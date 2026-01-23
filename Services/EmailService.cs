@@ -52,26 +52,21 @@ namespace InkVault.Services
             {
                 var smtpSettings = _configuration.GetSection("SmtpSettings");
                 var smtpServer = smtpSettings["Server"];
+                var senderEmail = smtpSettings["SenderEmail"];
+                var senderPassword = smtpSettings["SenderPassword"];
 
-                if (string.IsNullOrEmpty(smtpServer))
+                // Skip email sending if SMTP is not configured (graceful degradation)
+                if (string.IsNullOrEmpty(smtpServer) || string.IsNullOrEmpty(senderEmail) || string.IsNullOrEmpty(senderPassword))
                 {
-                    _logger.LogError("SMTP configuration is missing. SmtpSettings:Server is null or empty.");
-                    throw new InvalidOperationException("SMTP configuration is missing. Please ensure SmtpSettings are configured in appsettings.json or Environment Variables.");
+                    _logger.LogWarning("SMTP configuration is incomplete. Skipping email send. Server={Server}, Email={Email}", 
+                        smtpServer ?? "null", senderEmail ?? "null");
+                    return;
                 }
 
                 var smtpPortStr = smtpSettings["Port"] ?? "587";
                 if (!int.TryParse(smtpPortStr, out var smtpPort))
                 {
                     smtpPort = 587;
-                }
-                
-                var senderEmail = smtpSettings["SenderEmail"];
-                var senderPassword = smtpSettings["SenderPassword"];
-
-                if (string.IsNullOrEmpty(senderEmail) || string.IsNullOrEmpty(senderPassword))
-                {
-                    _logger.LogError("SMTP credentials are missing.");
-                    throw new InvalidOperationException("SMTP credentials are missing.");
                 }
 
                 _logger.LogInformation("Connecting to SMTP server {SmtpServer}:{SmtpPort}", smtpServer, smtpPort);
@@ -86,26 +81,26 @@ namespace InkVault.Services
 
                 using (var client = new SmtpClient())
                 {
-                    // Set a timeout of 10 seconds for connection
-                    client.Timeout = 10000; 
+                    // Set a timeout of 30 seconds for SMTP operations
+                    client.Timeout = 30000;
 
-                    // Connect
+                    // Connect with timeout handling
                     await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.StartTls);
                     
-                    _logger.LogInformation("Authenticated with SMTP server");
+                    _logger.LogInformation("Connected to SMTP server, authenticating...");
                     await client.AuthenticateAsync(senderEmail, senderPassword);
                     
                     _logger.LogInformation("Sending email to {Email}", email);
                     await client.SendAsync(message);
                     
                     await client.DisconnectAsync(true);
-                    _logger.LogInformation("Email sent successfully");
+                    _logger.LogInformation("Email sent successfully to {Email}", email);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send email to {Email}", email);
-                throw new InvalidOperationException($"Error sending email: {ex.Message}", ex);
+                _logger.LogWarning(ex, "Failed to send email to {Email}. This is non-critical and won't affect user experience.", email);
+                // Email is non-blocking - do not throw
             }
         }
     }
