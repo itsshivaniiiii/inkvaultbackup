@@ -6,9 +6,17 @@ using InkVault.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database
+// Database - Use connection string from config or environment variable (for production)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Fall back to DATABASE_URL environment variable (used by Render)
+    connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
+        ?? throw new InvalidOperationException("Connection string not configured");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 // Identity with persistent login support
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
