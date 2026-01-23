@@ -50,20 +50,37 @@ namespace InkVault.Services
         {
             try
             {
-                var smtpSettings = _configuration.GetSection("SmtpSettings");
-                var smtpServer = smtpSettings["Server"];
-                var senderEmail = smtpSettings["SenderEmail"];
-                var senderPassword = smtpSettings["SenderPassword"];
+                // Try multiple configuration sources
+                var smtpServer = _configuration["SmtpSettings:Server"] 
+                    ?? Environment.GetEnvironmentVariable("SmtpSettings__Server")
+                    ?? Environment.GetEnvironmentVariable("SMTP_SERVER");
+                    
+                var senderEmail = _configuration["SmtpSettings:SenderEmail"] 
+                    ?? Environment.GetEnvironmentVariable("SmtpSettings__SenderEmail")
+                    ?? Environment.GetEnvironmentVariable("SMTP_EMAIL");
+                    
+                var senderPassword = _configuration["SmtpSettings:SenderPassword"] 
+                    ?? Environment.GetEnvironmentVariable("SmtpSettings__SenderPassword")
+                    ?? Environment.GetEnvironmentVariable("SMTP_PASSWORD");
+                    
+                var smtpPortStr = _configuration["SmtpSettings:Port"] 
+                    ?? Environment.GetEnvironmentVariable("SmtpSettings__Port")
+                    ?? Environment.GetEnvironmentVariable("SMTP_PORT")
+                    ?? "587";
 
-                // Skip email sending if SMTP is not configured (graceful degradation)
+                _logger.LogInformation("SMTP Config Check - Server: {Server}, Email: {Email}, Password: {HasPassword}, Port: {Port}",
+                    string.IsNullOrEmpty(smtpServer) ? "NOT SET" : smtpServer,
+                    string.IsNullOrEmpty(senderEmail) ? "NOT SET" : senderEmail,
+                    string.IsNullOrEmpty(senderPassword) ? "NOT SET" : "***SET***",
+                    smtpPortStr);
+
+                // Skip email sending if SMTP is not configured
                 if (string.IsNullOrEmpty(smtpServer) || string.IsNullOrEmpty(senderEmail) || string.IsNullOrEmpty(senderPassword))
                 {
-                    _logger.LogWarning("SMTP configuration is incomplete. Skipping email send. Server={Server}, Email={Email}", 
-                        smtpServer ?? "null", senderEmail ?? "null");
+                    _logger.LogWarning("SMTP configuration is incomplete. Email will not be sent. Please set environment variables: SmtpSettings__Server, SmtpSettings__SenderEmail, SmtpSettings__SenderPassword");
                     return;
                 }
 
-                var smtpPortStr = smtpSettings["Port"] ?? "587";
                 if (!int.TryParse(smtpPortStr, out var smtpPort))
                 {
                     smtpPort = 587;
