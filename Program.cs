@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection;
 using InkVault.Data;
 using InkVault.Models;
 using InkVault.Services;
@@ -17,6 +18,10 @@ if (string.IsNullOrEmpty(connectionString))
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// Configure Data Protection for antiforgery tokens to persist across restarts
+builder.Services.AddDataProtection()
+    .PersistKeysToDbContext<ApplicationDbContext>();
 
 // Identity with persistent login support
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
