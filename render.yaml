@@ -1,0 +1,44 @@
+# ===========================================
+# render.yaml - Render Blueprint Configuration
+# ===========================================
+# This file defines your service configuration for Render
+# Deploy by connecting your GitHub repo to Render
+
+services:
+  - type: web
+    name: inkvault
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free  # Change to 'starter' or higher for production
+    
+    # Environment variables (set actual values in Render Dashboard)
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false  # Set in Render Dashboard (sensitive)
+      - key: SmtpSettings__Server
+        sync: false
+      - key: SmtpSettings__Port
+        sync: false
+      - key: SmtpSettings__SenderEmail
+        sync: false
+      - key: SmtpSettings__SenderPassword
+        sync: false
+    
+    # Health check
+    healthCheckPath: /health
+    
+    # Auto-deploy on push
+    autoDeploy: true
+    
+    # Build filter - only rebuild when these paths change
+    buildFilter:
+      paths:
+        - "**/*.cs"
+        - "**/*.cshtml"
+        - "**/*.csproj"
+        - "**/*.json"
+        - "wwwroot/**"
+        - "Dockerfile"

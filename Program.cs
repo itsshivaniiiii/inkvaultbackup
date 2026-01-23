@@ -92,6 +92,9 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Health check endpoint for Docker/Render
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
 app.MapControllerRoute(
 name: "default",
 pattern: "{controller=Home}/{action=Index}/{id?}");

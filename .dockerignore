@@ -1,0 +1,50 @@
+# ===========================================
+# .dockerignore for InkVault
+# Excludes unnecessary files from Docker build
+# ===========================================
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE & Editor
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Build outputs
+bin/
+obj/
+out/
+publish/
+
+# Documentation
+*.md
+!README.md
+
+# Logs
+*.log
+Logs/
+
+# Local settings (secrets)
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+
+# Test results
+TestResults/
+coverage/
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker/
+
+# Misc
+*.tmp
+*.temp
+*.bak
+node_modules/
