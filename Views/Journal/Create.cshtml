@@ -1,0 +1,561 @@
+@model InkVault.ViewModels.CreateJournalViewModel
+
+@{
+    ViewData["Title"] = "Create New Journal";
+}
+
+<style>
+    .journal-editor-container {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        animation: slideInLeft 0.6s ease;
+    }
+
+    .editor-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .editor-header h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .form-section {
+        margin-bottom: 25px;
+    }
+
+    .form-section label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+    }
+
+    .form-control, .form-select {
+        background: linear-gradient(135deg, rgba(26, 31, 46, 0.9) 0%, rgba(26, 31, 46, 0.8) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        color: #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control::placeholder, .form-control::-webkit-input-placeholder {
+        color: rgba(224, 224, 224, 0.5);
+        opacity: 1;
+    }
+
+    .form-control:-ms-input-placeholder {
+        color: rgba(224, 224, 224, 0.5);
+    }
+
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+        padding-right: 2.5rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        background-color: rgba(26, 31, 46, 0.95);
+        color: #e0e0e0;
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .form-select option {
+        background: #1a1f2e;
+        color: #e0e0e0;
+    }
+
+    [data-theme="light"] .form-control,
+    [data-theme="light"] .form-select {
+        background: #ffffff;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        color: #2c3e50;
+    }
+
+    [data-theme="light"] .form-control::placeholder,
+    [data-theme="light"] .form-control::-webkit-input-placeholder {
+        color: rgba(44, 62, 80, 0.5);
+    }
+
+    [data-theme="light"] .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232c3e50' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    }
+
+    [data-theme="light"] .form-select option {
+        background: #ffffff;
+        color: #2c3e50;
+    }
+
+    [data-theme="light"] .form-control:focus,
+    [data-theme="light"] .form-select:focus {
+        background-color: #ffffff;
+        color: #2c3e50;
+        border-color: #667eea;
+    }
+
+    .editor-toolbar {
+        background: linear-gradient(135deg, rgba(26, 31, 46, 0.6) 0%, rgba(26, 31, 46, 0.5) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 8px 8px 0 0;
+        padding: 12px 15px;
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin-bottom: 0;
+    }
+
+    .toolbar-btn {
+        background: rgba(102, 126, 234, 0.15);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        color: var(--text-primary);
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .toolbar-btn:hover {
+        background: rgba(102, 126, 234, 0.3);
+        border-color: #667eea;
+    }
+
+    .toolbar-btn.active {
+        background: #667eea;
+        border-color: #667eea;
+    }
+
+    .toolbar-separator {
+        width: 1px;
+        background: rgba(102, 126, 234, 0.2);
+        margin: 0 5px;
+    }
+
+    .rich-editor {
+        background: linear-gradient(135deg, rgba(26, 31, 46, 0.8) 0%, rgba(26, 31, 46, 0.6) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 0 0 8px 8px;
+        color: var(--text-primary);
+        padding: 20px;
+        min-height: 400px;
+        max-height: 600px;
+        overflow-y: auto;
+        outline: none;
+        line-height: 1.8;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .rich-editor:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.1);
+    }
+
+    .editor-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .btn-action {
+        flex: 1;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-publish {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-publish:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-draft {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-draft:hover {
+        background: rgba(102, 126, 234, 0.3);
+        border-color: #667eea;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .char-count {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 8px;
+    }
+
+    .error-message {
+        color: #ff6b6b;
+        font-size: 0.85rem;
+        margin-top: 5px;
+    }
+
+    @@media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+
+        .editor-actions {
+            flex-direction: column;
+        }
+
+        .journal-editor-container {
+            padding: 20px;
+        }
+    }
+
+    [data-theme="light"] .editor-toolbar {
+        background: linear-gradient(135deg, rgba(245, 245, 245, 0.8) 0%, rgba(255, 255, 255, 0.8) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    [data-theme="light"] .toolbar-btn {
+        background: rgba(102, 126, 234, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        color: #2c3e50;
+    }
+
+    [data-theme="light"] .toolbar-btn:hover {
+        background: rgba(102, 126, 234, 0.15);
+        border-color: #667eea;
+    }
+
+    [data-theme="light"] .toolbar-btn.active {
+        background: #667eea;
+        border-color: #667eea;
+        color: #ffffff;
+    }
+
+    [data-theme="light"] .toolbar-separator {
+        background: rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="light"] .rich-editor {
+        background: #ffffff;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        color: #2c3e50;
+    }
+
+    [data-theme="light"] .rich-editor:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.1);
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+</style>
+
+<a href="@Url.Action("Index", "Home")" class="back-btn">
+    <i class="bi bi-arrow-left"></i> Back to Dashboard
+</a>
+
+<div class="journal-editor-container">
+    <div class="editor-header">
+        <i class="bi bi-pencil-square" style="font-size: 2rem; color: #667eea;"></i>
+        <h2>Create New Journal</h2>
+    </div>
+
+    <form method="post" action="@Url.Action("Create", "Journal")">
+        @Html.AntiForgeryToken()
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+                <strong>Please fix the errors below:</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <ul class="mb-0 mt-2">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <!-- Title Section -->
+        <div class="form-section">
+            <label for="Title">Journal Title</label>
+            <input type="text" class="form-control" id="Title" name="Title" 
+                   placeholder="Give your journal a meaningful title..." 
+                   value="@Model?.Title" maxlength="200" required />
+            <div class="char-count">
+                <span id="titleCount">0</span>/200 characters
+            </div>
+            <span class="error-message">@Html.ValidationMessageFor(m => m.Title)</span>
+        </div>
+
+        <!-- Metadata Row -->
+        <div class="form-row">
+            <div class="form-section">
+                <label for="Topic">Topic (Optional)</label>
+                <select class="form-select" id="Topic" name="Topic">
+                    <option value="">Select a topic...</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Thoughts">Thoughts</option>
+                    <option value="Science">Science</option>
+                    <option value="Philosophy">Philosophy</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Health">Health</option>
+                    <option value="Education">Education</option>
+                    <option value="Career">Career</option>
+                    <option value="Relationships">Relationships</option>
+                    <option value="Arts">Arts</option>
+                    <option value="Music">Music</option>
+                    <option value="Food">Food</option>
+                    <option value="Lifestyle">Lifestyle</option>
+                    <option value="Fitness">Fitness</option>
+                    <option value="Business">Business</option>
+                    <option value="History">History</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-section">
+                <label for="PrivacyLevel">Privacy Level</label>
+                <select class="form-select" id="PrivacyLevel" name="PrivacyLevel">
+                    <option value="0" selected>Private (Only Me)</option>
+                    <option value="1">Friends Only</option>
+                    <option value="2">Public</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Rich Text Editor Section -->
+        <div class="form-section">
+            <label for="Content">Journal Content</label>
+            
+            <!-- Toolbar -->
+            <div class="editor-toolbar">
+                <button type="button" class="toolbar-btn" data-command="bold" title="Bold (Ctrl+B)">
+                    <i class="bi bi-type-bold"></i> Bold
+                </button>
+                <button type="button" class="toolbar-btn" data-command="italic" title="Italic (Ctrl+I)">
+                    <i class="bi bi-type-italic"></i> Italic
+                </button>
+                <button type="button" class="toolbar-btn" data-command="underline" title="Underline (Ctrl+U)">
+                    <i class="bi bi-type-underline"></i> Underline
+                </button>
+                <div class="toolbar-separator"></div>
+                <button type="button" class="toolbar-btn" data-command="insertUnorderedList" title="Bullet List">
+                    <i class="bi bi-list-ul"></i> List
+                </button>
+                <button type="button" class="toolbar-btn" data-command="insertOrderedList" title="Numbered List">
+                    <i class="bi bi-list-ol"></i> Ordered
+                </button>
+                <div class="toolbar-separator"></div>
+                <button type="button" class="toolbar-btn" data-command="createLink" title="Add Link">
+                    <i class="bi bi-link-45deg"></i> Link
+                </button>
+                <div class="toolbar-separator"></div>
+                <button type="button" class="toolbar-btn" data-command="removeFormat" title="Clear Formatting">
+                    <i class="bi bi-eraser"></i> Clear
+                </button>
+            </div>
+
+            <!-- Editor -->
+            <div class="rich-editor" id="Content" contenteditable="true" data-placeholder="Start writing your journal..."></div>
+            
+            <!-- Hidden input to store content -->
+            <input type="hidden" id="ContentInput" name="Content" />
+            
+            <div class="char-count">
+                <span id="contentCount">0</span> characters | <span id="wordCount">0</span> words
+            </div>
+            <span class="error-message">@Html.ValidationMessageFor(m => m.Content)</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="editor-actions">
+            <button type="submit" name="status" value="Draft" class="btn-action btn-draft">
+                <i class="bi bi-bookmark"></i> Save as Draft
+            </button>
+            <button type="submit" name="status" value="Published" class="btn-action btn-publish">
+                <i class="bi bi-cloud-upload"></i> Publish
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const editor = document.getElementById('Content');
+    const contentInput = document.getElementById('ContentInput');
+    const titleInput = document.getElementById('Title');
+    const titleCount = document.getElementById('titleCount');
+    const contentCount = document.getElementById('contentCount');
+    const wordCount = document.getElementById('wordCount');
+
+    // Initialize content from hidden input if available
+    if (contentInput.value) {
+        editor.innerHTML = contentInput.value;
+    }
+
+    // Update character and word count
+    function updateCounts() {
+        const text = editor.innerText;
+        const html = editor.innerHTML;
+        contentCount.textContent = text.length;
+        wordCount.textContent = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    }
+
+    // Update title count
+    titleInput.addEventListener('input', function () {
+        titleCount.textContent = this.value.length;
+    });
+
+    // Toolbar button click handlers
+    document.querySelectorAll('.toolbar-btn').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const command = this.getAttribute('data-command');
+            const value = this.getAttribute('data-value');
+
+            if (command === 'createLink') {
+                const url = prompt('Enter the URL:');
+                if (url) {
+                    document.execCommand(command, false, url);
+                }
+            } else if (command === 'insertUnorderedList' || command === 'insertOrderedList') {
+                document.execCommand(command, false, null);
+            } else if (command === 'removeFormat') {
+                // Clear all formatting and reset toolbar buttons
+                document.execCommand(command, false, null);
+                document.querySelectorAll('.toolbar-btn').forEach(b => b.classList.remove('active'));
+            } else if (command === 'formatBlock') {
+                document.execCommand(command, false, value);
+            } else {
+                document.execCommand(command, false, null);
+                this.classList.toggle('active');
+            }
+
+            editor.focus();
+            updateCounts();
+        });
+    });
+
+
+    // Update counts on input
+    editor.addEventListener('input', updateCounts);
+    editor.addEventListener('keyup', updateCounts);
+
+    // Sync content continuously as user types to ensure it's always in the hidden input
+    editor.addEventListener('input', function () {
+        contentInput.value = editor.innerHTML;
+    });
+
+    editor.addEventListener('keydown', function () {
+        contentInput.value = editor.innerHTML;
+    });
+
+    // Also sync on blur
+    editor.addEventListener('blur', function () {
+        contentInput.value = editor.innerHTML;
+    });
+
+    // Set status based on button clicked
+    const form = document.querySelector('form');
+    
+    // CRITICAL: Sync content IMMEDIATELY before ANY validation runs
+    // This must run in capture phase and before default validators
+    form.addEventListener('submit', function (e) {
+        // IMMEDIATE sync - this must happen first
+        contentInput.value = editor.innerHTML;
+        
+        // Get text for validation
+        const text = editor.innerText.trim();
+        
+        // Validate that there's actual content
+        if (text.length === 0) {
+            e.preventDefault();
+            alert('Please write some content for your journal');
+            editor.focus();
+            return false;
+        }
+        
+        // Content is valid and synced, form will submit with populated hidden input
+        return true;
+    }, true); // Use capture phase to ensure this runs BEFORE validation
+
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+            e.preventDefault();
+            document.execCommand('bold', false, null);
+        } else if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+            e.preventDefault();
+            document.execCommand('italic', false, null);
+        } else if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+            e.preventDefault();
+            document.execCommand('underline', false, null);
+        }
+    });
+
+    // Initial count update
+    updateCounts();
+    titleCount.textContent = titleInput.value.length;
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

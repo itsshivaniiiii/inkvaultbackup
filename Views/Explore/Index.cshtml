@@ -1,0 +1,480 @@
+@model InkVault.ViewModels.ExploreListViewModel
+
+@{
+    ViewData["Title"] = "Explore Journals";
+}
+
+<style>
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    .explore-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .explore-header {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .explore-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .explore-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .search-section {
+        margin-bottom: 40px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .search-section form {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .search-input {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-input input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        background: var(--card-bg);
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-input input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .search-input button {
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .search-input button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .sort-section {
+        display: flex;
+        gap: 10px;
+    }
+
+    .sort-section select {
+        padding: 12px 15px;
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        background: var(--card-bg);
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .sort-section select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .sort-section select option {
+        background: #1a1f2e;
+        color: #e0e0e0;
+    }
+
+    [data-theme="light"] .sort-section select option {
+        background: white;
+        color: #2c3e50;
+    }
+
+    .journals-section {
+        margin-bottom: 50px;
+    }
+
+    .journals-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: var(--text-primary);
+        padding-bottom: 10px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .journal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+    }
+
+    .journal-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .journal-card:hover {
+        transform: translateY(-5px);
+        border-color: #667eea;
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .journal-header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        display: flex;
+        gap: 12px;
+    }
+
+    .journal-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .journal-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .journal-author {
+        flex: 1;
+    }
+
+    .journal-author-name {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .journal-author-date {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .own-badge {
+        display: inline-block;
+        padding: 0px 4px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        line-height: 1;
+        background: transparent;
+        color: #4caf50;
+        border: none;
+        white-space: nowrap;
+    }
+
+    .journal-content {
+        padding: 20px;
+        flex: 1;
+    }
+
+    .journal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+        line-height: 1.4;
+    }
+
+    .journal-preview {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+
+    .journal-topic {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+
+    .journal-footer {
+        padding: 15px 20px;
+        border-top: 1px solid rgba(102, 126, 234, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+    }
+
+    .journal-stats {
+        display: flex;
+        gap: 20px;
+        color: var(--text-secondary);
+    }
+
+    .journal-stat {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .view-button {
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .view-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+    }
+
+    @@media (max-width: 768px) {
+        .search-section {
+            flex-direction: column;
+        }
+
+        .journal-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .explore-header h1 {
+            font-size: 1.8rem;
+        }
+    }
+
+    /* Light Theme Styles for Explore */
+    [data-theme="light"] .search-input input {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.3) !important;
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="light"] .search-input input:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    [data-theme="light"] .sort-section select {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.3) !important;
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="light"] .sort-section select:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    [data-theme="light"] .journal-card {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    [data-theme="light"] .journal-title {
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="light"] .journal-preview {
+        color: var(--text-secondary) !important;
+    }
+
+
+</style>
+
+<div class="explore-container">
+<a href="@Url.Action("Index", "Home")" class="back-btn">
+    <i class="bi bi-arrow-left"></i> Back to Dashboard
+</a>
+
+<div class="explore-header">
+    <h1><i class="bi bi-compass"></i> Explore Journals</h1>
+    <p>Discover fascinating stories and connect with writers around the world</p>
+</div>
+
+    <div class="search-section">
+        <form method="get" asp-action="Index" class="flex-grow-1">
+            <div class="search-input">
+                <input type="text" name="search" placeholder="Search journals, topics, or authors..." value="@Model.SearchQuery" />
+                <button type="submit"><i class="bi bi-search"></i> Search</button>
+            </div>
+        </form>
+        <div class="sort-section">
+            <select id="sortDropdown" onchange="updateSort(this.value)">
+                @if (Model.SortBy == "recent")
+                {
+                    <option value="recent" selected>Recent</option>
+                }
+                else
+                {
+                    <option value="recent">Recent</option>
+                }
+                
+                @if (Model.SortBy == "oldest")
+                {
+                    <option value="oldest" selected>Oldest</option>
+                }
+                else
+                {
+                    <option value="oldest">Oldest</option>
+                }
+                
+                @if (Model.SortBy == "views")
+                {
+                    <option value="views" selected>Most Viewed</option>
+                }
+                else
+                {
+                    <option value="views">Most Viewed</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    @if (Model.PublicJournals.Any())
+    {
+        <div class="journals-section">
+            <div class="journal-grid">
+                @foreach (var journal in Model.PublicJournals)
+                {
+                    <div class="journal-card">
+                        <div class="journal-header">
+                            <div class="journal-avatar">
+                                @if (!string.IsNullOrEmpty(journal.AuthorProfilePicture))
+                                {
+                                    <img src="@journal.AuthorProfilePicture" alt="@journal.AuthorName" />
+                                }
+                                else
+                                {
+                                    @journal.AuthorName.First()
+                                }
+                            </div>
+                            <div class="journal-author">
+                                <div class="journal-author-name">@journal.AuthorName</div>
+                                <div class="journal-author-date">@journal.CreatedAt.ToString("MMM dd, yyyy")</div>
+                            </div>
+                            @if (journal.IsOwn)
+                            {
+                                <span class="own-badge"><i class="bi bi-check-circle-fill"></i> Own</span>
+                            }
+                        </div>
+                        <div class="journal-content">
+                            <h3 class="journal-title">@journal.Title</h3>
+                            <p class="journal-preview">@journal.PreviewText</p>
+                            @if (!string.IsNullOrEmpty(journal.Topic))
+                            {
+                                <span class="journal-topic">#@journal.Topic</span>
+                            }
+                        </div>
+                        <div class="journal-footer">
+                            <div class="journal-stats">
+                                <div class="journal-stat">
+                                    <i class="bi bi-eye"></i> @journal.ViewCount @(journal.ViewCount == 1 ? "view" : "views")
+                                </div>
+                            </div>
+                            <a href="@Url.Action("View", "Explore", new { id = journal.JournalId })" class="view-button">View</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (!Model.PublicJournals.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h3>No journals found</h3>
+            <p>@(!string.IsNullOrEmpty(Model.SearchQuery) ? "Try adjusting your search or explore other topics." : "Be the first to publish your journal!")</p>
+        </div>
+    }
+</div>
+
+<script>
+    function updateSort(sortValue) {
+        const searchQuery = '@Model.SearchQuery';
+        const url = `@Url.Action("Index", "Explore")?search=${encodeURIComponent(searchQuery)}&sortBy=${sortValue}`;
+        window.location.href = url;
+    }
+</script>

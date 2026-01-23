@@ -1,0 +1,980 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<style>
+    /* Dashboard Specific Styles */
+    .dashboard-container {
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .welcome-section {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(240, 147, 251, 0.15) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 15px;
+        padding: 40px 30px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+        animation: slideInLeft 0.6s ease;
+    }
+
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(240, 147, 251, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .welcome-section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+        z-index: 1;
+    }
+
+    .welcome-section p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Feature Cards */
+    .feature-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease backwards;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card:nth-child(5) { animation-delay: 0.5s; }
+    .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(102, 126, 234, 0.5);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .feature-card:hover::before {
+        opacity: 1;
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        transition: all 0.4s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.15) rotate(5deg);
+    }
+
+    .feature-card h5 {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .feature-card p {
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .feature-card .btn {
+        position: relative;
+        z-index: 2;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card .btn:hover {
+        transform: translateX(5px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Section Headers */
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .section-header h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .section-header i {
+        font-size: 1.8rem;
+        color: #667eea;
+    }
+
+    /* Stats Section */
+    .stat-box {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.6s ease backwards;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.15);
+    }
+
+    .stat-box .number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-box .label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    /* CTA Button */
+    .cta-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Quick Actions */
+    .quick-action {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .quick-action:hover {
+        transform: translateX(5px);
+        border-color: rgba(102, 126, 234, 0.5);
+    }
+
+    .quick-action i {
+        font-size: 1.5rem;
+        color: #667eea;
+    }
+
+    .quick-action-text h6 {
+        margin: 0;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .quick-action-text p {
+        margin: 3px 0 0 0;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+</style>
+
+@if (User?.Identity?.IsAuthenticated ?? false)
+{
+    <div class="dashboard-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>Welcome back, <span style="color: #667eea;">@User.Identity.Name</span>! 👋</h1>
+            <p>Share your thoughts, explore fascinating stories, and connect with writers around the world.</p>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="row mb-5">
+            <div class="col-md-3 mb-3">
+                <div class="stat-box">
+                    <div class="number">@ViewData["PublishedJournalsCount"]</div>
+                    <div class="label">Journals Published</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-box">
+                    <div class="number">@ViewData["FriendsCount"]</div>
+                    <div class="label">Friends</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-box">
+                    <div class="number">@ViewData["ReadersCount"]</div>
+                    <div class="label">Readers</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-box">
+                    <div class="number">@ViewData["LikesAndCommentsCount"]</div>
+                    <div class="label">Likes & Comments</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Features Section -->
+        <div class="section-header">
+            <i class="bi bi-star"></i>
+            <h2>Quick Actions</h2>
+        </div>
+
+        <div class="row mb-5">
+            <!-- Create Journal -->
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">✍️</div>
+                    <h5>Create Journal</h5>
+                    <p>Write and share your thoughts with the world. Make it private for yourself or public for readers.</p>
+                    <a href="@Url.Action("Create", "Journal")" class="btn btn-sm">
+                        <i class="bi bi-plus-lg"></i> New Journal
+                    </a>
+                </div>
+            </div>
+
+            <!-- Explore Writings -->
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h5>Explore Writings</h5>
+                    <p>Discover fascinating journals and stories by topic, author, or trending content.</p>
+                    <a href="@Url.Action("Index", "Explore")" class="btn btn-sm">
+                        <i class="bi bi-compass"></i> Browse
+                    </a>
+                </div>
+            </div>
+
+            <!-- Make Friends -->
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h5>Make Friends</h5>
+                    <p>Connect with other writers and readers. Build your community and network.</p>
+                    <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#makeFriendsModal">
+                        <i class="bi bi-people"></i> Connect
+                    </button>
+                </div>
+            </div>
+
+            <!-- Browse by Topic -->
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h5>Browse by Topic</h5>
+                    <p>Find journals organized by categories. From science to romance, philosophy to travel.</p>
+                    <a href="@Url.Action("Index", "Topic")" class="btn btn-sm">
+                        <i class="bi bi-tags"></i> Categories
+                    </a>
+                </div>
+            </div>
+
+            <!-- My Library -->
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📖</div>
+                    <h5>My Library</h5>
+                    <p>View and manage all your journals, drafts, and saved writings in one place.</p>
+                    <a href="@Url.Action("MyJournals", "Journal")" class="btn btn-sm">
+                        <i class="bi bi-bookmark"></i> My Journals
+                    </a>
+                </div>
+            </div>
+
+            <!-- Friends Feed -->
+            <div class="col-lg-4">
+                <div class="feature-card">
+                    <div class="feature-icon">📬</div>
+                    <h5>Friends Feed</h5>
+                    <p>See the latest writings from your friends and stay updated with their stories.</p>
+                    <a href="@Url.Action("Index", "Feed")" class="btn btn-sm">
+                        <i class="bi bi-chat-dots"></i> View Feed
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Getting Started Section -->
+        <div class="section-header">
+            <i class="bi bi-rocket"></i>
+            <h2>Getting Started</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="quick-action">
+                    <i class="bi bi-1-circle"></i>
+                    <div class="quick-action-text">
+                        <h6>Complete Your Profile</h6>
+                        <p>Add a profile picture, bio, and interests to help others find you.</p>
+                    </div>
+                </div>
+
+                <div class="quick-action">
+                    <i class="bi bi-2-circle"></i>
+                    <div class="quick-action-text">
+                        <h6>Write Your First Journal</h6>
+                        <p>Start your journey by sharing your first thought or story.</p>
+                    </div>
+                </div>
+
+                <div class="quick-action">
+                    <i class="bi bi-3-circle"></i>
+                    <div class="quick-action-text">
+                        <h6>Explore & Connect</h6>
+                        <p>Browse writings, follow authors, and make new friends.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-4">
+                <div class="quick-action">
+                    <i class="bi bi-4-circle"></i>
+                    <div class="quick-action-text">
+                        <h6>Engage with Community</h6>
+                        <p>Comment, like, and discuss writings with fellow authors.</p>
+                    </div>
+                </div>
+
+                <div class="quick-action">
+                    <i class="bi bi-5-circle"></i>
+                    <div class="quick-action-text">
+                        <h6>Build Your Audience</h6>
+                        <p>Share quality content and grow your readership over time.</p>
+                    </div>
+                </div>
+
+                <div class="quick-action">
+                    <i class="bi bi-6-circle"></i>
+                    <div class="quick-action-text">
+                        <h6>Customize Preferences</h6>
+                        <p>Set privacy levels, notification settings, and content preferences.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Journal Modal -->
+    <div class="modal fade" id="createJournalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: #1a1f2e; border: 1px solid rgba(102, 126, 234, 0.2);">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title">Create New Journal</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Journal Title</label>
+                            <input type="text" class="form-control" style="background: #0f1419; border: 1px solid rgba(102, 126, 234, 0.2); color: var(--text-primary);" placeholder="Enter title...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content</label>
+                            <textarea class="form-control" rows="5" style="background: #0f1419; border: 1px solid rgba(102, 126, 234, 0.2); color: var(--text-primary);" placeholder="Write your thoughts..."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Topic</label>
+                            <select class="form-select" style="background: #0f1419; border: 1px solid rgba(102, 126, 234, 0.2); color: var(--text-primary);">
+                                <option>Select topic...</option>
+                                <option>Science</option>
+                                <option>Technology</option>
+                                <option>Travel</option>
+                                <option>Philosophy</option>
+                                <option>Romance</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Privacy</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="privacy" id="private" value="private" checked>
+                                <label class="form-check-label" for="private">
+                                    <i class="bi bi-lock"></i> Private (Only you can see)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="privacy" id="public" value="public">
+                                <label class="form-check-label" for="public">
+                                    <i class="bi bi-unlock"></i> Public (Everyone can see)
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="cta-button">Publish Journal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Topics Modal -->
+    <div class="modal fade" id="topicsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background: #1a1f2e; border: 1px solid rgba(102, 126, 234, 0.2);">
+                <div class="modal-header border-bottom border-secondary">
+                    <h5 class="modal-title">Browse by Topic</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @foreach (var topic in new[] { "Science", "Technology", "Travel", "Philosophy", "Romance", "Food", "Health", "Education", "Business", "Art" })
+                        {
+                            <div class="col-md-6 mb-3">
+                                <a href="#" class="text-decoration-none">
+                                    <div class="feature-card">
+                                        <h6>@topic</h6>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div style="text-align: center; padding: 60px 20px; animation: fadeInUp 0.8s ease;">
+        <div style="margin-bottom: 30px;">
+            <i class="bi bi-book" style="font-size: 5rem; color: #667eea;"></i>
+        </div>
+        <h1 style="font-size: 3rem; font-weight: 700; margin-bottom: 15px;">
+            Welcome to <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">InkVault</span>
+        </h1>
+        <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 30px;">
+            Your personal journal platform to share thoughts, discover stories, and connect with writers worldwide.
+        </p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a asp-controller="Account" asp-action="Welcome" class="cta-button" id="loginBtn">
+                <i class="bi bi-box-arrow-in-right"></i> Login Now
+            </a>
+            <a asp-controller="Account" asp-action="Register" class="cta-button" id="joinBtn" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%); border: 1px solid rgba(102, 126, 234, 0.4); color: #667eea;">
+                <i class="bi bi-person-plus"></i> Join Community
+            </a>
+        </div>
+        
+        <style>
+            [data-theme="light"] #joinBtn {
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%) !important;
+                border: 2px solid #667eea !important;
+                color: #667eea !important;
+            }
+            
+            [data-theme="light"] #joinBtn:hover {
+                background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%) !important;
+                color: #667eea !important;
+                text-decoration: none;
+            }
+        </style>
+    </div>
+}
+
+<script>
+    // Add scroll animation
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.feature-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        cards.forEach(card => {
+            observer.observe(card);
+        });
+    });
+</script>
+
+<!-- Make Friends Modal -->
+<div class="modal fade" id="makeFriendsModal" tabindex="-1" aria-labelledby="makeFriendsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background: var(--card-bg); border: 1px solid rgba(102, 126, 234, 0.2);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(102, 126, 234, 0.2);">
+                <h5 class="modal-title" id="makeFriendsModalLabel" style="color: var(--text-primary); font-weight: 700;">
+                    <i class="bi bi-people"></i> Find & Connect with Friends
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 30px;">
+                <!-- Search Form -->
+                <div class="search-section" style="margin-bottom: 25px;">
+                    <div class="search-form" style="display: flex; gap: 10px;">
+                        <input 
+                            type="text" 
+                            id="friendSearchInput" 
+                            class="form-control" 
+                            placeholder="Search by name or user ID..." 
+                            style="background: var(--card-bg); border: 2px solid rgba(102, 126, 234, 0.3); color: var(--text-primary); padding: 12px 15px; border-radius: 8px; flex: 1;">
+                        <button 
+                            type="button" 
+                            class="btn" 
+                            onclick="searchFriends()" 
+                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px 25px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 8px;">
+                        💡 Tip: Search by full name or exact user ID
+                    </small>
+                </div>
+
+                <!-- Search Results -->
+                <div id="searchResults" style="min-height: 200px;">
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                        <i class="bi bi-search" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 15px;"></i>
+                        <p>Start typing to search for friends</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(102, 126, 234, 0.2);">
+                <button type="button" class="btn" data-bs-dismiss="modal" style="background: rgba(102, 126, 234, 0.2); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.3); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    Close
+                </button>
+                <a href="@Url.Action("Index", "Friends")" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none;">
+                    View All Friends
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Modal Styles */
+    .modal-content {
+        border-radius: 12px !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    [data-theme="light"] .modal-content {
+        background: #ffffff !important;
+    }
+
+    [data-theme="light"] .modal-header {
+        border-bottom-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    [data-theme="light"] .modal-footer {
+        border-top-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    [data-theme="light"] #friendSearchInput {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.3) !important;
+        color: #2c3e50 !important;
+    }
+
+    [data-theme="light"] #friendSearchInput::placeholder {
+        color: rgba(44, 62, 80, 0.5);
+    }
+
+    .friend-result-card {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 10px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .friend-result-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="light"] .friend-result-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        border-color: rgba(102, 126, 234, 0.15);
+    }
+
+    .friend-result-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+
+    .friend-result-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .friend-result-info {
+        flex: 1;
+    }
+
+    .friend-result-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 3px;
+    }
+
+    .friend-result-id {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .friend-result-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .friend-action-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .friend-action-btn.add-friend {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .friend-action-btn.add-friend:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .friend-action-btn.friends {
+        background: rgba(76, 175, 80, 0.2);
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+
+    .friend-action-btn.pending {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+
+    .friend-action-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    @@keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+</style>
+
+<!-- Toast Notification Container -->
+<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+<script>
+// Store URLs at page load
+var searchUsersUrl = '/Friends/SearchUsers';
+var sendRequestUrl = '/Friends/SendRequest';
+
+
+
+// Toast notification function
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toastContainer');
+    const toastId = 'toast-' + Date.now();
+    
+    const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
+    const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+    
+    const toastHTML = `
+        <div id="${toastId}" style="
+            background: ${bgColor};
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.3s ease;
+            min-width: 300px;
+        ">
+            <span style="font-weight: bold; font-size: 1.2rem;">${icon}</span>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        const toast = document.getElementById(toastId);
+        if (toast) {
+            toast.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 4000);
+}
+
+function searchFriends() {
+    const searchQuery = document.getElementById('friendSearchInput').value.trim();
+        
+    if (!searchQuery) {
+        document.getElementById('searchResults').innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                <i class="bi bi-search" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 15px;"></i>
+                <p>Start typing to search for friends</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Show loading state
+    document.getElementById('searchResults').innerHTML = `
+        <div style="text-align: center; padding: 40px 20px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p style="color: var(--text-secondary); margin-top: 15px;">Searching...</p>
+        </div>
+    `;
+
+    // Fetch search results
+    const url = searchUsersUrl + '?query=' + encodeURIComponent(searchQuery);
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+
+            if (data.length === 0) {
+                document.getElementById('searchResults').innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                        <i class="bi bi-person-x" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 15px;"></i>
+                        <p>No users found matching "${searchQuery}"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let resultsHtml = '';
+            data.forEach(user => {
+                const avatar = user.profilePicturePath 
+                    ? `<img src="${user.profilePicturePath}" alt="${user.firstName}">`
+                    : `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+                    
+                let buttonHtml = '';
+                if (user.friendStatus === 'friends') {
+                    buttonHtml = `<button class="friend-action-btn friends" disabled>✓ Friends</button>`;
+                } else if (user.friendStatus === 'pending') {
+                    buttonHtml = `<button class="friend-action-btn pending" disabled>⏳ Pending</button>`;
+                } else {
+                    buttonHtml = `<button class="friend-action-btn add-friend" onclick="sendFriendRequest('${user.userId}', '${user.firstName} ${user.lastName}')">+ Add Friend</button>`;
+                }
+
+                const userNameDisplay = [64].map(c => String.fromCharCode(c))[0] + user.userName;
+                resultsHtml += `
+                    <div class="friend-result-card">
+                        <div class="friend-result-avatar">
+                            ${avatar}
+                        </div>
+                        <div class="friend-result-info">
+                            <div class="friend-result-name">${user.firstName} ${user.lastName}</div>
+                            <div class="friend-result-id">${userNameDisplay}</div>
+                        </div>
+                        <div class="friend-result-actions">
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('searchResults').innerHTML = resultsHtml;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('searchResults').innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; color: #ff6b6b;">
+                    <i class="bi bi-exclamation-circle" style="font-size: 3rem; display: block; margin-bottom: 15px;"></i>
+                    <p>Error searching for friends. Please try again.</p>
+                </div>
+            `;
+        });
+}
+
+function sendFriendRequest(receiverId, userName) {
+    // Get CSRF token - try to find it from any hidden input on the page
+    let token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+    
+    // If not found, try to get it from meta tag (common pattern)
+    if (!token) {
+        token = document.querySelector('meta[name="csrf-token"]')?.content;
+    }
+    
+    const formData = new FormData();
+    formData.append('receiverId', receiverId);
+    if (token) {
+        formData.append('__RequestVerificationToken', token);
+    }
+    
+    fetch(sendRequestUrl, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            if (response.status === 400) {
+                return response.text().then(msg => {
+                    throw new Error(msg || 'Invalid request');
+                });
+            }
+            throw new Error('Failed to send request');
+        }
+        return response.text();
+    })
+    .then(data => {
+        showToast(`Friend request sent to ${userName}!`, 'success');
+        // Refresh search results to update button state
+        setTimeout(() => searchFriends(), 800);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast(error.message || 'Error sending friend request. Please try again.', 'error');
+    });
+}
+
+
+// Clear search and reset modal when it closes
+document.addEventListener('DOMContentLoaded', function() {
+    const makeFriendsModal = document.getElementById('makeFriendsModal');
+    
+    if (makeFriendsModal) {
+        makeFriendsModal.addEventListener('hidden.bs.modal', function() {
+            // Clear the search input
+            document.getElementById('friendSearchInput').value = '';
+            // Reset the results
+            document.getElementById('searchResults').innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                    <i class="bi bi-search" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 15px;"></i>
+                    <p>Start typing to search for friends</p>
+                </div>
+            `;
+        });
+    }
+    
+    // Allow Enter key to trigger search
+    const searchInput = document.getElementById('friendSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchFriends();
+            }
+        });
+    }
+});
+</script>
+
+
+
+

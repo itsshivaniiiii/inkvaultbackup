@@ -1,0 +1,281 @@
+# ===========================================
+# .gitignore for InkVault ASP.NET Core MVC Project
+# ===========================================
+
+# ===========================================
+# Build Results
+# ===========================================
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+
+# ===========================================
+# Visual Studio Files
+# ===========================================
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.cache
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Rider
+.idea/
+*.sln.iml
+
+# ===========================================
+# NuGet Packages
+# ===========================================
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+# ===========================================
+# ASP.NET & .NET Core
+# ===========================================
+ScaffoldingReadMe.txt
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Entity Framework Migrations - Keep these
+# (Uncomment if you want to ignore them)
+# Migrations/
+
+# Published output
+publish/
+PublishProfiles/
+*.pubxml
+!**/PublishProfiles/[Pp]ublish[Pp]rofiles/
+
+# ===========================================
+# User-specific & Sensitive Files
+# ===========================================
+# Local settings with sensitive info (connection strings, API keys, SMTP passwords)
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+
+# User secrets
+secrets/
+
+# ===========================================
+# Windows Files
+# ===========================================
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ===========================================
+# macOS Files
+# ===========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ===========================================
+# Linux Files
+# ===========================================
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===========================================
+# Test Results
+# ===========================================
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+
+# ===========================================
+# Code Coverage
+# ===========================================
+coverage/
+*.lcov
+coverlet/
+
+# ===========================================
+# SQL Server Files
+# ===========================================
+*.mdf
+*.ldf
+*.ndf
+
+# ===========================================
+# Azure & Deployment
+# ===========================================
+.azure/
+azure-pipelines.yml.user
+ServiceFabricBackup/
+*.azurePubxml
+web.*.config
+!web.config
+
+# ===========================================
+# Documentation Files (Optional - uncomment to ignore)
+# ===========================================
+# *.md
+# !README.md
+
+# ===========================================
+# Temporary & Backup Files
+# ===========================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*.*~
+*.orig
+
+# ===========================================
+# IDE Generated Files
+# ===========================================
+# Razor view generated files (IDE cache)
+*.cshtml.*.ide.g.cs
+
+# JetBrains Rider
+*.DotSettings.user
+
+# ===========================================
+# wwwroot Uploads (if applicable)
+# ===========================================
+# Uncomment if you have user uploads folder
+# wwwroot/uploads/
+# wwwroot/Images/uploads/
+
+# ===========================================
+# Logs & Diagnostics
+# ===========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===========================================
+# Node Modules (if using npm/yarn for frontend)
+# ===========================================
+node_modules/
+package-lock.json
+yarn.lock
+
+# ===========================================
+# LibMan (Library Manager)
+# ===========================================
+# libman.json - Keep this
+# wwwroot/lib/ - Usually restored from libman
+
+# ===========================================
+# Docker
+# ===========================================
+.docker/
+docker-compose*.override.yml
+
+# ===========================================
+# Miscellaneous
+# ===========================================
+# BenchmarkDotNet results
+BenchmarkDotNet.Artifacts/
+
+# JustCode
+.JustCode
+
+# StyleCop
+StyleCopReport.xml
+
+# Fody
+FodyWeavers.xsd
+
+# DotNetCore Tools
+.config/dotnet-tools.json
+
+# Mini profiler
+*.MiniProfiler
+
+# Backup & Deployment Bundles
+*.zip
+*.tar.gz
+*.rar
+
+# ===========================================
+# Project-Specific Ignores
+# ===========================================
+# InkVault specific documentation (optional - remove if you want to track)
+# JOURNAL_DELETE_FEATURE.md
+# FINAL_COMPLETION_SUMMARY.md
+# DETAILED_CHANGE_SUMMARY.md
+# DOCUMENTATION_INDEX.md
+# QUICK_REFERENCE.md
+# IMPLEMENTATION_COMPLETE_CHECKLIST.md
+# FEATURES_QUICK_START.md
+# FEATURES_IMPLEMENTATION_SUMMARY.md
+# COMPLETE_SETUP_SUMMARY.md
+# LOGO_QUICK_START.md
+# LOGO_INTEGRATION_GUIDE.md
+# FINAL_CHECKLIST.md
+# README_LAUNCH.md
+# DASHBOARD_COMPLETE.md
+# DASHBOARD_QUICK_REFERENCE.md
+# DASHBOARD_REDESIGN_SUMMARY.md
+# DASHBOARD_CUSTOMIZATION_GUIDE.md
+# VISUAL_GUIDE.md
+# INDEX.md
+# OTPSERVICE_CHANGES.md
+# README_AUTHENTICATION.md
+# QUICKSTART.md
+# DATABASE_SETUP.md
+# IMPLEMENTATION_SUMMARY.md
+# THEME_VISIBILITY_COMPLETE.md
+# THEME_VISIBILITY_QUICK_SUMMARY.md
+# DROPDOWN_Z_INDEX_FIX.md
+# DROPDOWN_VISIBILITY_OVERFLOW_FIX.md
+# DROPDOWN_OVERFLOW_FIX_QUICK.md
+# JOURNAL_EXPLORE_LIGHT_THEME_FIX.md
+# JOURNAL_EXPLORE_FIX_QUICK.md
+# THEME_VISIBILITY_FIXED.md
+# THEME_VISIBILITY_QUICK_GUIDE.md

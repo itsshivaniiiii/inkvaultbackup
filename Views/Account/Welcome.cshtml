@@ -1,0 +1,113 @@
+@model InkVault.ViewModels.WelcomeViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);">
+<div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <!-- Logo Section -->
+                <div class="text-center mb-4">
+                    <img src="~/images/logo.png" alt="InkVault Logo" style="height: 160px; object-fit: contain;">
+                </div>
+
+                <!-- Login Card -->
+                <div class="card p-4 shadow" style="max-width: 500px; margin: auto;">
+                    <h3 class="mb-3 text-center">Login to Your Account</h3>
+
+                    @if (TempData["Warning"] != null)
+                    {
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            @TempData["Warning"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Success"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" action="@Url.Action("Welcome", "Account")">
+                        @Html.AntiForgeryToken()
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div asp-validation-summary="All" class="text-danger mb-2"></div>
+                        }
+
+                        <div class="mb-2">
+                            <label for="Username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="Username" name="Username" 
+                                   value="@Model?.Username" placeholder="Enter your username" required />
+                            <span class="text-danger">@Html.ValidationMessageFor(m => m.Username)</span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="Password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="Password" name="Password" 
+                                       placeholder="Enter your password" required />
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword" 
+                                        style="border-left: none;">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                            </div>
+                            <span class="text-danger">@Html.ValidationMessageFor(m => m.Password)</span>
+                        </div>
+
+                        <div class="mb-2 form-check">
+                            <input type="checkbox" class="form-check-input" id="RememberMe" name="RememberMe" />
+                            <label class="form-check-label" for="RememberMe">Remember me</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a asp-controller="Account" asp-action="Register">Create one</a></p>
+                        <p><a asp-controller="Account" asp-action="ForgotPassword" class="text-decoration-none">Forgot Password?</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #togglePassword {
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    
+    #togglePassword:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('Password');
+            const toggleBtn = this;
+            const icon = toggleBtn.querySelector('i');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('bi-eye-fill');
+                icon.classList.add('bi-eye-slash-fill');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('bi-eye-slash-fill');
+                icon.classList.add('bi-eye-fill');
+            }
+        });
+    </script>
+}

@@ -1,0 +1,335 @@
+@model InkVault.ViewModels.JournalsByTopicViewModel
+
+@{
+    ViewData["Title"] = $"Topic: {Model.TopicName}";
+}
+
+<style>
+    .topic-view-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .breadcrumb-nav {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.15);
+    }
+
+    .breadcrumb-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .breadcrumb-link:hover {
+        color: #764ba2;
+    }
+
+    .breadcrumb-separator {
+        color: var(--text-secondary);
+    }
+
+    .topic-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+    .topic-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-transform: capitalize;
+    }
+
+    .topic-header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        background: rgba(102, 126, 234, 0.15);
+        color: #667eea;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .journals-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .journal-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 25px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .journal-card:hover {
+        transform: translateY(-3px);
+        border-color: #667eea;
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.15);
+    }
+
+    .journal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 12px;
+    }
+
+    .journal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        flex: 1;
+    }
+
+    .own-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        background: rgba(76, 175, 80, 0.15);
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .journal-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 15px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .journal-content {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    .journal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .view-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .view-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+
+    .author-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 30px;
+        background: rgba(102, 126, 234, 0.05);
+        border: 1px dashed rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--text-secondary);
+        opacity: 0.5;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h2 {
+        font-size: 1.8rem;
+        color: var(--text-primary);
+        margin: 0 0 10px 0;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .privacy-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background: rgba(102, 126, 234, 0.15);
+        color: #667eea;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    [data-theme="light"] .journal-card {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    [data-theme="light"] .journal-title {
+        color: var(--text-primary) !important;
+    }
+
+    @@media (max-width: 768px) {
+        .journal-header {
+            flex-direction: column;
+        }
+
+        .topic-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .journal-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+    }
+</style>
+
+<div class="topic-view-container">
+    <div class="breadcrumb-nav">
+        <a href="@Url.Action("Index", "Home")" class="breadcrumb-link">
+            <i class="bi bi-house-door"></i> Dashboard
+        </a>
+        <span class="breadcrumb-separator">/</span>
+        <a href="@Url.Action("Index", "Topic")" class="breadcrumb-link">
+            <i class="bi bi-bookmark"></i> Topics
+        </a>
+        <span class="breadcrumb-separator">/</span>
+        <span style="color: var(--text-secondary);">@Model.TopicName</span>
+    </div>
+
+    <div class="topic-header">
+        <h1>@Model.TopicName</h1>
+        <div class="topic-header-badge">
+            <i class="bi bi-journal-text"></i>
+            @Model.Journals.Count @(Model.Journals.Count == 1 ? "journal" : "journals")
+        </div>
+    </div>
+
+    @if (Model.Journals.Any())
+    {
+        <div class="journals-list">
+            @foreach (var journal in Model.Journals)
+            {
+                <div class="journal-card">
+                    <div class="journal-header">
+                        <h3 class="journal-title">@journal.Title</h3>
+                        @if (journal.IsOwn)
+                        {
+                            <div class="own-badge">
+                                <i class="bi bi-check-circle-fill"></i> Own
+                            </div>
+                        }
+                    </div>
+
+                    <div class="journal-meta">
+                        <div class="meta-item">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="author-info">@journal.AuthorName</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="bi bi-calendar-event"></i>
+                            <span>@journal.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="bi bi-eye"></i>
+                            <span>@journal.ViewCount @(journal.ViewCount == 1 ? "view" : "views")</span>
+                        </div>
+                        @if (journal.PrivacyLevel == InkVault.Models.PrivacyLevel.FriendsOnly)
+                        {
+                            <div class="privacy-badge">
+                                <i class="bi bi-people-fill"></i> Friends Only
+                            </div>
+                        }
+                    </div>
+
+                    <div class="journal-content">
+                        @journal.Content
+                    </div>
+
+                    <div class="journal-footer">
+                        <a href="@Url.Action("View", "Journal", new { id = journal.JournalId, fromBrowse = true, topicName = Model.TopicName })" class="view-btn">
+                            <i class="bi bi-eye"></i> Read Full Journal
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h2>No Journals Found</h2>
+            <p>There are no published journals under the "@Model.TopicName" topic yet. Check back later!</p>
+        </div>
+    }
+</div>

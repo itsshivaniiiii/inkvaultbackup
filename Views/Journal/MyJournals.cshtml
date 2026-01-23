@@ -1,0 +1,734 @@
+@model IEnumerable<InkVault.ViewModels.JournalListViewModel>
+
+@{
+    ViewData["Title"] = "My Journals";
+    var publishedJournals = Model.Where(j => j.Status == InkVault.Models.JournalStatus.Published && j.PrivacyLevel == InkVault.Models.PrivacyLevel.Public).ToList();
+    var privateJournals = Model.Where(j => j.Status == InkVault.Models.JournalStatus.Published && (j.PrivacyLevel == InkVault.Models.PrivacyLevel.Private || j.PrivacyLevel == InkVault.Models.PrivacyLevel.FriendsOnly)).ToList();
+    var draftJournals = Model.Where(j => j.Status == InkVault.Models.JournalStatus.Draft).ToList();
+}
+
+<style>
+    /* Toast Notification Styles */
+    .toast-notification {
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #66c864 0%, #52b788 100%);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        animation: slideInRight 0.4s ease;
+        z-index: 9999;
+        max-width: 400px;
+    }
+
+    .toast-notification.error {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    }
+
+    .toast-notification i {
+        font-size: 1.2rem;
+    }
+
+    @@keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(400px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideOutRight {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(400px);
+        }
+    }
+
+    .journals-container {
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 40px;
+        padding-bottom: 25px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .create-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white !important;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .create-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .create-btn:focus {
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .create-btn i {
+        color: white !important;
+    }
+
+    /* Light theme button */
+    [data-theme="light"] .create-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white !important;
+    }
+
+    [data-theme="light"] .create-btn:hover {
+        color: white !important;
+    }
+
+    .section {
+        margin-bottom: 50px;
+        animation: slideInUp 0.6s ease;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 25px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        color: var(--text-primary);
+    }
+
+    .section-title i {
+        font-size: 1.8rem;
+    }
+
+    .published .section-title i {
+        color: #66c864;
+    }
+
+    .private .section-title i {
+        color: #667eea;
+    }
+
+    .drafts .section-title i {
+        color: #ff6b6b;
+    }
+
+    .journal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 20px;
+    }
+
+    .journal-tile {
+        background: linear-gradient(135deg, rgba(26, 31, 46, 0.8) 0%, rgba(26, 31, 46, 0.6) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 24px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 280px;
+    }
+
+    .journal-tile::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+
+    .journal-tile-lock {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(102, 126, 234, 0.3);
+        border: 1px solid rgba(102, 126, 234, 0.5);
+        border-radius: 6px;
+        padding: 6px 8px;
+        color: #667eea;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 10;
+    }
+
+    .journal-tile:hover {
+        transform: translateY(-12px);
+        border-color: rgba(102, 126, 234, 0.5);
+        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.25);
+    }
+
+    .journal-tile:hover::before {
+        transform: scaleX(1);
+    }
+
+    .journal-tile-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 12px 0;
+        word-break: break-word;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .journal-tile-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+        font-size: 0.8rem;
+    }
+
+    .meta-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        background: rgba(102, 126, 234, 0.15);
+        color: #667eea;
+        border-radius: 5px;
+        font-weight: 600;
+    }
+
+    .meta-date {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .tile-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .tile-btn {
+        flex: 1;
+        padding: 10px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+
+    .tile-btn-edit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .tile-btn-edit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .tile-btn-view {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .tile-btn-view:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    .tile-btn-delete {
+        background: rgba(244, 67, 54, 0.2);
+        color: #f44336;
+        border: 1px solid rgba(244, 67, 54, 0.2);
+    }
+
+    .tile-btn-delete:hover {
+        background: rgba(244, 67, 54, 0.3);
+        color: #f44336;
+        text-decoration: none;
+    }
+
+    .empty-section {
+        text-align: center;
+        padding: 40px 30px;
+        background: rgba(102, 126, 234, 0.05);
+        border: 1px dashed rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+    }
+
+    .empty-section i {
+        font-size: 3rem;
+        color: rgba(102, 126, 234, 0.2);
+        margin-bottom: 12px;
+    }
+
+    .empty-section p {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .no-journals {
+        text-align: center;
+        padding: 80px 40px;
+    }
+
+    .no-journals i {
+        font-size: 5rem;
+        color: rgba(102, 126, 234, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .no-journals h2 {
+        color: var(--text-primary);
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .no-journals p {
+        color: var(--text-secondary);
+        margin-bottom: 30px;
+    }
+
+    [data-theme="light"] .journal-tile {
+        background: #ffffff;
+        border: 1px solid rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="light"] .journal-tile-title {
+        color: #2c3e50;
+    }
+
+    [data-theme="light"] .meta-badge {
+        background: rgba(102, 126, 234, 0.08);
+        color: #667eea;
+    }
+
+    [data-theme="light"] .meta-date {
+        color: #7f8c8d;
+    }
+
+    @@media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .journal-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .tile-actions {
+            flex-direction: row;
+        }
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+</style>
+
+<div class="journals-container">
+    <a href="@Url.Action("Index", "Home")" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <i class="bi bi-book" style="font-size: 2.5rem; color: #667eea;"></i>
+            <h1>My Journals</h1>
+        </div>
+        <a href="@Url.Action("Create", "Journal")" class="create-btn">
+            <i class="bi bi-plus-circle"></i> Create New
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <!-- Published Journals Section (Default/First) -->
+        <div class="section published">
+            <h2 class="section-title">
+                <i class="bi bi-globe"></i>
+                Published Journals (@publishedJournals.Count)
+            </h2>
+            @if (publishedJournals.Any())
+            {
+                <div class="journal-grid">
+                    @foreach (var journal in publishedJournals)
+                    {
+                        <div class="journal-tile">
+                            <h3 class="journal-tile-title">@journal.Title</h3>
+                            
+                            <div class="journal-tile-meta">
+                                <span class="meta-badge">
+                                    <i class="bi bi-globe"></i> Public
+                                </span>
+                                @if (!string.IsNullOrEmpty(journal.Topic))
+                                {
+                                    <span class="meta-badge">
+                                        <i class="bi bi-tag"></i> @journal.Topic
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="meta-date">
+                                <i class="bi bi-calendar-event"></i>
+                                @journal.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+
+                            <div class="tile-actions">
+                                <a href="@Url.Action("Edit", "Journal", new { id = journal.JournalId })" class="tile-btn tile-btn-edit">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a href="@Url.Action("View", "Journal", new { id = journal.JournalId })" class="tile-btn tile-btn-view">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                <button type="button" class="tile-btn tile-btn-delete" onclick="showDeleteConfirmation(@journal.JournalId, '@journal.Title')">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-section">
+                    <i class="bi bi-inbox"></i>
+                    <p>No published journals yet</p>
+                </div>
+            }
+        </div>
+
+        <!-- Private Journals Section -->
+        <div class="section private">
+            <h2 class="section-title">
+                <i class="bi bi-lock"></i>
+                Private Journals (@privateJournals.Count)
+            </h2>
+            @if (privateJournals.Any())
+            {
+                <div class="journal-grid">
+                    @foreach (var journal in privateJournals)
+                    {
+                        <div class="journal-tile">
+                            @if (journal.PrivacyLevel == InkVault.Models.PrivacyLevel.Private)
+                            {
+                                <div class="journal-tile-lock">
+                                    <i class="bi bi-lock-fill"></i> Private
+                                </div>
+                            }
+                            <h3 class="journal-tile-title">@journal.Title</h3>
+                            
+                            <div class="journal-tile-meta">
+                                @if (journal.PrivacyLevel == InkVault.Models.PrivacyLevel.Private)
+                                {
+                                    <span class="meta-badge">
+                                        <i class="bi bi-lock-fill"></i> Private
+                                    </span>
+                                }
+                                else if (journal.PrivacyLevel == InkVault.Models.PrivacyLevel.FriendsOnly)
+                                {
+                                    <span class="meta-badge">
+                                        <i class="bi bi-people-fill"></i> Friends Only
+                                    </span>
+                                }
+                                @if (!string.IsNullOrEmpty(journal.Topic))
+                                {
+                                    <span class="meta-badge">
+                                        <i class="bi bi-tag"></i> @journal.Topic
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="meta-date">
+                                <i class="bi bi-calendar-event"></i>
+                                @journal.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+
+                            <div class="tile-actions">
+                                <a href="@Url.Action("Edit", "Journal", new { id = journal.JournalId })" class="tile-btn tile-btn-edit">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a href="@Url.Action("View", "Journal", new { id = journal.JournalId })" class="tile-btn tile-btn-view">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                <button type="button" class="tile-btn tile-btn-delete" onclick="showDeleteConfirmation(@journal.JournalId, '@journal.Title')">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-section">
+                    <i class="bi bi-inbox"></i>
+                    <p>No private journals yet</p>
+                </div>
+            }
+        </div>
+
+        <!-- Drafts Section -->
+        <div class="section drafts">
+            <h2 class="section-title">
+                <i class="bi bi-bookmark"></i>
+                Drafts (@draftJournals.Count)
+            </h2>
+            @if (draftJournals.Any())
+            {
+                <div class="journal-grid">
+                    @foreach (var journal in draftJournals)
+                    {
+                        <div class="journal-tile">
+                            <h3 class="journal-tile-title">@journal.Title</h3>
+                            
+                            <div class="journal-tile-meta">
+                                <span class="meta-badge" style="background: rgba(255, 107, 107, 0.15); color: #ff6b6b;">
+                                    <i class="bi bi-bookmark"></i> Draft
+                                </span>
+                                @if (!string.IsNullOrEmpty(journal.Topic))
+                                {
+                                    <span class="meta-badge">
+                                        <i class="bi bi-tag"></i> @journal.Topic
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="meta-date">
+                                <i class="bi bi-calendar-event"></i>
+                                @journal.CreatedAt.ToString("MMM dd, yyyy")
+                            </div>
+
+                            <div class="tile-actions">
+                                <a href="@Url.Action("Edit", "Journal", new { id = journal.JournalId })" class="tile-btn tile-btn-edit">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a href="@Url.Action("View", "Journal", new { id = journal.JournalId })" class="tile-btn tile-btn-view">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                                <button type="button" class="tile-btn tile-btn-delete" onclick="showDeleteConfirmation(@journal.JournalId, '@journal.Title')">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-section">
+                    <i class="bi bi-inbox"></i>
+                    <p>No draft journals yet</p>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="no-journals">
+            <i class="bi bi-book"></i>
+            <h2>No Journals Yet</h2>
+            <p>You haven't created any journals yet. Start writing your first journal entry!</p>
+            <a href="@Url.Action("Create", "Journal")" class="create-btn">
+                <i class="bi bi-plus-circle"></i> Create New Journal
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: var(--card-bg); border: 1px solid rgba(244, 67, 54, 0.3);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(244, 67, 54, 0.2);">
+                <h5 class="modal-title" id="deleteConfirmationLabel" style="color: #f44336; font-weight: 700;">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Delete Journal
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div style="padding: 15px; background: rgba(244, 67, 54, 0.1); border-left: 4px solid #f44336; border-radius: 4px; margin-bottom: 15px;">
+                    <p style="color: var(--text-primary); font-weight: 600; margin: 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="bi bi-exclamation-circle" style="font-size: 1.3rem; color: #f44336;"></i>
+                        Warning: This action cannot be undone!
+                    </p>
+                </div>
+                <p style="color: var(--text-secondary); margin: 15px 0;">
+                    Are you sure you want to delete the journal titled:
+                </p>
+                <p style="color: var(--text-primary); font-weight: 700; margin: 15px 0; padding: 10px; background: rgba(102, 126, 234, 0.1); border-radius: 6px;">
+                    <span id="journalTitleDisplay"></span>
+                </p>
+                <p style="color: var(--text-secondary); margin: 15px 0;">
+                    This will be permanently deleted and cannot be recovered.
+                </p>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(244, 67, 54, 0.2); padding: 15px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background: rgba(102, 126, 234, 0.2); color: #667eea; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    Cancel
+                </button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger" style="background: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        <i class="bi bi-trash"></i> Delete Permanently
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentDeleteJournalId = null;
+
+    function showDeleteConfirmation(journalId, journalTitle) {
+        currentDeleteJournalId = journalId;
+        document.getElementById('journalTitleDisplay').textContent = journalTitle;
+        
+        // Update form action
+        const form = document.getElementById('deleteForm');
+        form.action = '@Url.Action("Delete", "Journal")' + '?id=' + journalId;
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+        modal.show();
+    }
+
+    // Display toast notification if there's a success message from TempData
+    document.addEventListener('DOMContentLoaded', function() {
+        const successMessage = '@TempData["Success"]';
+        
+        
+        if (successMessage && successMessage.trim().length > 0) {
+            showToast(successMessage, 'success');
+        }
+    });
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type === 'error' ? 'error' : ''}`;
+        
+        const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+        
+        toast.innerHTML = `
+            <i class="bi ${icon}"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Auto remove after 4 seconds
+        setTimeout(function() {
+            toast.style.animation = 'slideOutRight 0.4s ease';
+            setTimeout(function() {
+                toast.remove();
+            }, 400);
+        }, 4000);
+    }
+</script>

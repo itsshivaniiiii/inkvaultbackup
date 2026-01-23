@@ -1,0 +1,60 @@
+@model InkVault.ViewModels.VerifyOTPViewModel
+
+@{
+    ViewData["Title"] = "Verify OTP";
+}
+
+<div class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card shadow-lg" style="border: none; border-radius: 15px;">
+                    <div class="card-body p-5">
+                        <h3 class="card-title text-center mb-4">Verify Your Email</h3>
+
+                        <p class="text-center text-muted mb-4">
+                            We sent a 6-digit OTP to <strong>@Model.Email</strong>
+                        </p>
+
+                        <form method="post">
+                            @Html.AntiForgeryToken()
+                            
+                            <input type="hidden" name="Email" value="@Model.Email" />
+                            <input type="hidden" name="Purpose" value="@Model.Purpose" />
+
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <div asp-validation-summary="All" class="alert alert-danger alert-dismissible fade show">
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            }
+
+                            <div class="mb-3">
+                                <label asp-for="OTP" class="form-label">Enter OTP</label>
+                                <input asp-for="OTP" class="form-control form-control-lg text-center" 
+                                       placeholder="000000" maxlength="6" inputmode="numeric" required />
+                                <span asp-validation-for="OTP" class="text-danger"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Verify OTP</button>
+                        </form>
+
+                        <p class="text-center text-muted mt-4 small">
+                            OTP expires in 10 minutes
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Allow only numeric input
+        document.getElementById("OTP").addEventListener("input", function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    </script>
+}

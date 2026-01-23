@@ -1,0 +1,930 @@
+@model InkVault.ViewModels.FriendsManagementViewModel
+
+@{
+    ViewData["Title"] = "Friends";
+}
+
+<style>
+    .friends-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .friends-header {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .friends-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+    }
+
+    .friends-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .search-section {
+        margin-bottom: 40px;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-form input {
+        flex: 1;
+        padding: 12px 15px;
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        background: var(--card-bg);
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-form input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .search-form button {
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .search-form button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .section {
+        margin-bottom: 50px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        color: var(--text-primary);
+    }
+
+    .section-count {
+        display: inline-block;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .user-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .user-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .user-card:hover {
+        transform: translateY(-5px);
+        border-color: #667eea;
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 2rem;
+        margin: 0 auto 15px;
+    }
+
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .user-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+    }
+
+    .user-email {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+    }
+
+    .user-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        flex: 1;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        font-size: 0.85rem;
+        min-width: 80px;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-accept {
+        background: rgba(76, 175, 80, 0.2);
+        color: #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-accept:hover {
+        background: rgba(76, 175, 80, 0.3);
+        border-color: #4caf50;
+    }
+
+    .btn-decline {
+        background: rgba(244, 67, 54, 0.2);
+        color: #f44336;
+        border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .btn-decline:hover {
+        background: rgba(244, 67, 54, 0.3);
+        border-color: #f44336;
+    }
+
+    .btn-withdraw {
+        background: rgba(255, 152, 0, 0.2);
+        color: #ff9800;
+        border: 1px solid rgba(255, 152, 0, 0.3);
+    }
+
+    .btn-withdraw:hover {
+        background: rgba(255, 152, 0, 0.3);
+        border-color: #ff9800;
+    }
+
+    .btn-remove {
+        background: rgba(244, 67, 54, 0.2);
+        color: #f44336;
+        border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+
+    .btn-remove:hover {
+        background: rgba(244, 67, 54, 0.3);
+        border-color: #f44336;
+    }
+
+    .btn-added {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        cursor: default;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: var(--text-primary);
+    }
+
+    /* Toast Styles */
+    #toastContainer {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    @@keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .search-form {
+            flex-direction: column;
+        }
+
+        .user-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .friends-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .user-actions {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            min-width: auto;
+        }
+    }
+
+    /* Light Theme Styles for Friends */
+    [data-theme="light"] .search-form input {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.3) !important;
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="light"] .search-form input:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    [data-theme="light"] .user-card {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    [data-theme="light"] .user-name {
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="light"] .user-email {
+        color: var(--text-secondary) !important;
+    }
+
+    [data-theme="light"] .section-header {
+        color: var(--text-primary) !important;
+        border-bottom-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+</style>
+
+<!-- Toast Container -->
+<div id="toastContainer"></div>
+
+<!-- Hidden CSRF Token for AJAX requests -->
+@Html.AntiForgeryToken()
+
+<div class="friends-container">
+    <a href="@Url.Action("Index", "Home")" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <div class="friends-header">
+        <h1><i class="bi bi-people"></i> Friends</h1>
+        <p>Search for users and connect with your friends</p>
+    </div>
+
+    <div class="search-section">
+        <form method="get" asp-action="Index" class="search-form" id="searchForm">
+            <input type="text" name="search" id="searchInput" placeholder="Search by name or email..." value="@Model.SearchQuery" />
+            <button type="submit"><i class="bi bi-search"></i> Search</button>
+        </form>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <!-- Pending Requests Received Button -->
+            <button type="button" class="btn-view-sent" data-bs-toggle="modal" data-bs-target="#pendingReceivedModal" style="flex: 1; padding: 12px; background: rgba(76, 175, 80, 0.2); color: #4caf50; border: 1px solid rgba(76, 175, 80, 0.3); border-radius: 8px; cursor: pointer; font-weight: 600;" id="receivedCountBtn">
+                <i class="bi bi-inbox-fill"></i> Requests Received (<span id="receivedCount">@Model.PendingRequests.Count</span>)
+            </button>
+            
+            <!-- Pending Requests Sent Button -->
+            <button type="button" class="btn-view-sent" data-bs-toggle="modal" data-bs-target="#sentRequestsModal" style="flex: 1; padding: 12px; background: rgba(255, 152, 0, 0.2); color: #ff9800; border: 1px solid rgba(255, 152, 0, 0.3); border-radius: 8px; cursor: pointer; font-weight: 600;" id="sentCountBtn">
+                <i class="bi bi-clock-history"></i> Requests Sent (<span id="sentCount">@Model.SentPendingRequests.Count</span>)
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Results Section -->
+    @if (!string.IsNullOrEmpty(Model.SearchQuery) && Model.SearchResults.Any())
+    {
+        <div class="section">
+            <div class="section-header">
+                <i class="bi bi-search"></i> Search Results
+                <span class="section-count">@Model.SearchResults.Count</span>
+            </div>
+            <div class="user-grid">
+                @foreach (var user in Model.SearchResults)
+                {
+                    <div class="user-card" data-user-id="@user.UserId">
+                        <div class="user-avatar">
+                            @if (!string.IsNullOrEmpty(user.ProfilePicturePath))
+                            {
+                                <img src="@user.ProfilePicturePath" alt="@user.FirstName @user.LastName" />
+                            }
+                            else
+                            {
+                                @user.FirstName.First()
+                            }
+                        </div>
+                        <div class="user-name">@user.FirstName @user.LastName</div>
+                        <div class="user-actions">
+                            @if (user.FriendStatus == "friends")
+                            {
+                                <button class="btn-action btn-added" disabled><i class="bi bi-check-circle"></i> Friends</button>
+                                <button class="btn-action btn-remove" onclick="removeFriend(this, @user.FriendId, '@user.FirstName @user.LastName')"><i class="bi bi-x-circle"></i> Remove</button>
+                            }
+                            else if (user.FriendStatus == "pending_sent")
+                            {
+                                <button class="btn-action btn-withdraw" onclick="withdrawRequest(this, @user.FriendRequestId, '@user.FirstName @user.LastName')"><i class="bi bi-arrow-counterclockwise"></i> Withdraw</button>
+                            }
+                            else if (user.FriendStatus == "pending_received")
+                            {
+                                <button class="btn-action btn-added" disabled style="background: rgba(255, 152, 0, 0.2); color: #ff9800; border: 1px solid rgba(255, 152, 0, 0.3);"><i class="bi bi-clock-history"></i> Pending Response</button>
+                            }
+                            else
+                            {
+                                <button class="btn-action btn-add" onclick="sendFriendRequest(this, '@user.UserId', '@user.FirstName @user.LastName')"><i class="bi bi-person-plus"></i> Add Friend</button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Your Friends Section -->
+    <div class="section">
+        <div class="section-header">
+            <i class="bi bi-people-fill"></i> Your Friends
+            <span class="section-count">@Model.FriendCount</span>
+        </div>
+        @if (Model.Friends.Any())
+        {
+            <div class="user-grid">
+                @foreach (var friend in Model.Friends)
+                {
+                    <div class="user-card">
+                        <div class="user-avatar">
+                            @if (!string.IsNullOrEmpty(friend.ProfilePicturePath))
+                            {
+                                <img src="@friend.ProfilePicturePath" alt="@friend.FirstName @friend.LastName" />
+                            }
+                            else
+                            {
+                                @friend.FirstName.First()
+                            }
+                        </div>
+                        <div class="user-name">@friend.FirstName @friend.LastName</div>
+                        <div class="user-email">Friends since @friend.CreatedAt.ToString("MMM dd, yyyy")</div>
+                        <div class="user-actions">
+                            <button class="btn-action btn-remove" onclick="removeFriend(this, @friend.FriendId, '@friend.FirstName @friend.LastName')"><i class="bi bi-x-circle"></i> Remove Friend</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-people"></i>
+                <h3>No friends yet</h3>
+                <p>Search for users above to send friend requests</p>
+            </div>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SearchQuery) && !Model.SearchResults.Any() && !Model.PendingRequests.Any() && !Model.Friends.Any())
+    {
+        <div class="empty-state">
+            <i class="bi bi-search"></i>
+            <h3>No users found</h3>
+            <p>Try searching with different keywords</p>
+        </div>
+    }
+</div>
+
+<!-- Pending Requests Received Modal -->
+<div class="modal fade" id="pendingReceivedModal" tabindex="-1" aria-labelledby="pendingReceivedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background: var(--card-bg); border: 1px solid rgba(102, 126, 234, 0.2);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(102, 126, 234, 0.2);">
+                <h5 class="modal-title" id="pendingReceivedModalLabel" style="color: var(--text-primary); font-weight: 700;">
+                    <i class="bi bi-inbox-fill"></i> Requests Received
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div class="user-grid" style="grid-template-columns: 1fr;">
+                    @if (Model.PendingRequests.Any())
+                    {
+                        @foreach (var request in Model.PendingRequests)
+                        {
+                            <div class="user-card" style="display: flex; align-items: center; gap: 15px; padding: 15px;">
+                                <div class="user-avatar" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    @if (!string.IsNullOrEmpty(request.SenderProfilePicture))
+                                    {
+                                        <img src="@request.SenderProfilePicture" alt="@request.SenderFirstName @request.SenderLastName" />
+                                    }
+                                    else
+                                    {
+                                        @request.SenderFirstName?.First()
+                                    }
+                                </div>
+                                <div style="flex: 1;">
+                                    <div class="user-name">@request.SenderFirstName @request.SenderLastName</div>
+                                    <div class="user-email" style="font-size: 0.85rem;">Sent @request.CreatedAt.ToString("MMM dd, yyyy")</div>
+                                </div>
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn-action btn-accept" onclick="acceptRequest(this, @request.FriendRequestId, '@request.SenderFirstName @request.SenderLastName')" style="white-space: nowrap;">
+                                        <i class="bi bi-check-circle"></i> Accept
+                                    </button>
+                                    <button class="btn-action btn-decline" onclick="declineRequest(this, @request.FriendRequestId, '@request.SenderFirstName @request.SenderLastName')" style="white-space: nowrap;">
+                                        <i class="bi bi-x-circle"></i> Decline
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h3>No pending requests</h3>
+                            <p>You haven't received any friend requests yet</p>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(102, 126, 234, 0.2);">
+                <button type="button" class="btn" data-bs-dismiss="modal" style="background: rgba(102, 126, 234, 0.2); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.3); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sent Pending Requests Modal -->
+<div class="modal fade" id="sentRequestsModal" tabindex="-1" aria-labelledby="sentRequestsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background: var(--card-bg); border: 1px solid rgba(102, 126, 234, 0.2);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(102, 126, 234, 0.2);">
+                <h5 class="modal-title" id="sentRequestsModalLabel" style="color: var(--text-primary); font-weight: 700;">
+                    <i class="bi bi-clock-history"></i> Requests Sent
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <div class="user-grid" style="grid-template-columns: 1fr;">
+                    @if (Model.SentPendingRequests.Any())
+                    {
+                        @foreach (var request in Model.SentPendingRequests)
+                        {
+                            <div class="user-card" style="display: flex; align-items: center; gap: 15px; padding: 15px;">
+                                <div class="user-avatar" style="width: 50px; height: 50px; font-size: 1.2rem;">
+                                    @if (!string.IsNullOrEmpty(request.ReceiverProfilePicture))
+                                    {
+                                        <img src="@request.ReceiverProfilePicture" alt="@request.ReceiverFirstName @request.ReceiverLastName" />
+                                    }
+                                    else
+                                    {
+                                        @request.ReceiverFirstName?.First()
+                                    }
+                                </div>
+                                <div style="flex: 1;">
+                                    <div class="user-name">@request.ReceiverFirstName @request.ReceiverLastName</div>
+                                    <div class="user-email" style="font-size: 0.85rem;">Sent @request.CreatedAt.ToString("MMM dd, yyyy")</div>
+                                </div>
+                                <button class="btn-action btn-withdraw" onclick="withdrawRequest(this, @request.FriendRequestId, '@request.ReceiverFirstName @request.ReceiverLastName')" style="white-space: nowrap;">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Withdraw
+                                </button>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <h3>No pending requests</h3>
+                            <p>You haven't sent any pending friend requests</p>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(102, 126, 234, 0.2);">
+                <button type="button" class="btn" data-bs-dismiss="modal" style="background: rgba(102, 126, 234, 0.2); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.3); padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toast notification function
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toastContainer');
+    const toastId = 'toast-' + Date.now();
+    
+    const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
+    let iconHTML = '';
+    
+    if (type === 'success') {
+        iconHTML = '<i class="bi bi-check-circle-fill" style="font-size: 1.2rem;"></i>';
+    } else if (type === 'error') {
+        iconHTML = '<i class="bi bi-x-circle-fill" style="font-size: 1.2rem;"></i>';
+    } else {
+        iconHTML = '<i class="bi bi-info-circle-fill" style="font-size: 1.2rem;"></i>';
+    }
+    
+    const toastHTML = `
+        <div id="${toastId}" style="
+            background: ${bgColor};
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.3s ease;
+            min-width: 300px;
+        ">
+            <span style="font-weight: bold; display: flex; align-items: center;">${iconHTML}</span>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        const toast = document.getElementById(toastId);
+        if (toast) {
+            toast.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 4000);
+}
+
+function sendFriendRequest(btn, receiverId, userName) {
+    if (!receiverId) {
+        showToast('Error: User ID not found', 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending...';
+
+    fetch('/Friends/SendRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'receiverId=' + encodeURIComponent(receiverId)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(text || 'Failed to send request');
+            });
+        }
+        return response.text();
+    })
+    .then(data => {
+        showToast(`Friend request sent to ${userName}!`, 'success');
+        btn.className = 'btn-action btn-withdraw';
+        btn.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Withdraw';
+        btn.disabled = false;
+        // Update onclick to call withdrawRequest later once we know the ID
+        btn.onclick = function() { 
+            // For now, we'll need to reload or get the ID from search
+            location.reload(); 
+        };
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast(error.message || 'Error sending friend request', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-person-plus"></i> Add Friend';
+    });
+}
+
+function withdrawRequest(btn, friendRequestId, userName) {
+    if (!friendRequestId) {
+        showToast('Error: Request ID not found', 'error');
+        return;
+    }
+
+    console.log('Withdraw request clicked:', { friendRequestId, userName });
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Withdrawing...';
+
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+    fetch('/Friends/WithdrawRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) + 
+              (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
+    })
+    .then(response => {
+        console.log('Withdraw response status:', response.status);
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Failed to withdraw request');
+            }).catch(() => {
+                throw new Error('Failed to withdraw request (HTTP ' + response.status + ')');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Withdraw success:', data);
+        showToast(`Friend request withdrawn from ${userName}`, 'success');
+        setTimeout(() => location.reload(), 1500);
+    })
+    .catch(error => {
+        console.error('Error withdrawing request:', error);
+        showToast(error.message || 'Error withdrawing request', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Withdraw';
+    });
+}
+
+function acceptRequest(btn, friendRequestId, userName) {
+    console.log('Accept request clicked:', { friendRequestId, userName });
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Accepting...';
+
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+    
+    fetch('/Friends/AcceptRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) + 
+              (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
+    })
+    .then(response => {
+        console.log('Accept response status:', response.status);
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Failed to accept request');
+            }).catch(() => {
+                throw new Error('Failed to accept request (HTTP ' + response.status + ')');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Accept success:', data);
+        showToast(`You are now friends with ${userName}!`, 'success');
+        setTimeout(() => location.reload(), 1500);
+    })
+    .catch(error => {
+        console.error('Error accepting request:', error);
+        showToast(error.message || 'Error accepting friend request', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-check-circle"></i> Accept';
+    });
+}
+
+function declineRequest(btn, friendRequestId, userName) {
+    console.log('Decline request clicked:', { friendRequestId, userName });
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Declining...';
+
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+    fetch('/Friends/DeclineRequest', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) + 
+              (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
+    })
+    .then(response => {
+        console.log('Decline response status:', response.status);
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Failed to decline request');
+            }).catch(() => {
+                throw new Error('Failed to decline request (HTTP ' + response.status + ')');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Decline success:', data);
+        showToast(`Friend request from ${userName} declined`, 'success');
+        setTimeout(() => location.reload(), 1500);
+    })
+    .catch(error => {
+        console.error('Error declining request:', error);
+        showToast(error.message || 'Error declining request', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-x-circle"></i> Decline';
+    });
+}
+
+function removeFriend(btn, friendId, userName) {
+    if (!confirm(`Are you sure you want to remove ${userName} from your friends?`)) {
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Removing...';
+
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+    fetch('/Friends/RemoveFriend', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'friendId=' + encodeURIComponent(friendId) + 
+              (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(text || 'Failed to remove friend');
+            });
+        }
+        return response.text();
+    })
+    .then(data => {
+        showToast(`${userName} has been removed from your friends`, 'success');
+        setTimeout(() => location.reload(), 1500);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast(error.message || 'Error removing friend', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-x-circle"></i> Remove';
+    });
+}
+
+// Function to update counts
+function updateCounts() {
+    fetch('/Friends/GetCounts')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('receivedCount').textContent = data.receivedCount;
+            document.getElementById('sentCount').textContent = data.sentCount;
+        })
+        .catch(error => console.error('Error updating counts:', error));
+}
+
+// Real-time search functionality
+let searchTimeout;
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('input', function(e) {
+        clearTimeout(searchTimeout);
+        const searchQuery = this.value.trim();
+        
+        if (searchQuery.length === 0) {
+            document.querySelector('.section:first-of-type')?.remove();
+            return;
+        }
+
+        // Debounce search - wait 300ms after user stops typing
+        searchTimeout = setTimeout(() => {
+            performSearch(searchQuery);
+        }, 300);
+    });
+}
+
+// Perform the actual search
+function performSearch(query) {
+    fetch(`/Friends/Index?search=${encodeURIComponent(query)}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.text())
+    .then(html => {
+        // Extract just the search results section from the response
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const searchSection = doc.querySelector('.section:first-of-type');
+        
+        // Remove old search results if they exist
+        const oldSection = document.querySelector('.friends-container .section:first-of-type');
+        if (oldSection) {
+            oldSection.remove();
+        }
+        
+        // Add new search results
+        if (searchSection) {
+            const yourFriendsSection = document.querySelector('[id*="Your Friends"]')?.closest('.section');
+            if (yourFriendsSection) {
+                yourFriendsSection.parentNode.insertBefore(searchSection, yourFriendsSection);
+            } else {
+                document.querySelector('.friends-container').appendChild(searchSection);
+            }
+        }
+    })
+    .catch(error => console.error('Search error:', error));
+}
+</script>

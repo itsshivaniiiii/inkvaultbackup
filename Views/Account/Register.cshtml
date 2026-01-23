@@ -1,0 +1,99 @@
+@model InkVault.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);">
+<div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <!-- Logo Section -->
+                <div class="text-center mb-4">
+                    <img src="~/images/logo.png" alt="InkVault Logo" style="height: 160px; object-fit: contain;">
+                </div>
+
+                <!-- Register Card -->
+                <div class="card p-4 shadow" style="max-width: 500px; margin: auto;">
+                    <h3 class="mb-3 text-center">Create New Account</h3>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div asp-validation-summary="All" class="text-danger mb-2"></div>
+                    }
+
+                    <form asp-action="Register" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-2">
+                            <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <input asp-for="Username" class="form-control" placeholder="Username" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <input asp-for="Email" class="form-control" placeholder="Email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm Password" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <select asp-for="Gender" class="form-select">
+                                <option value="">Select gender</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Don't prefer to say</option>
+                            </select>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <label asp-for="DateOfBirth" class="form-label">Date of Birth (optional)</label>
+                            <input asp-for="DateOfBirth" type="date" class="form-control" />
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-2">
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="Phone number" type="tel" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ProfilePicture" class="form-label">Profile picture (optional)</label>
+                            <input asp-for="ProfilePicture" type="file" class="form-control" />
+                            <span asp-validation-for="ProfilePicture" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <p>Already have an account? <a asp-controller="Account" asp-action="Welcome">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

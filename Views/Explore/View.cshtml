@@ -1,0 +1,210 @@
+@model InkVault.Models.Journal
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<style>
+    .journal-view-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .journal-view-header {
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+    }
+
+    .journal-view-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: var(--text-primary);
+    }
+
+    .journal-view-meta {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .journal-author-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .journal-author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+    }
+
+    .journal-author-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .journal-author-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .journal-author-name {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .journal-author-date {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .journal-stats {
+        display: flex;
+        gap: 20px;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .journal-stat {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+    }
+
+    .journal-content-area {
+        background: var(--card-bg);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 40px;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    .journal-content-area p {
+        margin-bottom: 20px;
+        color: var(--text-primary);
+    }
+
+    .journal-content-area p:last-child {
+        margin-bottom: 0;
+    }
+
+    .journal-topic {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        margin: 10px 0;
+    }
+
+    .back-button {
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        background: rgba(102, 126, 234, 0.2);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 6px;
+        color: #667eea;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .back-button:hover {
+        background: rgba(102, 126, 234, 0.3);
+        border-color: #667eea;
+    }
+
+    [data-theme="light"] .back-button:hover {
+        background: rgba(102, 126, 234, 0.15);
+    }
+
+    /* Light Theme Styles */
+    [data-theme="light"] .journal-view-header {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        border-color: rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="light"] .journal-content-area {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    [data-theme="light"] .journal-content-area p {
+        color: var(--text-primary) !important;
+    }
+
+    [data-theme="light"] .journal-stats {
+        border-top-color: rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="light"] .journal-view-title {
+        color: var(--text-primary) !important;
+    }
+
+</style>
+
+<div class="journal-view-container">
+    <a href="@Url.Action("Index", "Explore")" class="back-button">
+        <i class="bi bi-arrow-left"></i> Back to Explore
+    </a>
+
+    <div class="journal-view-header">
+        <h1 class="journal-view-title">@Model.Title</h1>
+
+        <div class="journal-view-meta">
+            <div class="journal-author-info">
+                <div class="journal-author-avatar">
+                    @if (!string.IsNullOrEmpty(Model.User?.ProfilePicturePath))
+                    {
+                        <img src="@Model.User.ProfilePicturePath" alt="@Model.User.FirstName @Model.User.LastName" />
+                    }
+                    else
+                    {
+                        @(Model.User?.FirstName[0])
+                    }
+                </div>
+                <div class="journal-author-details">
+                    <div class="journal-author-name">@Model.User?.FirstName @Model.User?.LastName</div>
+                    <div class="journal-author-date">@Model.CreatedAt.ToString("MMMM dd, yyyy")</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="journal-stats">
+            <div class="journal-stat">
+                <i class="bi bi-eye"></i> @Model.ViewCount views
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Topic))
+            {
+                <div class="journal-stat">
+                    <i class="bi bi-tag"></i> @Model.Topic
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="journal-content-area">
+        @Html.Raw(Model.Content.Replace("\n", "<br />"))
+    </div>
+</div>

@@ -1,0 +1,49 @@
+@model InkVault.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="card p-4 shadow" style="max-width:500px;margin:auto;">
+    <h3 class="mb-3">@ViewData["Title"]</h3>
+
+    <form asp-action="Login" method="post">
+        @Html.AntiForgeryToken()
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+        }
+
+        <div class="mb-3">
+            <input asp-for="Username" class="form-control" placeholder="Username" />
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <div class="form-check">
+                <!-- Hidden input ensures false is posted when unchecked -->
+                <input type="hidden" name="RememberMe" value="false" />
+                <input type="checkbox" name="RememberMe" value="true" class="form-check-input" id="RememberMe" />
+                <label class="form-check-label" for="RememberMe">Remember me</label>
+            </div>
+            <span asp-validation-for="RememberMe" class="text-danger d-block"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+
+    <div class="text-center mt-3">
+        <p>Don't have an account? <a asp-controller="Account" asp-action="Register">Register here</a></p>
+        <p><a asp-controller="Account" asp-action="ForgotPassword">Forgot Password?</a></p>
+        <p><a asp-controller="Account" asp-action="Welcome">Back to Welcome</a></p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
