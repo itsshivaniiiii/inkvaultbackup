@@ -71,7 +71,6 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IOTPService, OTPService>();
 builder.Services.AddScoped<IBirthdayService, BirthdayService>();
 builder.Services.AddScoped<NotificationService>();
-builder.Services.AddScoped<IAIEnhancementService, AIEnhancementService>();
 builder.Services.AddHttpClient<IAIEnhancementService, AIEnhancementService>();
 
 // Session

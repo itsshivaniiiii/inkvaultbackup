@@ -17,7 +17,12 @@ namespace InkVault.Services
         private readonly ILogger<AIEnhancementService> _logger;
         private readonly HttpClient _httpClient;
         private static readonly Dictionary<string, (string result, DateTime timestamp)> _cache = new();
-        private static readonly TimeSpan _cacheExpiry = TimeSpan.FromMinutes(10); // Cache for 10 minutes
+        private static readonly TimeSpan _cacheExpiry = TimeSpan.FromMinutes(10);
+
+        // Rate limiting: track API call timestamps to avoid hitting quota
+        private static readonly Queue<DateTime> _apiCallTimestamps = new();
+        private static readonly object _rateLimitLock = new();
+        private const int MaxCallsPerMinute = 10; // Stay well under the 15/min limit
 
         public AIEnhancementService(IConfiguration configuration, ILogger<AIEnhancementService> logger, HttpClient httpClient)
         {
@@ -35,7 +40,6 @@ namespace InkVault.Services
             var wordCount = content.Trim().Split(new char[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
             if (wordCount < 4)
             {
-                // Return original text unchanged if less than 4 words
                 _logger.LogInformation($"Content has only {wordCount} words (minimum 4 required). Returning unchanged.");
                 return content.Trim();
             }
@@ -46,12 +50,12 @@ namespace InkVault.Services
             {
                 if (DateTime.Now - cached.timestamp < _cacheExpiry)
                 {
-                    Console.WriteLine($"[CACHE] ✅ Using cached result (age: {(DateTime.Now - cached.timestamp).TotalMinutes:F1}m)");
+                    Console.WriteLine($"[CACHE] Using cached result (age: {(DateTime.Now - cached.timestamp).TotalMinutes:F1}m)");
                     return cached.result;
                 }
                 else
                 {
-                    _cache.Remove(cacheKey); // Remove expired cache
+                    _cache.Remove(cacheKey);
                 }
             }
 
@@ -62,69 +66,39 @@ namespace InkVault.Services
                 apiKey = Environment.GetEnvironmentVariable("GEMINI_API_KEY");
             }
 
-            Console.WriteLine($"[AI] API Key Status: {(string.IsNullOrEmpty(apiKey) ? "NOT SET ❌" : "SET ✅")}");
-            Console.WriteLine($"[AI] Word Count: {wordCount}");
-            Console.WriteLine($"[AI] Content Preview: {content.Substring(0, Math.Min(50, content.Length))}...");
+            Console.WriteLine($"[AI] Content length: {content.Length}, Word count: {wordCount}");
 
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-            Console.WriteLine($"[AI] Environment: {environment}");
+            string? result = null;
 
-            string result;
-
-            // ALWAYS try Gemini API first for comprehensive grammar checking
-            if (!string.IsNullOrEmpty(apiKey))
+            // Try Gemini API if key is available AND we haven't exceeded our self-imposed rate limit
+            if (!string.IsNullOrEmpty(apiKey) && IsWithinRateLimit())
             {
-                Console.WriteLine("[AI] Using Gemini API for comprehensive grammar enhancement...");
-
                 try
                 {
-                    var enhancedContent = await EnhanceWithGeminiAsync(content, apiKey, isRetry: false);
+                    // Single API call only — no retry to conserve quota
+                    result = await EnhanceWithGeminiAsync(content, apiKey, isRetry: false);
+                    RecordApiCall();
 
-                    // Validate that output is different and meaningful
-                    if (IsSimilarContent(content, enhancedContent))
+                    if (string.IsNullOrWhiteSpace(result) || result.Trim() == content.Trim())
                     {
-                        _logger.LogWarning("Gemini returned similar text to input. Retrying with stronger instruction...");
-                        enhancedContent = await EnhanceWithGeminiAsync(content, apiKey, isRetry: true);
-
-                        // If still similar after retry, apply fallback as additional layer
-                        if (IsSimilarContent(content, enhancedContent))
-                        {
-                            _logger.LogWarning("Gemini retry still returned similar text. Using fallback enhancement.");
-                            result = await FallbackEnhanceAsync(content);
-                        }
-                        else
-                        {
-                            result = enhancedContent;
-                        }
-                    }
-                    else
-                    {
-                        result = enhancedContent;
+                        Console.WriteLine("[AI] Gemini returned empty/identical text, using fallback.");
+                        result = null;
                     }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"[AI] Gemini API Error: {ex.Message}");
-
-                    // Check if it's a rate limit error
-                    if (ex.Message.Contains("429") || ex.Message.Contains("RESOURCE_EXHAUSTED"))
-                    {
-                        Console.WriteLine("[AI] ⚠️ Rate limit detected. Using fallback enhancement for now.");
-                        Console.WriteLine("[AI] 💡 Tip: Wait 1-5 minutes between tests or check your daily quota at https://aistudio.google.com/");
-                        result = await FallbackEnhanceAsync(content);
-                    }
-                    else
-                    {
-                        // Continue to fallback for other errors
-                        Console.WriteLine("[AI] Falling back to programmatic enhancement due to API error");
-                        result = await FallbackEnhanceAsync(content);
-                    }
+                    result = null;
                 }
             }
-            else
+            else if (!string.IsNullOrEmpty(apiKey))
             {
-                Console.WriteLine("[AI] WARNING: Gemini API key not configured. Using fallback programmatic enhancement.");
-                Console.WriteLine("[AI] For comprehensive grammar checking, please set GEMINI_API_KEY environment variable.");
+                Console.WriteLine("[AI] Skipping API call — self-imposed rate limit reached. Using fallback.");
+            }
+
+            // Fallback to programmatic enhancement
+            if (result == null)
+            {
                 result = await FallbackEnhanceAsync(content);
             }
 
@@ -132,10 +106,36 @@ namespace InkVault.Services
             if (!string.IsNullOrEmpty(result))
             {
                 _cache[cacheKey] = (result, DateTime.Now);
-                Console.WriteLine($"[CACHE] 💾 Result cached for future use");
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Check if we're within our self-imposed rate limit
+        /// </summary>
+        private bool IsWithinRateLimit()
+        {
+            lock (_rateLimitLock)
+            {
+                var cutoff = DateTime.Now.AddMinutes(-1);
+                // Remove timestamps older than 1 minute
+                while (_apiCallTimestamps.Count > 0 && _apiCallTimestamps.Peek() < cutoff)
+                    _apiCallTimestamps.Dequeue();
+
+                return _apiCallTimestamps.Count < MaxCallsPerMinute;
+            }
+        }
+
+        /// <summary>
+        /// Record that an API call was made
+        /// </summary>
+        private void RecordApiCall()
+        {
+            lock (_rateLimitLock)
+            {
+                _apiCallTimestamps.Enqueue(DateTime.Now);
+            }
         }
 
         /// <summary>

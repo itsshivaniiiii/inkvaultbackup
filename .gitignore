@@ -1,5 +1,5 @@
 # ===========================================
-# .gitignore for InkVault ASP.NET Core MVC Project
+# .gitignore for InkVault ASP.NET Core Project
 # ===========================================
 
 # ===========================================
@@ -22,7 +22,7 @@ bld/
 [Ll]ogs/
 
 # ===========================================
-# Visual Studio Files
+# Visual Studio
 # ===========================================
 .vs/
 *.user
@@ -36,14 +36,11 @@ bld/
 *.pidb
 *.svclog
 *.scc
-
-# Visual Studio Code
 .vscode/
 *.code-workspace
-
-# Rider
 .idea/
 *.sln.iml
+*.DotSettings.user
 
 # ===========================================
 # NuGet Packages
@@ -61,34 +58,77 @@ project.fragment.lock.json
 # ASP.NET & .NET Core
 # ===========================================
 ScaffoldingReadMe.txt
-
-# ASP.NET Scaffolding
-ScaffoldingReadMe.txt
-
-# Entity Framework Migrations - Keep these
-# (Uncomment if you want to ignore them)
-# Migrations/
-
-# Published output
 publish/
 PublishProfiles/
 *.pubxml
-!**/PublishProfiles/[Pp]ublish[Pp]rofiles/
 
 # ===========================================
-# User-specific & Sensitive Files
+# Sensitive / Environment-Specific Files
 # ===========================================
-# Local settings with sensitive info (connection strings, API keys, SMTP passwords)
+appsettings.json
 appsettings.Development.json
 appsettings.Local.json
 appsettings.*.local.json
 secrets.json
-
-# User secrets
 secrets/
 
 # ===========================================
-# Windows Files
+# Database Files
+# ===========================================
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.mdf
+*.ldf
+*.ndf
+*.sql
+
+# ===========================================
+# Python Virtual Environment
+# ===========================================
+.venv/
+venv/
+__pycache__/
+*.py
+*.pyc
+
+# ===========================================
+# Dev/Debug Scripts & Temporary Code
+# ===========================================
+*.ps1
+*.sh
+*_NEW.cs
+*_NEW.*
+*_OLD.cs
+*_BACKUP.*
+Utilities/EmailDiagnostic.cs
+EMAIL_DIAGNOSTIC_INSTRUCTIONS.txt
+
+# ===========================================
+# Generated Documentation / Implementation Notes
+# (Keep only README.md and .github/ docs)
+# ===========================================
+*_GUIDE.md
+*_SUMMARY.md
+*_COMPLETE.md
+*_IMPLEMENTATION.md
+*_TESTING.md
+*_DIAGRAM.md
+*_REFERENCE.md
+*_QUICK_REFERENCE.md
+*_QUICK_REF.md
+*_CHECKLIST.md
+*_FIXES.md
+*_FIX.md
+*_FIX_*.md
+*_PLAN.md
+*_UPDATE.md
+!README.md
+!.github/**
+
+# ===========================================
+# OS Files
 # ===========================================
 Thumbs.db
 Thumbs.db:encryptable
@@ -98,20 +138,12 @@ ehthumbs_vista.db
 [Dd]esktop.ini
 $RECYCLE.BIN/
 *.lnk
-
-# ===========================================
-# macOS Files
-# ===========================================
 .DS_Store
 .AppleDouble
 .LSOverride
 ._*
 .Spotlight-V100
 .Trashes
-
-# ===========================================
-# Linux Files
-# ===========================================
 *~
 .fuse_hidden*
 .directory
@@ -119,7 +151,7 @@ $RECYCLE.BIN/
 .nfs*
 
 # ===========================================
-# Test Results
+# Test Results & Coverage
 # ===========================================
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
@@ -131,20 +163,9 @@ coverage*.xml
 coverage*.info
 *.coverage
 *.coveragexml
-
-# ===========================================
-# Code Coverage
-# ===========================================
 coverage/
 *.lcov
 coverlet/
-
-# ===========================================
-# SQL Server Files
-# ===========================================
-*.mdf
-*.ldf
-*.ndf
 
 # ===========================================
 # Azure & Deployment
@@ -153,14 +174,6 @@ coverlet/
 azure-pipelines.yml.user
 ServiceFabricBackup/
 *.azurePubxml
-web.*.config
-!web.config
-
-# ===========================================
-# Documentation Files
-# ===========================================
-*.md
-!README.md
 
 # ===========================================
 # Temporary & Backup Files
@@ -174,30 +187,13 @@ web.*.config
 *.orig
 
 # ===========================================
-# IDE Generated Files
+# IDE Generated / Logs
 # ===========================================
-# Razor view generated files (IDE cache)
 *.cshtml.*.ide.g.cs
-
-# JetBrains Rider
-*.DotSettings.user
-
-# ===========================================
-# wwwroot Uploads (if applicable)
-# ===========================================
-# Uncomment if you have user uploads folder
-# wwwroot/uploads/
-# wwwroot/Images/uploads/
-
-# ===========================================
-# Logs & Diagnostics
-# ===========================================
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# ===========================================
 # Node Modules (if using npm/yarn for frontend)
 # ===========================================
 node_modules/
