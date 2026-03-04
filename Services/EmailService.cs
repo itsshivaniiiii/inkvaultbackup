@@ -153,9 +153,20 @@ namespace InkVault.Services
         {
             Console.WriteLine($"[EMAIL] Sending via SendGrid API to {toEmail}...");
 
+            var personalization = new Dictionary<string, object>
+            {
+                ["to"] = new[] { new { email = toEmail } }
+            };
+
+            // BCC the sender so a copy appears in their inbox
+            if (!string.Equals(toEmail, fromEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                personalization["bcc"] = new[] { new { email = fromEmail } };
+            }
+
             var payload = new
             {
-                personalizations = new[] { new { to = new[] { new { email = toEmail } } } },
+                personalizations = new[] { personalization },
                 from = new { email = fromEmail, name = fromName },
                 subject,
                 content = new[] { new { type = "text/html", value = htmlBody } }
