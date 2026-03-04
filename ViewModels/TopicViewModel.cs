@@ -19,6 +19,8 @@ namespace InkVault.ViewModels
         public bool IsOwn { get; set; }
         public PrivacyLevel PrivacyLevel { get; set; }
         public string AuthorId { get; set; } = null!;
+        public string? DUI { get; set; }
+        public string? ReferencedDUI { get; set; }
     }
 
     public class JournalsByTopicViewModel

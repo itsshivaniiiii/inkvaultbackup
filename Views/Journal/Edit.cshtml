@@ -63,11 +63,19 @@
     }
 
     .form-select {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 16px 12px;
-        padding-right: 2.5rem;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 0.75rem center !important;
+        background-size: 16px 12px !important;
+        padding-right: 2.5rem !important;
+        background-color: linear-gradient(135deg, rgba(26, 31, 46, 0.9) 0%, rgba(26, 31, 46, 0.8) 100%) !important;
+    }
+    
+    .form-select::-ms-expand {
+        display: none;
     }
 
     .form-control:focus, .form-select:focus {
@@ -95,7 +103,18 @@
     }
 
     [data-theme="light"] .form-select {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232c3e50' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232c3e50' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        background-repeat: no-repeat !important;
+        background-position: right 0.75rem center !important;
+        background-size: 16px 12px !important;
+        padding-right: 2.5rem !important;
+    }
+
+    [data-theme="light"] .form-select::-ms-expand {
+        display: none;
     }
 
     [data-theme="light"] .form-select option {
@@ -302,6 +321,162 @@
         color: #667eea;
         text-decoration: none;
     }
+
+    /* Tags Input Styles */
+    .tags-container {
+        position: relative;
+        min-height: 50px;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(26, 31, 46, 0.9) 0%, rgba(26, 31, 46, 0.8) 100%);
+        padding: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .tags-container:focus-within {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    [data-theme="light"] .tags-container {
+        background: #ffffff;
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    .tags-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-height: 20px;
+    }
+
+    .tag-item {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 16px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        gap: 6px;
+        animation: fadeInScale 0.2s ease;
+    }
+
+    .tag-item .tag-remove {
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1rem;
+        line-height: 1;
+        opacity: 0.8;
+        transition: opacity 0.2s ease;
+    }
+
+    .tag-item .tag-remove:hover {
+        opacity: 1;
+    }
+
+    .tags-input {
+        flex: 1;
+        min-width: 150px;
+        border: none;
+        background: transparent;
+        color: inherit;
+        outline: none;
+        padding: 6px 4px;
+        font-size: 0.9rem;
+    }
+
+    [data-theme="light"] .tags-input {
+        color: #2c3e50;
+    }
+
+    .tags-input::placeholder {
+        color: rgba(224, 224, 224, 0.5);
+    }
+
+    [data-theme="light"] .tags-input::placeholder {
+        color: rgba(44, 62, 80, 0.5);
+    }
+
+    .tags-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--card-bg);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tags-suggestion-item {
+        padding: 10px 15px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        color: var(--text-primary);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .tags-suggestion-item:hover {
+        background: rgba(102, 126, 234, 0.1);
+    }
+
+    .tags-suggestion-item.selected {
+        background: rgba(102, 126, 234, 0.2);
+    }
+
+    .suggestion-tag {
+        font-weight: 500;
+    }
+
+    [data-theme="light"] .tags-suggestions {
+        background: #ffffff;
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    [data-theme="light"] .tags-suggestion-item {
+        color: #2c3e50;
+        border-bottom-color: rgba(102, 126, 234, 0.1);
+    }
+
+    [data-theme="light"] .tags-suggestion-item:hover {
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .tags-help {
+        margin-top: 5px;
+    }
+
+    .tags-help small {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+    }
+
+    .tags-error {
+        border-color: #ff6b6b !important;
+    }
+
+    @@keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 </style>
 
 <a href="@Url.Action("Index", "Home")" class="back-btn">
@@ -373,6 +548,24 @@
                     <option value="Other" selected="@(Model?.Topic == "Other")">Other</option>
                 </select>
             </div>
+
+            <!-- Tags Section -->
+            <div class="form-section">
+                <label for="Tags">Tags <span style="color: #ff6b6b;">*</span></label>
+                <div class="tags-container">
+                    <div class="tags-display" id="tagsDisplay"></div>
+                    <input type="text" class="form-control tags-input" id="tagsInput" 
+                           placeholder="Add tags... (Press Enter or comma to add)" autocomplete="off" />
+                    <input type="hidden" id="Tags" name="Tags" value="@Model?.Tags" />
+                    <div class="tags-suggestions" id="tagsSuggestions" style="display: none;"></div>
+                </div>
+                <div class="tags-help">
+                    <small>Add at least one tag to describe your journal. Press Enter or comma to add each tag.</small>
+                </div>
+                <span class="error-message" id="tagsError" style="display: none;">At least one tag is required to publish your journal.</span>
+                <span class="error-message">@Html.ValidationMessageFor(m => m.Tags)</span>
+            </div>
+
             <div class="form-section">
                 <label for="PrivacyLevel">Privacy Level</label>
                 <select class="form-select" id="PrivacyLevel" name="PrivacyLevel">
@@ -383,10 +576,31 @@
             </div>
         </div>
 
+        <!-- Abstract Section (Optional) -->
+        <div class="form-section">
+            <label for="Abstract">Abstract (Optional)</label>
+            <textarea class="form-control" id="Abstract" name="Abstract" rows="4"
+                      placeholder="Write a brief summary or abstract of your journal...">@Model?.Abstract</textarea>
+            <div style="margin-top: 8px;">
+                <small style="color: var(--text-secondary); font-size: 0.85rem;">
+                    <i class="bi bi-info-circle"></i> An abstract provides a summary. You can choose to show only the abstract and request readers to request full access.
+                </small>
+            </div>
+            <span class="error-message">@Html.ValidationMessageFor(m => m.Abstract)</span>
+        </div>
+
         <!-- Rich Text Editor Section -->
         <div class="form-section">
-            <label for="Content">Journal Content</label>
-            
+            <label for="Content">Journal Content (Optional)</label>
+
+            <!-- Info box about abstract vs content -->
+            <div style="margin-bottom: 15px; padding: 12px; background: rgba(102, 126, 234, 0.08); border-left: 3px solid #667eea; border-radius: 6px;">
+                <small style="color: var(--text-primary); font-size: 0.85rem;">
+                    <i class="bi bi-lightbulb"></i> <strong>Note:</strong> You must provide either an Abstract or Journal Content (or both). 
+                    If you provide only an abstract, readers will see a "Request Full Text" button.
+                </small>
+            </div>
+
             <!-- Toolbar -->
             <div class="editor-toolbar">
                 <button type="button" class="toolbar-btn" data-command="bold" title="Bold (Ctrl+B)">
@@ -562,6 +776,250 @@ document.querySelectorAll('.toolbar-btn').forEach(btn => {
     // Initial count update
     updateCounts();
     titleCount.textContent = titleInput.value.length;
+
+    // Tags functionality
+    let journalTags = [];
+    let allAvailableTags = [];
+    let selectedSuggestionIndex = -1;
+    const tagsInput = document.getElementById('tagsInput');
+    const tagsDisplay = document.getElementById('tagsDisplay');
+    const tagsHiddenInput = document.getElementById('Tags');
+    const tagsContainer = document.querySelector('.tags-container');
+    const tagsError = document.getElementById('tagsError');
+    const tagsSuggestions = document.getElementById('tagsSuggestions');
+
+    // Load available tags for auto-complete
+    async function loadAvailableTags() {
+        try {
+            const response = await fetch('@Url.Action("GetTags", "Journal")');
+            const data = await response.json();
+            allAvailableTags = data.tags || [];
+        } catch (error) {
+            console.log('Could not load tags for auto-complete:', error);
+            allAvailableTags = [];
+        }
+    }
+
+    // Show tag suggestions
+    function showSuggestions(query) {
+        if (!query.trim()) {
+            hideSuggestions();
+            return;
+        }
+
+        const filtered = allAvailableTags
+            .filter(tag => tag.toLowerCase().includes(query.toLowerCase()) && !journalTags.includes(tag))
+            .slice(0, 8);
+
+        if (filtered.length === 0) {
+            hideSuggestions();
+            return;
+        }
+
+        tagsSuggestions.innerHTML = filtered.map((tag, index) => `
+            <div class="tags-suggestion-item ${index === selectedSuggestionIndex ? 'selected' : ''}" 
+                 onclick="selectSuggestion('${tag}')" 
+                 data-index="${index}">
+                <span class="suggestion-tag">#${tag}</span>
+            </div>
+        `).join('');
+
+        tagsSuggestions.style.display = 'block';
+    }
+
+    function hideSuggestions() {
+        tagsSuggestions.style.display = 'none';
+        selectedSuggestionIndex = -1;
+    }
+
+    function selectSuggestion(tag) {
+        addTag(tag);
+        tagsInput.value = '';
+        hideSuggestions();
+        tagsInput.focus();
+    }
+
+    function navigateSuggestions(direction) {
+        const items = tagsSuggestions.querySelectorAll('.tags-suggestion-item');
+        if (items.length === 0) return;
+
+        // Update selection index
+        if (direction === 'down') {
+            selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
+        } else {
+            selectedSuggestionIndex = selectedSuggestionIndex <= 0 ? items.length - 1 : selectedSuggestionIndex - 1;
+        }
+
+        // Update visual selection
+        items.forEach((item, index) => {
+            item.classList.toggle('selected', index === selectedSuggestionIndex);
+        });
+    }
+
+    function addTag(tagText) {
+        const cleanTag = tagText.trim().toLowerCase();
+        if (cleanTag && !journalTags.includes(cleanTag)) {
+            journalTags.push(cleanTag);
+            renderTags();
+            updateTagsInput();
+            clearTagsError();
+        }
+    }
+
+    function removeTag(tagToRemove) {
+        journalTags = journalTags.filter(tag => tag !== tagToRemove);
+        renderTags();
+        updateTagsInput();
+        if (journalTags.length === 0) {
+            showTagsError();
+        }
+    }
+
+    function renderTags() {
+        tagsDisplay.innerHTML = journalTags.map(tag => `
+            <span class="tag-item">
+                <span class="tag-text">${tag}</span>
+                <span class="tag-remove" onclick="removeTag('${tag}')">&times;</span>
+            </span>
+        `).join('');
+    }
+
+    function updateTagsInput() {
+        tagsHiddenInput.value = journalTags.join(',');
+    }
+
+    function showTagsError() {
+        tagsError.style.display = 'block';
+        tagsContainer.classList.add('tags-error');
+    }
+
+    function clearTagsError() {
+        tagsError.style.display = 'none';
+        tagsContainer.classList.remove('tags-error');
+    }
+
+    // Tags input event listeners
+    tagsInput.addEventListener('input', function(e) {
+        const query = this.value.trim();
+        if (query.length > 0) {
+            showSuggestions(query);
+        } else {
+            hideSuggestions();
+        }
+    });
+
+    tagsInput.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (tagsSuggestions.style.display === 'block') {
+                navigateSuggestions('down');
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (tagsSuggestions.style.display === 'block') {
+                navigateSuggestions('up');
+            }
+        } else if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+
+            // If a suggestion is selected, use it
+            if (selectedSuggestionIndex >= 0 && tagsSuggestions.style.display === 'block') {
+                const selectedItem = tagsSuggestions.querySelector('.tags-suggestion-item.selected .suggestion-tag');
+                if (selectedItem) {
+                    const tag = selectedItem.textContent.replace('#', '');
+                    addTag(tag);
+                    this.value = '';
+                    hideSuggestions();
+                    return;
+                }
+            }
+
+            // Otherwise, add the typed text
+            const tagText = this.value.trim();
+            if (tagText) {
+                addTag(tagText);
+                this.value = '';
+                hideSuggestions();
+            }
+        } else if (e.key === 'Escape') {
+            hideSuggestions();
+        }
+    });
+
+    tagsInput.addEventListener('blur', function(e) {
+        // Small delay to allow clicking on suggestions
+        setTimeout(() => {
+            const tagText = this.value.trim();
+            if (tagText) {
+                addTag(tagText);
+                this.value = '';
+            }
+            hideSuggestions();
+        }, 150);
+    });
+
+    tagsInput.addEventListener('focus', function() {
+        if (this.value.trim()) {
+            showSuggestions(this.value.trim());
+        }
+    });
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!tagsContainer.contains(e.target)) {
+            hideSuggestions();
+        }
+    });
+
+    // Initialize tags from server model if available
+    const serverTags = '@Html.Raw(Model?.Tags ?? "")';
+    if (serverTags) {
+        const tags = serverTags.split(',').filter(tag => tag.trim());
+        tags.forEach(tag => addTag(tag));
+    }
+
+    // Load available tags on page load
+    loadAvailableTags();
+
+    // Update form validation to include tags check
+    const originalFormHandler = form.onsubmit;
+    form.addEventListener('submit', function (e) {
+        // IMMEDIATE sync - this must happen first
+        contentInput.value = editor.innerHTML;
+
+        // Get text for validation
+        const text = editor.innerText.trim();
+
+        // Validate that there's actual content
+        if (text.length === 0) {
+            e.preventDefault();
+            alert('Please write some content for your journal');
+            editor.focus();
+            return false;
+        }
+
+        // Check if user is trying to publish and validate tags
+        const isPublishing = e.submitter && e.submitter.value === 'Published';
+        if (isPublishing && journalTags.length === 0) {
+            e.preventDefault();
+            showTagsError();
+            tagsInput.focus();
+            alert('Please add at least one tag before publishing your journal');
+            return false;
+        }
+
+        // Clear any existing tags error if validation passes
+        if (journalTags.length > 0) {
+            clearTagsError();
+        }
+
+        // Content is valid and synced, form will submit with populated hidden input
+        return true;
+    }, true); // Use capture phase to ensure this runs BEFORE validation
+
+    // Note: Link modal and AI enhancement are available in Create.cshtml
+    // For Edit, we use the simpler link insertion via prompt
+
 </script>
 
 @section Scripts {

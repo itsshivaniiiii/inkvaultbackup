@@ -401,7 +401,7 @@
             <div class="user-grid">
                 @foreach (var user in Model.SearchResults)
                 {
-                    <div class="user-card" data-user-id="@user.UserId">
+                    <div class="user-card" data-user-id="@user.UserId" style="cursor: pointer;" onclick="viewProfile('@user.UserId')">
                         <div class="user-avatar">
                             @if (!string.IsNullOrEmpty(user.ProfilePicturePath))
                             {
@@ -417,11 +417,11 @@
                             @if (user.FriendStatus == "friends")
                             {
                                 <button class="btn-action btn-added" disabled><i class="bi bi-check-circle"></i> Friends</button>
-                                <button class="btn-action btn-remove" onclick="removeFriend(this, @user.FriendId, '@user.FirstName @user.LastName')"><i class="bi bi-x-circle"></i> Remove</button>
+                                <button class="btn-action btn-remove" onclick="event.stopPropagation(); removeFriend(this, @user.FriendId, '@user.FirstName @user.LastName')"><i class="bi bi-x-circle"></i> Remove</button>
                             }
                             else if (user.FriendStatus == "pending_sent")
                             {
-                                <button class="btn-action btn-withdraw" onclick="withdrawRequest(this, @user.FriendRequestId, '@user.FirstName @user.LastName')"><i class="bi bi-arrow-counterclockwise"></i> Withdraw</button>
+                                <button class="btn-action btn-withdraw" onclick="event.stopPropagation(); withdrawRequest(this, @user.FriendRequestId, '@user.FirstName @user.LastName')"><i class="bi bi-arrow-counterclockwise"></i> Withdraw</button>
                             }
                             else if (user.FriendStatus == "pending_received")
                             {
@@ -429,7 +429,7 @@
                             }
                             else
                             {
-                                <button class="btn-action btn-add" onclick="sendFriendRequest(this, '@user.UserId', '@user.FirstName @user.LastName')"><i class="bi bi-person-plus"></i> Add Friend</button>
+                                <button class="btn-action btn-add" onclick="event.stopPropagation(); sendFriendRequest(this, '@user.UserId', '@user.FirstName @user.LastName')"><i class="bi bi-person-plus"></i> Add Friend</button>
                             }
                         </div>
                     </div>
@@ -449,7 +449,7 @@
             <div class="user-grid">
                 @foreach (var friend in Model.Friends)
                 {
-                    <div class="user-card">
+                    <div class="user-card" style="cursor: pointer;" onclick="viewProfile('@friend.UserId')">
                         <div class="user-avatar">
                             @if (!string.IsNullOrEmpty(friend.ProfilePicturePath))
                             {
@@ -463,7 +463,7 @@
                         <div class="user-name">@friend.FirstName @friend.LastName</div>
                         <div class="user-email">Friends since @friend.CreatedAt.ToString("MMM dd, yyyy")</div>
                         <div class="user-actions">
-                            <button class="btn-action btn-remove" onclick="removeFriend(this, @friend.FriendId, '@friend.FirstName @friend.LastName')"><i class="bi bi-x-circle"></i> Remove Friend</button>
+                            <button class="btn-action btn-remove" onclick="event.stopPropagation(); removeFriend(this, @friend.FriendId, '@friend.FirstName @friend.LastName')"><i class="bi bi-x-circle"></i> Remove Friend</button>
                         </div>
                     </div>
                 }
@@ -864,6 +864,15 @@ function removeFriend(btn, friendId, userName) {
     });
 }
 
+// Function to view user's public profile
+function viewProfile(userId) {
+    if (!userId) {
+        console.error('User ID is missing');
+        return;
+    }
+    window.location.href = `/Profile/ViewPublic?userId=${encodeURIComponent(userId)}`;
+}
+
 // Function to update counts
 function updateCounts() {
     fetch('/Friends/GetCounts')
@@ -926,5 +935,10 @@ function performSearch(query) {
         }
     })
     .catch(error => console.error('Search error:', error));
+}
+
+// Navigate to user profile with Friends context
+function viewProfile(userId) {
+    window.location.href = `/Profile/ViewPublic/${userId}?fromFriends=true`;
 }
 </script>

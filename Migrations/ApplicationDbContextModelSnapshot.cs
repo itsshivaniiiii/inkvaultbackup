@@ -30,6 +30,9 @@ namespace InkVault.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -57,6 +60,9 @@ namespace InkVault.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("HasCompletedFirstLogin")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastBirthdayEmailSent")
                         .HasColumnType("timestamp with time zone");
@@ -126,6 +132,38 @@ namespace InkVault.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("InkVault.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("JournalId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JournalId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("InkVault.Models.Friend", b =>
                 {
                     b.Property<int>("FriendId")
@@ -188,6 +226,43 @@ namespace InkVault.Migrations
                     b.ToTable("FriendRequests");
                 });
 
+            modelBuilder.Entity("InkVault.Models.FullTextRequest", b =>
+                {
+                    b.Property<int>("RequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RequestId"));
+
+                    b.Property<bool?>("IsGranted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsResponded")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("JournalId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RequesterId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RespondedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("RequestId");
+
+                    b.HasIndex("RequesterId");
+
+                    b.HasIndex("JournalId", "RequesterId")
+                        .IsUnique();
+
+                    b.ToTable("FullTextRequests");
+                });
+
             modelBuilder.Entity("InkVault.Models.Journal", b =>
                 {
                     b.Property<int>("JournalId")
@@ -196,18 +271,34 @@ namespace InkVault.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("JournalId"));
 
+                    b.Property<string>("Abstract")
+                        .HasColumnType("text");
+
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("DUI")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool>("IsAnonymous")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("PrivacyLevel")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ReferencedDUI")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -260,6 +351,104 @@ namespace InkVault.Migrations
                         .IsUnique();
 
                     b.ToTable("JournalViews");
+                });
+
+            modelBuilder.Entity("InkVault.Models.Like", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("JournalId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("LikedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JournalId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("InkVault.Models.NotificationPreference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("EmailOnFriendJournalPost")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("EmailOnFriendRequestAccepted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("EmailOnFriendRequestDenied")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("EmailOnFriendRequestReceived")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("EmailOnSuccessfulLogin")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("RequireOTPOnEveryLogin")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("NotificationPreferences");
+                });
+
+            modelBuilder.Entity("InkVault.Models.SavedJournal", b =>
+                {
+                    b.Property<int>("SavedJournalId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SavedJournalId"));
+
+                    b.Property<int>("JournalId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("SavedJournalId");
+
+                    b.HasIndex("JournalId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SavedJournals");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -413,6 +602,25 @@ namespace InkVault.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("InkVault.Models.Comment", b =>
+                {
+                    b.HasOne("InkVault.Models.Journal", "Journal")
+                        .WithMany("Comments")
+                        .HasForeignKey("JournalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InkVault.Models.ApplicationUser", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Journal");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("InkVault.Models.Friend", b =>
                 {
                     b.HasOne("InkVault.Models.ApplicationUser", "FriendUser")
@@ -451,6 +659,25 @@ namespace InkVault.Migrations
                     b.Navigation("Sender");
                 });
 
+            modelBuilder.Entity("InkVault.Models.FullTextRequest", b =>
+                {
+                    b.HasOne("InkVault.Models.Journal", "Journal")
+                        .WithMany()
+                        .HasForeignKey("JournalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InkVault.Models.ApplicationUser", "Requester")
+                        .WithMany()
+                        .HasForeignKey("RequesterId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Journal");
+
+                    b.Navigation("Requester");
+                });
+
             modelBuilder.Entity("InkVault.Models.Journal", b =>
                 {
                     b.HasOne("InkVault.Models.ApplicationUser", "User")
@@ -474,6 +701,55 @@ namespace InkVault.Migrations
                         .WithMany("JournalViews")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Journal");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("InkVault.Models.Like", b =>
+                {
+                    b.HasOne("InkVault.Models.Journal", "Journal")
+                        .WithMany("Likes")
+                        .HasForeignKey("JournalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InkVault.Models.ApplicationUser", "User")
+                        .WithMany("Likes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Journal");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("InkVault.Models.NotificationPreference", b =>
+                {
+                    b.HasOne("InkVault.Models.ApplicationUser", "User")
+                        .WithOne("NotificationPreference")
+                        .HasForeignKey("InkVault.Models.NotificationPreference", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("InkVault.Models.SavedJournal", b =>
+                {
+                    b.HasOne("InkVault.Models.Journal", "Journal")
+                        .WithMany()
+                        .HasForeignKey("JournalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InkVault.Models.ApplicationUser", "User")
+                        .WithMany("SavedJournals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Journal");
@@ -534,6 +810,8 @@ namespace InkVault.Migrations
 
             modelBuilder.Entity("InkVault.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("FriendRequestsReceived");
 
                     b.Navigation("FriendRequestsSent");
@@ -543,10 +821,20 @@ namespace InkVault.Migrations
                     b.Navigation("FriendsReceived");
 
                     b.Navigation("JournalViews");
+
+                    b.Navigation("Likes");
+
+                    b.Navigation("NotificationPreference");
+
+                    b.Navigation("SavedJournals");
                 });
 
             modelBuilder.Entity("InkVault.Models.Journal", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Likes");
+
                     b.Navigation("Views");
                 });
 #pragma warning restore 612, 618

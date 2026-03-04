@@ -83,15 +83,23 @@ namespace InkVault.Controllers
                 {
                     JournalId = j.JournalId,
                     Title = j.Title,
-                    Content = StripHtmlTags(j.Content).Length > 200 
-                        ? StripHtmlTags(j.Content).Substring(0, 200) + "..." 
-                        : StripHtmlTags(j.Content),
+                    Content = !string.IsNullOrEmpty(j.Content)
+                        ? (StripHtmlTags(j.Content).Length > 200 
+                            ? StripHtmlTags(j.Content).Substring(0, 200) + "..." 
+                            : StripHtmlTags(j.Content))
+                        : !string.IsNullOrEmpty(j.Abstract)
+                            ? (j.Abstract.Length > 200
+                                ? j.Abstract.Substring(0, 200) + "..."
+                                : j.Abstract)
+                            : string.Empty,
                     AuthorName = $"{j.User?.FirstName} {j.User?.LastName}",
                     CreatedAt = j.CreatedAt,
                     ViewCount = j.ViewCount,
                     IsOwn = j.UserId == currentUserId,
                     PrivacyLevel = j.PrivacyLevel,
-                    AuthorId = j.UserId
+                    AuthorId = j.UserId,
+                    DUI = j.DUI,
+                    ReferencedDUI = j.ReferencedDUI
                 }).ToList()
             };
 

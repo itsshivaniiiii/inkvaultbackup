@@ -135,11 +135,265 @@
         border-color: #667eea;
     }
 
-    [data-theme="light"] .back-button:hover {
-        background: rgba(102, 126, 234, 0.15);
+    /* Interactions Section */
+    .journal-interactions {
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid rgba(102, 126, 234, 0.2);
     }
 
-    /* Light Theme Styles */
+    .interaction-buttons {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .interaction-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: rgba(102, 126, 234, 0.15);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        color: #667eea;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+    .interaction-btn:hover {
+        background: rgba(102, 126, 234, 0.3);
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+
+    .interaction-btn.liked {
+        background: rgba(255, 107, 107, 0.2);
+        border-color: #ff6b6b;
+        color: #ff6b6b;
+    }
+
+    .interaction-btn.liked:hover {
+        background: rgba(255, 107, 107, 0.3);
+        border-color: #ff6b6b;
+    }
+
+    .interaction-btn.saved {
+        background: rgba(255, 193, 7, 0.2);
+        border-color: #ffc107;
+        color: #ffc107;
+    }
+
+    .interaction-btn.saved:hover {
+        background: rgba(255, 193, 7, 0.3);
+        border-color: #ffc107;
+    }
+
+    .interaction-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    /* Comments Section */
+    .comments-section {
+        margin-top: 30px;
+    }
+
+    .comments-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: var(--text-primary);
+    }
+
+    .comment-input-area {
+        margin-bottom: 30px;
+    }
+
+    .comment-textarea {
+        width: 100%;
+        padding: 15px;
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 1rem;
+        resize: vertical;
+        min-height: 80px;
+        transition: all 0.3s ease;
+    }
+
+    .comment-textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .comment-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        justify-content: flex-end;
+    }
+
+    .btn-submit, .btn-cancel {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-cancel {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-cancel:hover {
+        background: rgba(102, 126, 234, 0.3);
+    }
+
+    /* Comments List */
+    .comment-item {
+        background: rgba(102, 126, 234, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.15);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .comment-item:hover {
+        border-color: rgba(102, 126, 234, 0.3);
+        background: rgba(102, 126, 234, 0.12);
+    }
+
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .comment-author {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .comment-meta {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .comment-time {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .comment-delete {
+        background: rgba(255, 107, 107, 0.2);
+        border: none;
+        color: #ff6b6b;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .comment-delete:hover {
+        background: rgba(255, 107, 107, 0.3);
+        transform: scale(1.05);
+    }
+
+    .comment-content {
+        color: var(--text-primary);
+        line-height: 1.6;
+    }
+
+    .no-comments {
+        text-align: center;
+        padding: 30px;
+        color: var(--text-secondary);
+        font-style: italic;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+    .toast {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        animation: slideInRight 0.3s ease;
+        pointer-events: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 300px;
+    }
+
+    .toast.success {
+        background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+    }
+
+    .toast.error {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
+    }
+
+    .toast i {
+        font-size: 1.2rem;
+    }
+
+    @@keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes progressBar {
+        from {
+            width: 100%;
+        }
+        to {
+            width: 0%;
+        }
+    }
+
+    /* Light Theme */
     [data-theme="light"] .journal-view-header {
         background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
         border-color: rgba(102, 126, 234, 0.15);
@@ -162,6 +416,16 @@
         color: var(--text-primary) !important;
     }
 
+    [data-theme="light"] .comment-item {
+        background: rgba(102, 126, 234, 0.05) !important;
+        border-color: rgba(102, 126, 234, 0.1) !important;
+    }
+
+    [data-theme="light"] .comment-textarea {
+        background: rgba(102, 126, 234, 0.05) !important;
+        color: var(--text-primary) !important;
+    }
+
 </style>
 
 <div class="journal-view-container">
@@ -172,10 +436,31 @@
     <div class="journal-view-header">
         <h1 class="journal-view-title">@Model.Title</h1>
 
+        <!-- Referenced From Display (Top - Below Title) -->
+        @if (!string.IsNullOrEmpty(Model.ReferencedDUI))
+        {
+            <div style="margin-bottom: 20px; padding: 12px 15px; background: rgba(118, 75, 162, 0.1); border-left: 4px solid #764ba2; border-radius: 6px;">
+                <div style="display: flex; align-items: center; gap: 10px; color: var(--text-primary); font-size: 0.95rem;">
+                    <i class="bi bi-arrow-return-right" style="font-size: 1.1rem; color: #764ba2;"></i>
+                    <span style="font-weight: 600; color: var(--text-secondary);">Referenced from:</span>
+                    <a href="@Url.Action("ViewByDUI", "Explore", new { dui = Model.ReferencedDUI })" 
+                       style="font-family: 'Courier New', monospace; color: #764ba2; font-weight: 600; text-decoration: none; transition: all 0.3s ease;"
+                       onmouseover="this.style.textDecoration='underline'; this.style.color='#667eea'"
+                       onmouseout="this.style.textDecoration='none'; this.style.color='#764ba2'">
+                        @Model.ReferencedDUI
+                    </a>
+                </div>
+            </div>
+        }
+
         <div class="journal-view-meta">
             <div class="journal-author-info">
                 <div class="journal-author-avatar">
-                    @if (!string.IsNullOrEmpty(Model.User?.ProfilePicturePath))
+                    @if (Model.IsAnonymous)
+                    {
+                        <i class="bi bi-incognito" style="font-size: 1.5rem;"></i>
+                    }
+                    else if (!string.IsNullOrEmpty(Model.User?.ProfilePicturePath))
                     {
                         <img src="@Model.User.ProfilePicturePath" alt="@Model.User.FirstName @Model.User.LastName" />
                     }
@@ -185,7 +470,18 @@
                     }
                 </div>
                 <div class="journal-author-details">
-                    <div class="journal-author-name">@Model.User?.FirstName @Model.User?.LastName</div>
+                    <div class="journal-author-name">
+                        @if (Model.IsAnonymous)
+                        {
+                            <span style="color: var(--text-secondary);">Anonymous User</span>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("ViewPublic", "Profile", new { userId = Model.UserId })" style="color: inherit; text-decoration: none;">
+                                @Model.User?.FirstName @Model.User?.LastName
+                            </a>
+                        }
+                    </div>
                     <div class="journal-author-date">@Model.CreatedAt.ToString("MMMM dd, yyyy")</div>
                 </div>
             </div>
@@ -195,6 +491,12 @@
             <div class="journal-stat">
                 <i class="bi bi-eye"></i> @Model.ViewCount views
             </div>
+            <div class="journal-stat">
+                <i class="bi bi-heart"></i> <span id="likeCount">@(Model.Likes?.Count ?? 0)</span> likes
+            </div>
+            <div class="journal-stat">
+                <i class="bi bi-chat-dots"></i> <span id="commentCount">@(Model.Comments?.Count ?? 0)</span> comments
+            </div>
             @if (!string.IsNullOrEmpty(Model.Topic))
             {
                 <div class="journal-stat">
@@ -202,9 +504,591 @@
                 </div>
             }
         </div>
+
+        <!-- Tags Display -->
+        @{
+            List<string>? tags = null;
+            if (!string.IsNullOrEmpty(Model.Tags))
+            {
+                try
+                {
+                    tags = System.Text.Json.JsonSerializer.Deserialize<List<string>>(Model.Tags);
+                }
+                catch
+                {
+                    tags = null;
+                }
+            }
+        }
+
+        @if (tags != null && tags.Any())
+        {
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(102, 126, 234, 0.2);">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                    <span style="font-weight: 600; color: var(--text-secondary); margin-right: 5px;">
+                        <i class="bi bi-tags"></i> Tags:
+                    </span>
+                    @foreach (var tag in tags)
+                    {
+                        <span style="display: inline-block; padding: 6px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px; font-size: 0.85rem; font-weight: 500;">
+                            #@tag
+                        </span>
+                    }
+                </div>
+            </div>
+        }
     </div>
 
-    <div class="journal-content-area">
-        @Html.Raw(Model.Content.Replace("\n", "<br />"))
+    <!-- Abstract Section (if exists) -->
+    @if (!string.IsNullOrWhiteSpace(Model.Abstract))
+    {
+        <div style="margin-bottom: 30px; padding: 20px; background: rgba(102, 126, 234, 0.08); border-left: 4px solid #667eea; border-radius: 8px;">
+            <h3 style="font-size: 1.2rem; font-weight: 600; margin-bottom: 12px; color: var(--text-primary);">
+                <i class="bi bi-file-text"></i> Abstract
+            </h3>
+            <p style="color: var(--text-primary); line-height: 1.8;">@Model.Abstract</p>
+        </div>
+    }
+
+    <!-- Journal Content -->
+    @if (!string.IsNullOrWhiteSpace(Model.Content))
+    {
+        <div class="journal-content-area">
+            @Html.Raw(Model.Content.Replace("\n", "<br />"))
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(Model.Abstract))
+    {
+        <!-- Only Abstract exists - Show Request Button -->
+        var currentUserId = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var isOwner = Model.UserId == currentUserId;
+
+        if (!isOwner)
+        {
+            <div style="margin-top: 30px; padding: 30px; text-align: center; background: rgba(102, 126, 234, 0.05); border: 2px dashed rgba(102, 126, 234, 0.3); border-radius: 12px;">
+                <i class="bi bi-file-lock2" style="font-size: 3rem; color: #667eea; margin-bottom: 15px; display: block;"></i>
+                <h3 style="font-size: 1.4rem; margin-bottom: 10px; color: var(--text-primary);">Full Content Restricted</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">The full text of this journal is not publicly available. You can request access from the author.</p>
+
+                <form asp-controller="Journal" asp-action="RequestFullText" method="post" style="display: inline;">
+                    <input type="hidden" name="journalId" value="@Model.JournalId" />
+                    @Html.AntiForgeryToken()
+                    <button type="submit" id="requestButton" class="btn-action btn-edit" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                        <i class="bi bi-envelope-paper"></i>
+                        <span id="requestButtonText">Request to View Full Text</span>
+                    </button>
+                </form>
+
+                <script>
+                    // Check if user already requested
+                    fetch('@Url.Action("HasRequestedFullText", "Journal")?journalId=@Model.JournalId')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.hasRequested) {
+                                const button = document.getElementById('requestButton');
+                                button.disabled = true;
+                                button.style.opacity = '0.6';
+                                button.style.cursor = 'not-allowed';
+                                document.getElementById('requestButtonText').textContent = 'Access Already Requested';
+                            }
+                        });
+                </script>
+            </div>
+        }
+    }
+
+    <!-- DUI Display at Bottom (Only for Public Journals) -->
+    @if (Model.PrivacyLevel == InkVault.Models.PrivacyLevel.Public && !string.IsNullOrEmpty(Model.DUI))
+    {
+        <div style="margin-top: 30px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-left: 4px solid #667eea; border-radius: 6px;">
+            <div style="display: flex; align-items: center; gap: 10px; color: var(--text-primary);">
+                <i class="bi bi-fingerprint" style="font-size: 1.2rem; color: #667eea;"></i>
+                <span style="font-weight: 600;">Document ID:</span>
+                <span style="font-family: 'Courier New', monospace; color: #667eea; font-weight: 600; font-size: 1.05rem;">@Model.DUI</span>
+            </div>
+        </div>
+    }
+
+    <!-- Interactions Section -->
+    <div class="journal-interactions">
+        <div class="interaction-buttons">
+            <button class="interaction-btn" id="likeBtn" onclick="toggleLike(@Model.JournalId)">
+                <i class="bi bi-heart"></i> <span id="likeBtnText">Like</span>
+            </button>
+            <button class="interaction-btn" onclick="toggleCommentInput()">
+                <i class="bi bi-chat-dots"></i> Comment
+            </button>
+            @if (User.Identity?.Name != Model.User?.UserName)
+            {
+                <button class="interaction-btn" id="saveBtn" onclick="toggleSaveJournal(@Model.JournalId)">
+                    <i class="bi bi-bookmark"></i> <span id="saveBtnText">Save</span>
+                </button>
+            }
+            else
+            {
+                <button class="interaction-btn" disabled style="opacity: 0.5; cursor: not-allowed;" title="You cannot save your own journal">
+                    <i class="bi bi-bookmark-x"></i> <span>Cannot Save Own</span>
+                </button>
+            }
+        </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <h3 class="comments-title">Comments</h3>
+
+            <div class="comment-input-area" id="commentInputArea" style="display: none;">
+                <textarea class="comment-textarea" id="commentText" placeholder="Share your thoughts..."></textarea>
+                <div class="comment-actions">
+                    <button class="btn-submit" onclick="submitComment(@Model.JournalId)">Post Comment</button>
+                    <button class="btn-cancel" onclick="toggleCommentInput()">Cancel</button>
+                </div>
+            </div>
+
+            <div id="commentsList">
+                @if (Model.Comments != null && Model.Comments.Any())
+                {
+                    @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedAt))
+                    {
+                        <div class="comment-item" id="comment-@comment.Id">
+                            <div class="comment-header">
+                                <div class="comment-author">@comment.User?.FirstName @comment.User?.LastName</div>
+                                <div class="comment-meta">
+                                    <span class="comment-time">@comment.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                    @if (User.Identity?.Name == comment.User?.UserName)
+                                    {
+                                        <button class="comment-delete" onclick="deleteComment(@comment.Id)">Delete</button>
+                                    }
+                                </div>
+                            </div>
+                            <div class="comment-content">@comment.Content</div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-comments">No comments yet. Be the first to comment!</div>
+                }
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CSRF Token for AJAX requests -->
+@Html.AntiForgeryToken()
+
+<script>
+    const journalId = @Model.JournalId;
+    // Clean the journal title and author name to remove null coalescing operators
+    const journalTitle = (@Html.Raw(Json.Serialize(Model.Title)) || '').replace(/\?\?/g, '').trim() || 'this journal';
+    const authorName = (@Html.Raw(Json.Serialize($"{Model.User?.FirstName} {Model.User?.LastName}")) || '').replace(/null null/g, 'Unknown Author').replace(/\?\?/g, '').trim();
+
+    // Initialize like state
+    function initializeLikeState() {
+        fetch(`/api/interaction/likes/${journalId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const likeBtn = document.getElementById('likeBtn');
+            const likeBtnText = document.getElementById('likeBtnText');
+            
+            if (data.userLiked) {
+                likeBtn.classList.add('liked');
+                likeBtnText.textContent = 'Unlike';
+            } else {
+                likeBtn.classList.remove('liked');
+                likeBtnText.textContent = 'Like';
+            }
+        });
+    }
+
+    // Initialize save state
+    function initializeSaveState() {
+        const saveBtn = document.getElementById('saveBtn');
+        if (!saveBtn) {
+            // No save button (probably user's own journal)
+            return;
+        }
+        
+        fetch(`/api/SavedJournal/check/${journalId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const saveBtnText = document.getElementById('saveBtnText');
+            
+            if (data.isSaved) {
+                saveBtn.classList.add('saved');
+                saveBtnText.textContent = 'Saved';
+            } else {
+                saveBtn.classList.remove('saved');
+                saveBtnText.textContent = 'Save';
+            }
+        })
+        .catch(error => {
+            console.error('Error checking save state:', error);
+        });
+    }
+
+    function toggleLike(journalId) {
+        fetch(`/api/interaction/like/${journalId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const likeBtn = document.getElementById('likeBtn');
+            const likeBtnText = document.getElementById('likeBtnText');
+            const likeCount = document.getElementById('likeCount');
+
+             if (data.liked) {
+                 likeBtn.classList.add('liked');
+                 likeBtnText.textContent = 'Unlike';
+                 showToast('Liked this journal!', 'success');
+            } else {
+                likeBtn.classList.remove('liked');
+                likeBtnText.textContent = 'Like';
+                showToast(`Unliked this journal`, 'info');
+            }
+
+            likeCount.textContent = data.likeCount;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Failed to like the journal', 'error');
+        });
+    }
+
+    function toggleSaveJournal(journalId) {
+        const saveBtn = document.getElementById('saveBtn');
+        const saveBtnText = document.getElementById('saveBtnText');
+        
+        // Safety check - if no save button exists, show warning and exit
+        if (!saveBtn || !saveBtnText) {
+            showToast('You cannot save your own journal to your library!', 'warning');
+            return;
+        }
+        
+        const isSaved = saveBtn.classList.contains('saved');
+        
+        const url = isSaved ? `/api/SavedJournal/unsave/${journalId}` : `/api/SavedJournal/save/${journalId}`;
+        const method = isSaved ? 'DELETE' : 'POST';
+        
+        // Disable button during operation
+        saveBtn.disabled = true;
+        saveBtnText.textContent = isSaved ? 'Removing...' : 'Saving...';
+        saveBtn.style.opacity = '0.7';
+        
+        // Get the antiforgery token
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        };
+        
+        // Add antiforgery token to headers if available
+        if (token) {
+            headers['RequestVerificationToken'] = token;
+            headers['X-CSRF-TOKEN'] = token;
+        }
+        
+        console.log('Making request to:', url, 'with method:', method);
+        
+        fetch(url, {
+            method: method,
+            headers: headers
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                // For non-2xx responses, try to parse the JSON error response
+                return response.text().then(responseText => {
+                    console.log('Error response text:', responseText);
+                    
+                    try {
+                        const errorData = JSON.parse(responseText);
+                        console.log('Parsed error data:', errorData);
+                        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                    } catch (parseError) {
+                        // If response isn't valid JSON, throw generic error
+                        console.log('Failed to parse error response as JSON:', parseError);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success response:', data);
+            
+            // Clean up the journal title to remove any ?? or null issues
+            const cleanTitle = journalTitle && journalTitle !== 'null' && journalTitle !== 'undefined' 
+                ? journalTitle.replace(/\?\?/g, '').trim() 
+                : 'this journal';
+            
+             if (isSaved) {
+                 saveBtn.classList.remove('saved');
+                 saveBtnText.textContent = 'Save';
+                 showToast('Journal removed from your library', 'warning');
+             } else {
+                 saveBtn.classList.add('saved');
+                 saveBtnText.textContent = 'Saved';
+                 showToast('Journal saved to your library! View it in My Library.', 'success');
+             }
+        })
+        .catch(error => {
+            console.error('Full error details:', error);
+            const action = isSaved ? 'removing' : 'saving';
+            
+            // Show specific user-friendly error messages
+            let errorMsg = error.message;
+            let toastType = 'error';
+            
+            if (errorMsg.includes('Cannot save your own journal')) {
+                errorMsg = "You cannot save your own journal to your library!";
+                toastType = 'warning';
+            } else if (errorMsg.includes('Journal already saved')) {
+                errorMsg = "This journal is already saved in your library!";
+                toastType = 'info';
+            } else if (errorMsg.includes('User not authenticated')) {
+                errorMsg = "Please log in to save journals to your library!";
+                toastType = 'warning';
+            } else if (errorMsg.includes('Journal not found')) {
+                errorMsg = "This journal is no longer available!";
+                toastType = 'error';
+            } else if (errorMsg.includes('HTTP error! status: 400')) {
+                // Generic 400 error - likely "Cannot save your own journal"
+                errorMsg = "You cannot save your own journal to your library!";
+                toastType = 'warning';
+            } else {
+                errorMsg = `Failed ${action} journal. Please try again later.`;
+                toastType = 'error';
+            }
+            
+            showToast(errorMsg, toastType);
+            
+            // Reset button state on error
+            saveBtnText.textContent = isSaved ? 'Saved' : 'Save';
+            if (isSaved) {
+                saveBtn.classList.add('saved');
+            } else {
+                saveBtn.classList.remove('saved');
+            }
+        })
+        .finally(() => {
+            // Re-enable button
+            saveBtn.disabled = false;
+            saveBtn.style.opacity = '1';
+        });
+    }
+
+    function toggleCommentInput() {
+        const commentInputArea = document.getElementById('commentInputArea');
+        commentInputArea.style.display = commentInputArea.style.display === 'none' ? 'block' : 'none';
+        
+        if (commentInputArea.style.display === 'block') {
+            document.getElementById('commentText').focus();
+        }
+    }
+
+    function submitComment(journalId) {
+        const commentText = document.getElementById('commentText').value.trim();
+        
+        if (!commentText) {
+            showToast('Please enter a comment', 'error');
+            return;
+        }
+
+        fetch('/api/interaction/comment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+            },
+            body: JSON.stringify({
+                journalId: journalId,
+                content: commentText
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const commentsList = document.getElementById('commentsList');
+            const noComments = commentsList.querySelector('.no-comments');
+            
+            if (noComments) {
+                noComments.remove();
+            }
+
+            const newComment = document.createElement('div');
+            newComment.className = 'comment-item';
+            newComment.id = `comment-${data.id}`;
+            newComment.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-author">${data.authorName}</div>
+                    <div class="comment-meta">
+                        <span class="comment-time">${data.createdAt}</span>
+                        <button class="comment-delete" onclick="deleteComment(${data.id})">Delete</button>
+                    </div>
+                </div>
+                <div class="comment-content">${data.content}</div>
+            `;
+
+            commentsList.insertBefore(newComment, commentsList.firstChild);
+            
+            document.getElementById('commentText').value = '';
+            document.getElementById('commentInputArea').style.display = 'none';
+            
+            const commentCount = document.getElementById('commentCount');
+            commentCount.textContent = parseInt(commentCount.textContent) + 1;
+
+            showToast('Comment posted successfully!', 'success');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Failed to post comment', 'error');
+        });
+    }
+
+    function deleteComment(commentId) {
+        if (!confirm('Are you sure you want to delete this comment?')) {
+            return;
+        }
+
+        fetch(`/api/interaction/comment/${commentId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const commentElement = document.getElementById(`comment-${commentId}`);
+            if (commentElement) {
+                commentElement.remove();
+            }
+
+            const commentCount = document.getElementById('commentCount');
+            commentCount.textContent = Math.max(0, parseInt(commentCount.textContent) - 1);
+
+            showToast('Comment deleted successfully', 'success');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Failed to delete comment', 'error');
+        });
+    }
+
+    function showToast(message, type = 'info') {
+        const toastContainer = document.getElementById('toastContainer');
+        const toastId = 'toast-' + Date.now();
+        
+        let bgColor, iconClass;
+        switch(type) {
+            case 'success':
+                bgColor = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                iconClass = 'bi-check-circle';
+                break;
+            case 'error':
+                bgColor = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                iconClass = 'bi-exclamation-circle';
+                break;
+            case 'warning':
+                bgColor = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+                iconClass = 'bi-exclamation-triangle';
+                break;
+            case 'info':
+                bgColor = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+                iconClass = 'bi-info-circle';
+                break;
+            default:
+                bgColor = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+                iconClass = 'bi-info-circle';
+        }
+        
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.className = `toast ${type}`;
+        toast.style.cssText = `
+            background: ${bgColor};
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideInRight 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            max-width: 400px;
+            min-width: 300px;
+            position: relative;
+            overflow: hidden;
+            z-index: 10000;
+        `;
+        
+        toast.innerHTML = `
+            <i class="bi ${iconClass}" style="font-size: 1.2rem; flex-shrink: 0;"></i>
+            <span style="flex: 1;">${message}</span>
+            <button onclick="removeToast('${toastId}')" style="
+                background: none; 
+                border: none; 
+                color: white; 
+                font-size: 1.4rem; 
+                cursor: pointer;
+                padding: 0;
+                margin-left: 8px;
+                opacity: 0.7;
+                transition: opacity 0.2s;
+            " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+            <div style="
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.3);
+                width: 100%;
+                animation: progressBar 4s linear;
+            "></div>
+        `;
+        
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            removeToast(toastId);
+        }, 4000);
+    }
+
+    // Remove toast function
+    function removeToast(toastId) {
+        const toast = document.getElementById(toastId);
+        if (toast) {
+            toast.style.animation = 'slideInRight 0.3s ease reverse';
+            setTimeout(() => {
+                if (toast && toast.parentNode) {
+                    toast.remove();
+                }
+            }, 300);
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeLikeState();
+        initializeSaveState();
+    });
+</script>

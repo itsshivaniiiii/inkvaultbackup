@@ -1,0 +1,67 @@
+// EMAIL DIAGNOSTIC - Add this to your Program.cs if you want to test email before running the app
+// 
+// Usage: Set environment variable "TEST_EMAIL_ONLY=true" before running:
+//   Windows CMD: set TEST_EMAIL_ONLY=true && dotnet run
+//   Windows PowerShell: $env:TEST_EMAIL_ONLY='true'; dotnet run
+//   Linux/Mac: TEST_EMAIL_ONLY=true dotnet run
+//
+// Then enter your test email address when prompted.
+
+using InkVault.Utilities;
+
+// Check if we're in diagnostic mode
+if (Environment.GetEnvironmentVariable("TEST_EMAIL_ONLY") == "true")
+{
+    Console.WriteLine("\n========== EMAIL DIAGNOSTIC MODE ==========\n");
+    
+    // Manually create a builder to read config
+    var configBuilder = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json")
+        .AddJsonFile("appsettings.Development.json", optional: true)
+        .AddEnvironmentVariables();
+    
+    var config = configBuilder.Build();
+    
+    var smtpServer = config["SmtpSettings:Server"];
+    var smtpPortStr = config["SmtpSettings:Port"];
+    var senderEmail = config["SmtpSettings:SenderEmail"];
+    var senderPassword = config["SmtpSettings:SenderPassword"];
+    
+    if (!int.TryParse(smtpPortStr, out var smtpPort))
+        smtpPort = 587;
+    
+    Console.Write("Enter test email address (where to send test email): ");
+    var testEmail = Console.ReadLine();
+    
+    if (string.IsNullOrEmpty(testEmail))
+    {
+        Console.WriteLine("? Email address required");
+        return;
+    }
+    
+    var diagnostic = new EmailDiagnostic(smtpServer, smtpPort, senderEmail, senderPassword, testEmail);
+    
+    var result = await diagnostic.TestConnectionAsync();
+    
+    if (result)
+    {
+        Console.WriteLine("\n? SUCCESS! Your email is configured correctly.");
+        Console.WriteLine("\nYou can now:");
+        Console.WriteLine("  - Register and receive OTP emails");
+        Console.WriteLine("  - Login with OTP requirement");
+        Console.WriteLine("  - Receive friend notifications");
+        Console.WriteLine("  - Receive journal post notifications");
+    }
+    else
+    {
+        Console.WriteLine("\n? FAILED! Email configuration has issues.");
+        Console.WriteLine("\nPlease check:");
+        Console.WriteLine("  1. Gmail app password is correct (no spaces)");
+        Console.WriteLine("  2. Both appsettings files are updated");
+        Console.WriteLine("  3. 2FA is enabled on Gmail account");
+        Console.WriteLine("  4. App password was generated for Mail + Windows");
+    }
+    
+    return;
+}

@@ -2,6 +2,13 @@
 
 @{
     ViewData["Title"] = "Verify OTP";
+    string title = Model?.Purpose switch
+    {
+        "Login" => "OTP Verification for Login",
+        "Registration" => "Verify Your Email",
+        "PasswordReset" => "Verify Your Email",
+        _ => "Verify Your OTP"
+    };
 }
 
 <div class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -10,10 +17,17 @@
             <div class="col-md-5">
                 <div class="card shadow-lg" style="border: none; border-radius: 15px;">
                     <div class="card-body p-5">
-                        <h3 class="card-title text-center mb-4">Verify Your Email</h3>
+                        <h3 class="card-title text-center mb-4">@title</h3>
 
                         <p class="text-center text-muted mb-4">
-                            We sent a 6-digit OTP to <strong>@Model.Email</strong>
+                            @if (Model?.Purpose == "Login")
+                            {
+                                <span>We sent a 6-digit OTP to <strong>@Model.Email</strong><br />Please enter it to complete your login.</span>
+                            }
+                            else
+                            {
+                                <span>We sent a 6-digit OTP to <strong>@Model.Email</strong></span>
+                            }
                         </p>
 
                         <form method="post">
@@ -36,7 +50,16 @@
                                 <span asp-validation-for="OTP" class="text-danger"></span>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Verify OTP</button>
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                                @if (Model?.Purpose == "Login")
+                                {
+                                    <span>Complete Login</span>
+                                }
+                                else
+                                {
+                                    <span>Verify OTP</span>
+                                }
+                            </button>
                         </form>
 
                         <p class="text-center text-muted mt-4 small">

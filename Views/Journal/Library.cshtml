@@ -1,0 +1,731 @@
+@model IEnumerable<InkVault.ViewModels.SavedJournalListViewModel>
+
+@{
+    ViewData["Title"] = "My Library - Saved Journals";
+    var availableTopics = ViewData["AvailableTopics"] as List<string> ?? new List<string>();
+    var currentSort = ViewData["CurrentSort"]?.ToString() ?? "recently_added";
+    var currentTopic = ViewData["CurrentTopic"]?.ToString() ?? "";
+}
+
+<style>
+    /* Toast Notification Styles */
+    .toast-notification {
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        background: linear-gradient(135deg, #66c864 0%, #52b788 100%);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 600;
+        animation: slideInRight 0.4s ease;
+        z-index: 9999;
+        max-width: 400px;
+    }
+
+    .toast-notification.error {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    }
+
+    .toast-notification i {
+        font-size: 1.2rem;
+    }
+
+    @@keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(400px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @@keyframes slideOutRight {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(400px);
+        }
+    }
+
+    /* Journal Cards */
+    .journals-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-content h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    /* Stats */
+    .stat-box {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.6s ease backwards;
+    }
+
+    .stat-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.15);
+    }
+
+    .stat-box .number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-box .label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+
+    /* Journal tiles */
+    .journal-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 20px;
+    }
+
+    .journal-tile {
+        background: linear-gradient(135deg, rgba(26, 31, 46, 0.8) 0%, rgba(26, 31, 46, 0.6) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 24px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        min-height: 280px;
+    }
+
+    .journal-tile::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s ease;
+    }
+
+    .journal-tile:hover {
+        transform: translateY(-8px);
+        border-color: rgba(102, 126, 234, 0.5);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .journal-tile:hover::before {
+        transform: scaleX(1);
+    }
+
+    .journal-tile-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: var(--text-primary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .journal-tile-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .meta-badge {
+        background: rgba(102, 126, 234, 0.15);
+        color: #667eea;
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .meta-date {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .tile-actions {
+        margin-top: auto;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .tile-btn {
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .tile-btn-edit {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .tile-btn-edit:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    .tile-btn-view {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .tile-btn-view:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    .tile-btn-delete {
+        background: rgba(244, 67, 54, 0.2);
+        color: #f44336;
+        border: 1px solid rgba(244, 67, 54, 0.2);
+    }
+
+    .tile-btn-delete:hover {
+        background: rgba(244, 67, 54, 0.3);
+        color: #f44336;
+        text-decoration: none;
+    }
+
+    .empty-section {
+        text-align: center;
+        padding: 40px 30px;
+        background: rgba(102, 126, 234, 0.05);
+        border: 1px dashed rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+    }
+
+    .empty-section i {
+        font-size: 3rem;
+        color: rgba(102, 126, 234, 0.2);
+        margin-bottom: 12px;
+    }
+
+    .empty-section p {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .no-journals {
+        text-align: center;
+        padding: 80px 40px;
+    }
+
+    .no-journals i {
+        font-size: 5rem;
+        color: rgba(102, 126, 234, 0.2);
+        margin-bottom: 20px;
+    }
+
+    .no-journals h2 {
+        color: var(--text-primary);
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+
+    .no-journals p {
+        color: var(--text-secondary);
+        margin-bottom: 30px;
+    }
+
+    .create-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white !important;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .create-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        color: white !important;
+        text-decoration: none;
+    }
+
+    [data-theme="light"] .journal-tile {
+        background: #ffffff;
+        border: 1px solid rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="light"] .journal-tile-title {
+        color: #2c3e50;
+    }
+
+    [data-theme="light"] .meta-badge {
+        background: rgba(102, 126, 234, 0.08);
+        color: #667eea;
+    }
+
+    [data-theme="light"] .meta-date {
+        color: #7f8c8d;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<div class="journals-container">
+    <a href="@Url.Action("Index", "Home")" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <i class="bi bi-bookmark-heart" style="font-size: 2.5rem; color: #667eea;"></i>
+            <h1>My Library - Saved Journals</h1>
+        </div>
+    </div>
+
+    <!-- Filter and Sort Controls -->
+    <div class="controls-section" style="margin-bottom: 30px;">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="topicFilter" style="color: var(--text-primary); font-weight: 600; margin-bottom: 8px; display: block;">
+                        <i class="bi bi-funnel"></i> Filter by Topic
+                    </label>
+                    <select id="topicFilter" class="form-select" onchange="applyFilters()" 
+                            style="background: var(--card-bg); border: 1px solid rgba(102, 126, 234, 0.3); color: var(--text-primary);">
+                        <option value="all" selected="@(currentTopic == "" ? "selected" : null)">All Topics</option>
+                        @foreach(var topic in availableTopics)
+                        {
+                            <option value="@topic.ToLower()" selected="@(currentTopic == topic.ToLower() ? "selected" : null)">@topic</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="sortBy" style="color: var(--text-primary); font-weight: 600; margin-bottom: 8px; display: block;">
+                        <i class="bi bi-sort-down"></i> Sort by
+                    </label>
+                    <select id="sortBy" class="form-select" onchange="applyFilters()"
+                            style="background: var(--card-bg); border: 1px solid rgba(102, 126, 234, 0.3); color: var(--text-primary);">
+                        <option value="recently_added" selected="@(currentSort == "recently_added" ? "selected" : null)">Recently Added</option>
+                        <option value="newest_written" selected="@(currentSort == "newest_written" ? "selected" : null)">Newly Written</option>
+                        <option value="oldest_written" selected="@(currentSort == "oldest_written" ? "selected" : null)">Oldest Written</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="saved-journals-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px;">
+            @foreach (var savedJournal in Model)
+            {
+                <div class="journal-tile saved-journal-tile" style="min-height: 320px;">
+                    <div class="journal-tile-header" style="margin-bottom: 15px;">
+                        <h3 class="journal-tile-title" style="margin-bottom: 8px;">@savedJournal.Title</h3>
+                        <div class="author-info" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                            <div class="author-avatar" style="width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.8rem;">
+                                @savedJournal.AuthorName.Split(' ').Select(n => n.FirstOrDefault()).Take(2).Aggregate("", (acc, c) => acc + c)
+                            </div>
+                            <div>
+                                <div style="color: var(--text-primary); font-weight: 600; font-size: 0.9rem;">@savedJournal.AuthorName</div>
+                                <div style="color: var(--text-secondary); font-size: 0.8rem;">@@@savedJournal.AuthorUserName</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="journal-content" style="margin-bottom: 15px; flex-grow: 1;">
+                        <p style="color: var(--text-secondary); line-height: 1.6; margin: 0;">@savedJournal.Content</p>
+                    </div>
+
+                    <div class="journal-tile-meta" style="margin-bottom: 15px;">
+                        <span class="meta-badge">
+                            <i class="bi bi-tag"></i> @savedJournal.Topic
+                        </span>
+                        <span class="meta-badge">
+                            <i class="bi bi-eye"></i> @savedJournal.ViewCount views
+                        </span>
+                    </div>
+
+                    <div class="saved-dates" style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 15px;">
+                        <span><i class="bi bi-calendar-event"></i> Written: @savedJournal.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        <span><i class="bi bi-bookmark-heart"></i> Saved: @savedJournal.SavedAt.ToString("MMM dd, yyyy")</span>
+                    </div>
+
+                    <div class="tile-actions" style="display: flex; gap: 10px;">
+                        <a href="@Url.Action("View", "Explore", new { id = savedJournal.JournalId, fromLibrary = true })" class="tile-btn tile-btn-view" style="flex: 1;">
+                            <i class="bi bi-eye"></i> Read
+                        </a>
+                        <button type="button" class="tile-btn tile-btn-delete" onclick="removeSavedJournal(@savedJournal.JournalId, '@savedJournal.Title')" style="flex: 0 0 auto;">
+                            <i class="bi bi-bookmark-x"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="no-journals">
+            <i class="bi bi-bookmark-heart" style="font-size: 5rem; color: rgba(102, 126, 234, 0.2); margin-bottom: 20px;"></i>
+            <h2>No Saved Journals Yet</h2>
+            <p>You haven't saved any journals yet. Explore journals from other writers and save the ones you love!</p>
+            <a href="@Url.Action("Index", "Explore")" class="create-btn">
+                <i class="bi bi-compass" style="color: white !important;"></i> Explore Journals
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Remove Saved Journal Modal -->
+<div class="modal fade" id="removeSavedModal" tabindex="-1" aria-labelledby="removeSavedLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: var(--card-bg); border: 1px solid rgba(255, 193, 7, 0.3);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255, 193, 7, 0.2);">
+                <h5 class="modal-title" id="removeSavedLabel" style="color: #ffc107; font-weight: 700;">
+                    <i class="bi bi-bookmark-x"></i> Remove Saved Journal
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 20px;">
+                <p style="color: var(--text-secondary); margin: 15px 0;">
+                    Are you sure you want to remove this journal from your saved list?
+                </p>
+                <p style="color: var(--text-primary); font-weight: 700; margin: 15px 0; padding: 10px; background: rgba(102, 126, 234, 0.1); border-radius: 6px;">
+                    <span id="savedJournalTitleDisplay"></span>
+                </p>
+                <p style="color: var(--text-secondary); margin: 15px 0; font-size: 0.9rem;">
+                    You can always save it again later if you change your mind.
+                </p>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255, 193, 7, 0.2); padding: 15px;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background: rgba(102, 126, 234, 0.2); color: #667eea; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    Cancel
+                </button>
+                <form id="removeSavedForm" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        <i class="bi bi-bookmark-x"></i> Remove from Library
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+<script>
+// Apply filters function
+function applyFilters() {
+    const sort = document.getElementById('sortBy').value;
+    const topic = document.getElementById('topicFilter').value;
+    
+    let url = '@Url.Action("Library", "Journal")';
+    const params = new URLSearchParams();
+    
+    if (sort && sort !== 'recently_added') {
+        params.append('sort', sort);
+    }
+    
+    if (topic && topic !== 'all') {
+        params.append('topic', topic);
+    }
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    window.location.href = url;
+}
+
+// Remove saved journal function
+function removeSavedJournal(journalId, journalTitle) {
+    document.getElementById('savedJournalTitleDisplay').textContent = journalTitle;
+    
+    const form = document.getElementById('removeSavedForm');
+    form.action = '/api/SavedJournal/unsave/' + journalId;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('removeSavedModal'));
+    modal.show();
+}
+
+// Handle form submission
+document.getElementById('removeSavedForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const response = await fetch(this.action, {
+        method: 'DELETE',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        }
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+        showToast(data.message || 'Journal removed from library', 'success');
+        
+        // Hide modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('removeSavedModal'));
+        modal.hide();
+        
+        // Reload page after delay
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
+    } else {
+        showToast(data.message || 'Error removing journal', 'error');
+    }
+});
+
+// Toast notification function
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toastContainer');
+    const toastId = 'toast-' + Date.now();
+    
+    // Different colors and icons for different types
+    let bgColor, icon, iconClass;
+    switch(type) {
+        case 'success':
+            bgColor = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            icon = '?';
+            iconClass = 'success';
+            break;
+        case 'error':
+            bgColor = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            icon = '?';
+            iconClass = 'error';
+            break;
+        case 'info':
+            bgColor = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+            icon = '?';
+            iconClass = 'info';
+            break;
+        case 'warning':
+            bgColor = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+            icon = '?';
+            iconClass = 'warning';
+            break;
+        default:
+            bgColor = 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)';
+            icon = '?';
+            iconClass = 'info';
+    }
+    
+    const toastHTML = `
+        <div id="${toastId}" class="toast-notification ${iconClass}" style="
+            background: ${bgColor};
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            animation: slideInRight 0.4s ease;
+            max-width: 400px;
+            min-width: 300px;
+            position: relative;
+            overflow: hidden;
+        ">
+            <span style="font-size: 1.2rem; flex-shrink: 0;">${icon}</span>
+            <span style="flex: 1;">${message}</span>
+            <button onclick="removeToast('${toastId}')" style="
+                background: none; 
+                border: none; 
+                color: white; 
+                font-size: 1.2rem; 
+                cursor: pointer;
+                padding: 0;
+                margin-left: 8px;
+                opacity: 0.7;
+                transition: opacity 0.2s;
+            " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">×</button>
+            <div style="
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.3);
+                width: 100%;
+                animation: progressBar 4s linear;
+            "></div>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        removeToast(toastId);
+    }, 4000);
+}
+
+// Remove toast function
+function removeToast(toastId) {
+    const toast = document.getElementById(toastId);
+    if (toast) {
+        toast.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }
+}
+
+// Add CSS animations
+const toastStyles = document.createElement('style');
+toastStyles.innerHTML = `
+    @@keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(400px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @@keyframes slideOutRight {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(400px);
+        }
+    }
+    
+    @@keyframes progressBar {
+        from {
+            width: 100%;
+        }
+        to {
+            width: 0%;
+        }
+    }
+`;
+document.head.appendChild(toastStyles);
+</script>

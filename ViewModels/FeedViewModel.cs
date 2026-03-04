@@ -12,7 +12,10 @@ namespace InkVault.ViewModels
         public DateTime CreatedAt { get; set; }
         public int ViewCount { get; set; }
         public string? Topic { get; set; }
+        public List<string>? Tags { get; set; }
         public PrivacyLevel PrivacyLevel { get; set; }
+        public string? DUI { get; set; }
+        public string? ReferencedDUI { get; set; }
     }
 
     public class FriendsFeedViewModel

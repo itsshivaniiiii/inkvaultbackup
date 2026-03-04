@@ -68,6 +68,29 @@
         background-position: right 0.75rem center;
         background-size: 16px 12px;
         padding-right: 2.5rem;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    /* Disabled state styling - must remain visible */
+    .form-select:disabled {
+        background-color: rgba(102, 126, 234, 0.15) !important;
+        border-color: rgba(102, 126, 234, 0.4) !important;
+        color: #e0e0e0 !important;
+        opacity: 1 !important;
+        cursor: not-allowed;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e0e0e0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+    }
+
+    .form-select:disabled option {
+        background: #1a1f2e;
+        color: #e0e0e0;
+    }
+
+    .form-control:disabled,
+    .form-select:disabled {
+        opacity: 1 !important;
     }
 
     .form-control:focus, .form-select:focus {
@@ -89,13 +112,15 @@
         color: #2c3e50;
     }
 
-    [data-theme="light"] .form-control::placeholder,
-    [data-theme="light"] .form-control::-webkit-input-placeholder {
-        color: rgba(44, 62, 80, 0.5);
-    }
-
     [data-theme="light"] .form-select {
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232c3e50' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+        padding-right: 2.5rem;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
     }
 
     [data-theme="light"] .form-select option {
@@ -103,11 +128,41 @@
         color: #2c3e50;
     }
 
+    [data-theme="light"] .form-control::placeholder,
+    [data-theme="light"] .form-control::-webkit-input-placeholder {
+        color: rgba(44, 62, 80, 0.5);
+    }
+
     [data-theme="light"] .form-control:focus,
     [data-theme="light"] .form-select:focus {
         background-color: #ffffff;
         color: #2c3e50;
         border-color: #667eea;
+    }
+
+    [data-theme="light"] .form-control::placeholder,
+    [data-theme="light"] .form-control::-webkit-input-placeholder {
+        color: rgba(44, 62, 80, 0.5);
+    }
+
+    [data-theme="light"] .form-select option {
+        background: #ffffff;
+        color: #2c3e50;
+    }
+
+    /* Light theme disabled state styling */
+    [data-theme="light"] .form-select:disabled {
+        background-color: rgba(102, 126, 234, 0.1) !important;
+        border-color: rgba(102, 126, 234, 0.4) !important;
+        color: #2c3e50 !important;
+        opacity: 1 !important;
+        cursor: not-allowed;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%232c3e50' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+    }
+
+    [data-theme="light"] .form-select:disabled option {
+        background: #ffffff;
+        color: #2c3e50;
     }
 
     .editor-toolbar {
@@ -302,6 +357,227 @@
         color: #667eea;
         text-decoration: none;
     }
+
+    /* Toggle Switch CSS */
+    .toggle-switch {
+        display: inline-block;
+        position: relative;
+        width: 50px;
+        height: 28px;
+        margin: 0;
+    }
+
+    .toggle-switch input {
+        display: none;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        border-radius: 24px;
+        border: 2px solid rgba(102, 126, 234, 0.5);
+    }
+
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: all 0.3s ease;
+        border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+        background-color: #667eea;
+        border-color: #667eea;
+    }
+
+    input:checked + .toggle-slider:before {
+        transform: translateX(22px);
+    }
+
+    /* Animation for notification */
+    @@keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Tags Input Styles */
+    .tags-container {
+        position: relative;
+        min-height: 50px;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(26, 31, 46, 0.9) 0%, rgba(26, 31, 46, 0.8) 100%);
+        padding: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .tags-container:focus-within {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    [data-theme="light"] .tags-container {
+        background: #ffffff;
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    .tags-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-height: 20px;
+    }
+
+    .tag-item {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 16px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        gap: 6px;
+        animation: fadeInScale 0.2s ease;
+    }
+
+    .tag-item .tag-remove {
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1rem;
+        line-height: 1;
+        opacity: 0.8;
+        transition: opacity 0.2s ease;
+    }
+
+    .tag-item .tag-remove:hover {
+        opacity: 1;
+    }
+
+    .tags-input {
+        flex: 1;
+        min-width: 150px;
+        border: none;
+        background: transparent;
+        color: inherit;
+        outline: none;
+        padding: 6px 4px;
+        font-size: 0.9rem;
+    }
+
+    [data-theme="light"] .tags-input {
+        color: #2c3e50;
+    }
+
+    .tags-input::placeholder {
+        color: rgba(224, 224, 224, 0.5);
+    }
+
+    [data-theme="light"] .tags-input::placeholder {
+        color: rgba(44, 62, 80, 0.5);
+    }
+
+    .tags-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--card-bg);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 8px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .tags-suggestion-item {
+        padding: 10px 15px;
+        cursor: pointer;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        color: var(--text-primary);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .tags-suggestion-item:hover {
+        background: rgba(102, 126, 234, 0.1);
+    }
+
+    .tags-suggestion-item.selected {
+        background: rgba(102, 126, 234, 0.2);
+    }
+
+    .suggestion-tag {
+        font-weight: 500;
+    }
+
+    .suggestion-count {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-left: auto;
+    }
+
+    [data-theme="light"] .tags-suggestions {
+        background: #ffffff;
+        border-color: rgba(102, 126, 234, 0.3);
+    }
+
+    [data-theme="light"] .tags-suggestion-item {
+        color: #2c3e50;
+        border-bottom-color: rgba(102, 126, 234, 0.1);
+    }
+
+    [data-theme="light"] .tags-suggestion-item:hover {
+        background: rgba(102, 126, 234, 0.05);
+    }
+
+    .tags-help {
+        margin-top: 5px;
+    }
+
+    .tags-help small {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+    }
+
+    .tags-error {
+        border-color: #ff6b6b !important;
+    }
+
+    @@keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 </style>
 
 <a href="@Url.Action("Index", "Home")" class="back-btn">
@@ -371,20 +647,108 @@
                     <option value="Other">Other</option>
                 </select>
             </div>
+
+            <!-- Tags Section -->
+            <div class="form-section">
+                <label for="Tags">Tags <span style="color: #ff6b6b;">*</span></label>
+                <div class="tags-container">
+                    <div class="tags-display" id="tagsDisplay"></div>
+                    <input type="text" class="form-control tags-input" id="tagsInput" 
+                           placeholder="Add tags... (Press Enter or comma to add)" autocomplete="off" />
+                    <input type="hidden" id="Tags" name="Tags" />
+                    <div class="tags-suggestions" id="tagsSuggestions" style="display: none;"></div>
+                </div>
+                <div class="tags-help">
+                    <small>Add at least one tag to describe your journal. Press Enter or comma to add each tag.</small>
+                </div>
+                <span class="error-message" id="tagsError" style="display: none;">At least one tag is required to publish your journal.</span>
+                <span class="error-message">@Html.ValidationMessageFor(m => m.Tags)</span>
+            </div>
+
             <div class="form-section">
                 <label for="PrivacyLevel">Privacy Level</label>
-                <select class="form-select" id="PrivacyLevel" name="PrivacyLevel">
-                    <option value="0" selected>Private (Only Me)</option>
-                    <option value="1">Friends Only</option>
-                    <option value="2">Public</option>
-                </select>
+                <div style="position: relative;">
+                    <select class="form-select" id="PrivacyLevel" name="PrivacyLevel">
+                        <option value="0" selected>Private (Only Me)</option>
+                        <option value="1">Friends Only</option>
+                        <option value="2">Public</option>
+                    </select>
+                    <!-- Lock icon indicator when disabled -->
+                    <div id="privacyLockIcon" style="display: none; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; color: #667eea; font-size: 1.2rem;">
+                        <i class="bi bi-lock-fill"></i>
+                    </div>
+                </div>
+                <p id="privacyHelperText" style="display: none; margin: 8px 0 0 0; font-size: 0.85rem; color: #667eea; font-weight: 500;">
+                    <i class="bi bi-info-circle"></i> Anonymous posts must be public
+                </p>
             </div>
+        </div>
+
+        <!-- Reference DUI Section (Optional) -->
+        <div class="form-section">
+            <label for="ReferencedDUI">Reference DUI (Optional)</label>
+            <input type="text" class="form-control" id="ReferencedDUI" name="ReferencedDUI" 
+                   placeholder="e.g., JRN-001234 (if this journal is inspired by another)" 
+                   value="@Model?.ReferencedDUI" maxlength="20" />
+            <div style="margin-top: 8px;">
+                <small style="color: var(--text-secondary); font-size: 0.85rem;">
+                    <i class="bi bi-info-circle"></i> Enter the DUI of another journal if your writing is based on or inspired by it.
+                </small>
+            </div>
+            <span class="error-message">@Html.ValidationMessageFor(m => m.ReferencedDUI)</span>
+        </div>
+
+        <!-- Privacy and Anonymous Section Row -->
+        <div class="form-row">
+
+            <!-- Anonymous Posting Toggle -->
+            <div class="form-section">
+                <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(102, 126, 234, 0.08); border: 1px solid rgba(102, 126, 234, 0.2); border-radius: 8px;">
+                    <!-- Toggle Switch -->
+                    <label class="toggle-switch" style="margin: 0;">
+                        <input type="checkbox" id="IsAnonymous" name="IsAnonymous" value="true" />
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <div style="flex: 1;">
+                        <label for="IsAnonymous" style="margin: 0; font-weight: 600; cursor: pointer; display: block;">
+                            Post Anonymously
+                        </label>
+                        <p style="margin: 6px 0 0 0; font-size: 0.85rem; color: var(--text-secondary);">Your identity will be hidden from other users. Anonymous posts must be public.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anonymous Status Notification -->
+            <div id="anonymousNotification" style="display: none; padding: 12px 15px; background: rgba(51, 200, 102, 0.15); border: 1px solid rgba(51, 200, 102, 0.3); border-radius: 6px; color: #33c866; font-weight: 500; margin-bottom: 10px; animation: slideInDown 0.3s ease;">
+                <i class="bi bi-info-circle"></i> Privacy level set to Public. Your post will be anonymous.
+            </div>
+        </div>
+
+        <!-- Abstract Section (Optional) -->
+        <div class="form-section">
+            <label for="Abstract">Abstract (Optional)</label>
+            <textarea class="form-control" id="Abstract" name="Abstract" rows="4"
+                      placeholder="Write a brief summary or abstract of your journal...">@Model?.Abstract</textarea>
+            <div style="margin-top: 8px;">
+                <small style="color: var(--text-secondary); font-size: 0.85rem;">
+                    <i class="bi bi-info-circle"></i> An abstract provides a summary. You can choose to show only the abstract and request readers to request full access.
+                </small>
+            </div>
+            <span class="error-message">@Html.ValidationMessageFor(m => m.Abstract)</span>
         </div>
 
         <!-- Rich Text Editor Section -->
         <div class="form-section">
-            <label for="Content">Journal Content</label>
-            
+            <label for="Content">Journal Content (Optional)</label>
+
+            <!-- Info box about abstract vs content -->
+            <div style="margin-bottom: 15px; padding: 12px; background: rgba(102, 126, 234, 0.08); border-left: 3px solid #667eea; border-radius: 6px;">
+                <small style="color: var(--text-primary); font-size: 0.85rem;">
+                    <i class="bi bi-lightbulb"></i> <strong>Note:</strong> You must provide either an Abstract or Journal Content (or both). 
+                    If you provide only an abstract, readers will see a "Request Full Text" button.
+                </small>
+            </div>
+
             <!-- Toolbar -->
             <div class="editor-toolbar">
                 <button type="button" class="toolbar-btn" data-command="bold" title="Bold (Ctrl+B)">
@@ -419,8 +783,33 @@
             <!-- Hidden input to store content -->
             <input type="hidden" id="ContentInput" name="Content" />
             
-            <div class="char-count">
-                <span id="contentCount">0</span> characters | <span id="wordCount">0</span> words
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; flex-wrap: wrap; gap: 15px;">
+                <div class="char-count">
+                    <span id="contentCount">0</span> characters | <span id="wordCount">0</span> words
+                </div>
+                <button type="button" id="enhanceBtn" onclick="openEnhanceModal()" style="padding: 10px 18px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); transition: all 0.3s ease;" title="Enhance your content with AI" onmouseover="this.style.boxShadow='0 8px 20px rgba(102, 126, 234, 0.5)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.4)'; this.style.transform='translateY(0)'">
+                    <i class="bi bi-sparkles"></i> Enhance with AI
+                </button>
+                <style>
+                    #enhanceBtn {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                        color: white !important;
+                        font-weight: 600 !important;
+                        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.45) !important;
+                    }
+                    #enhanceBtn:hover {
+                        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6) !important;
+                        transform: translateY(-2px) !important;
+                    }
+                    [data-theme="light"] #enhanceBtn {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                        color: white !important;
+                        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.5) !important;
+                    }
+                    [data-theme="light"] #enhanceBtn:hover {
+                        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.65) !important;
+                    }
+                </style>
             </div>
             <span class="error-message">@Html.ValidationMessageFor(m => m.Content)</span>
         </div>
@@ -444,10 +833,387 @@
     const titleCount = document.getElementById('titleCount');
     const contentCount = document.getElementById('contentCount');
     const wordCount = document.getElementById('wordCount');
+    const privacyLevelSelect = document.getElementById('PrivacyLevel');
+    const isAnonymousCheckbox = document.getElementById('IsAnonymous');
+
+    // Tags functionality
+    let journalTags = [];
+    let allAvailableTags = [];
+    let selectedSuggestionIndex = -1;
+    const tagsInput = document.getElementById('tagsInput');
+    const tagsDisplay = document.getElementById('tagsDisplay');
+    const tagsHiddenInput = document.getElementById('Tags');
+    const tagsContainer = document.querySelector('.tags-container');
+    const tagsError = document.getElementById('tagsError');
+    const tagsSuggestions = document.getElementById('tagsSuggestions');
+
+    // Load available tags for auto-complete
+    async function loadAvailableTags() {
+        try {
+            const response = await fetch('@Url.Action("GetTags", "Journal")');
+            const data = await response.json();
+            allAvailableTags = data.tags || [];
+        } catch (error) {
+            console.log('Could not load tags for auto-complete:', error);
+            allAvailableTags = [];
+        }
+    }
+
+    // Show tag suggestions
+    function showSuggestions(query) {
+        if (!query.trim()) {
+            hideSuggestions();
+            return;
+        }
+
+        const filtered = allAvailableTags
+            .filter(tag => tag.toLowerCase().includes(query.toLowerCase()) && !journalTags.includes(tag))
+            .slice(0, 8);
+
+        if (filtered.length === 0) {
+            hideSuggestions();
+            return;
+        }
+
+        tagsSuggestions.innerHTML = filtered.map((tag, index) => `
+            <div class="tags-suggestion-item ${index === selectedSuggestionIndex ? 'selected' : ''}" 
+                 onclick="selectSuggestion('${tag}')" 
+                 data-index="${index}">
+                <span class="suggestion-tag">#${tag}</span>
+            </div>
+        `).join('');
+
+        tagsSuggestions.style.display = 'block';
+    }
+
+    function hideSuggestions() {
+        tagsSuggestions.style.display = 'none';
+        selectedSuggestionIndex = -1;
+    }
+
+    function selectSuggestion(tag) {
+        addTag(tag);
+        tagsInput.value = '';
+        hideSuggestions();
+        tagsInput.focus();
+    }
+
+    function navigateSuggestions(direction) {
+        const items = tagsSuggestions.querySelectorAll('.tags-suggestion-item');
+        if (items.length === 0) return;
+
+        // Update selection index
+        if (direction === 'down') {
+            selectedSuggestionIndex = (selectedSuggestionIndex + 1) % items.length;
+        } else {
+            selectedSuggestionIndex = selectedSuggestionIndex <= 0 ? items.length - 1 : selectedSuggestionIndex - 1;
+        }
+
+        // Update visual selection
+        items.forEach((item, index) => {
+            item.classList.toggle('selected', index === selectedSuggestionIndex);
+        });
+    }
+
+    function addTag(tagText) {
+        const cleanTag = tagText.trim().toLowerCase();
+        if (cleanTag && !journalTags.includes(cleanTag)) {
+            journalTags.push(cleanTag);
+            renderTags();
+            updateTagsInput();
+            clearTagsError();
+        }
+    }
+
+    function removeTag(tagToRemove) {
+        journalTags = journalTags.filter(tag => tag !== tagToRemove);
+        renderTags();
+        updateTagsInput();
+        if (journalTags.length === 0) {
+            showTagsError();
+        }
+    }
+
+    function renderTags() {
+        tagsDisplay.innerHTML = journalTags.map(tag => `
+            <span class="tag-item">
+                <span class="tag-text">${tag}</span>
+                <span class="tag-remove" onclick="removeTag('${tag}')">&times;</span>
+            </span>
+        `).join('');
+    }
+
+    function updateTagsInput() {
+        tagsHiddenInput.value = journalTags.join(',');
+    }
+
+    function showTagsError() {
+        tagsError.style.display = 'block';
+        tagsContainer.classList.add('tags-error');
+    }
+
+    function clearTagsError() {
+        tagsError.style.display = 'none';
+        tagsContainer.classList.remove('tags-error');
+    }
+
+    // Tags input event listeners
+    tagsInput.addEventListener('input', function(e) {
+        const query = this.value.trim();
+        if (query.length > 0) {
+            showSuggestions(query);
+        } else {
+            hideSuggestions();
+        }
+    });
+
+    tagsInput.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (tagsSuggestions.style.display === 'block') {
+                navigateSuggestions('down');
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (tagsSuggestions.style.display === 'block') {
+                navigateSuggestions('up');
+            }
+        } else if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+
+            // If a suggestion is selected, use it
+            if (selectedSuggestionIndex >= 0 && tagsSuggestions.style.display === 'block') {
+                const selectedItem = tagsSuggestions.querySelector('.tags-suggestion-item.selected .suggestion-tag');
+                if (selectedItem) {
+                    const tag = selectedItem.textContent.replace('#', '');
+                    addTag(tag);
+                    this.value = '';
+                    hideSuggestions();
+                    return;
+                }
+            }
+
+            // Otherwise, add the typed text
+            const tagText = this.value.trim();
+            if (tagText) {
+                addTag(tagText);
+                this.value = '';
+                hideSuggestions();
+            }
+        } else if (e.key === 'Escape') {
+            hideSuggestions();
+        }
+    });
+
+    tagsInput.addEventListener('blur', function(e) {
+        // Small delay to allow clicking on suggestions
+        setTimeout(() => {
+            const tagText = this.value.trim();
+            if (tagText) {
+                addTag(tagText);
+                this.value = '';
+            }
+            hideSuggestions();
+        }, 150);
+    });
+
+    tagsInput.addEventListener('focus', function() {
+        if (this.value.trim()) {
+            showSuggestions(this.value.trim());
+        }
+    });
+
+    // Close suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!tagsContainer.contains(e.target)) {
+            hideSuggestions();
+        }
+    });
+
+    // Initialize tags from server model if available
+    const serverTags = '@Html.Raw(Model?.Tags ?? "")';
+    if (serverTags) {
+        const tags = serverTags.split(',').filter(tag => tag.trim());
+        tags.forEach(tag => addTag(tag));
+    }
+
+    // Load available tags on page load
+    loadAvailableTags();
+
+    // === REFERENCE DUI VALIDATION ===
+    const referenceDUIInput = document.getElementById('ReferencedDUI');
+    const referenceDUIGroup = referenceDUIInput.closest('.form-section');
+    let duiValidationMessage = null;
+    let lastValidatedDUI = '';
+
+    // Create validation message element
+    function createDUIValidationMessage() {
+        if (!duiValidationMessage) {
+            duiValidationMessage = document.createElement('div');
+            duiValidationMessage.style.cssText = 'margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 0.9rem; display: none;';
+            referenceDUIInput.parentNode.insertBefore(duiValidationMessage, referenceDUIInput.nextSibling);
+        }
+        return duiValidationMessage;
+    }
+
+    // Show validation message
+    function showDUIValidation(message, isError) {
+        const msgEl = createDUIValidationMessage();
+        msgEl.textContent = message;
+        msgEl.style.display = 'block';
+
+        if (isError) {
+            msgEl.style.background = 'rgba(255, 107, 107, 0.15)';
+            msgEl.style.border = '1px solid rgba(255, 107, 107, 0.3)';
+            msgEl.style.color = '#ff6b6b';
+            referenceDUIInput.style.borderColor = '#ff6b6b';
+        } else {
+            msgEl.style.background = 'rgba(81, 207, 102, 0.15)';
+            msgEl.style.border = '1px solid rgba(81, 207, 102, 0.3)';
+            msgEl.style.color = '#51cf66';
+            referenceDUIInput.style.borderColor = '#51cf66';
+        }
+    }
+
+    // Hide validation message
+    function hideDUIValidation() {
+        if (duiValidationMessage) {
+            duiValidationMessage.style.display = 'none';
+        }
+        referenceDUIInput.style.borderColor = '';
+    }
+
+    // Validate DUI via AJAX
+    async function validateReferenceDUI(dui) {
+        if (!dui || dui.trim() === '') {
+            hideDUIValidation();
+            return true; // Empty is valid (optional field)
+        }
+
+        const trimmedDUI = dui.trim();
+
+        // Check format
+        if (!/^JRN-\d{6}$/.test(trimmedDUI)) {
+            showDUIValidation('Invalid DUI format. Expected format: JRN-000123', true);
+            return false;
+        }
+
+        // Skip if we already validated this DUI
+        if (trimmedDUI === lastValidatedDUI) {
+            return true;
+        }
+
+        try {
+            showDUIValidation('Validating DUI...', false);
+
+            // Get anti-forgery token
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            const response = await fetch('/Journal/ValidateDUI', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify({ dui: trimmedDUI })
+            });
+
+            const result = await response.json();
+
+            if (result.valid) {
+                // DUI exists and is accessible
+                lastValidatedDUI = trimmedDUI;
+                const message = result.title ? `? Valid DUI - References: "${result.title}"` : '? Valid DUI found';
+                showDUIValidation(message, false);
+                setTimeout(hideDUIValidation, 3000);
+                return true;
+            } else {
+                showDUIValidation(`? ${result.message || 'Invalid DUI'}`, true);
+                return false;
+            }
+        } catch (error) {
+            console.error('DUI validation error:', error);
+            showDUIValidation('Could not validate DUI. Please check format.', true);
+            return false;
+        }
+    }
+
+    // Debounce validation
+    let duiValidationTimeout;
+    referenceDUIInput.addEventListener('input', function() {
+        clearTimeout(duiValidationTimeout);
+        const value = this.value.trim();
+
+        if (!value) {
+            hideDUIValidation();
+            return;
+        }
+
+        duiValidationTimeout = setTimeout(() => {
+            validateReferenceDUI(value);
+        }, 500); // Wait 500ms after user stops typing
+    });
+
+    // Validate on blur
+    referenceDUIInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (value) {
+            validateReferenceDUI(value);
+        }
+    });
+
+    // === END REFERENCE DUI VALIDATION ===
+
+    // Handle Anonymous Posting
+    isAnonymousCheckbox.addEventListener('change', function() {
+        const notificationDiv = document.getElementById('anonymousNotification');
+        const lockIcon = document.getElementById('privacyLockIcon');
+        const helperText = document.getElementById('privacyHelperText');
+        
+        if (this.checked) {
+            // Force privacy to Public (value 2) when anonymous
+            privacyLevelSelect.value = '2';
+            privacyLevelSelect.disabled = true;
+            
+            // Show lock icon and helper text
+            lockIcon.style.display = 'block';
+            helperText.style.display = 'block';
+            
+            // Show custom notification
+            notificationDiv.style.display = 'block';
+        } else {
+            // Allow changing privacy level again
+            privacyLevelSelect.disabled = false;
+            
+            // Hide lock icon and helper text
+            lockIcon.style.display = 'none';
+            helperText.style.display = 'none';
+            
+            // Hide custom notification
+            notificationDiv.style.display = 'none';
+        }
+    });
+
+    // Initialize on page load
+    if (isAnonymousCheckbox.checked) {
+        privacyLevelSelect.value = '2';
+        privacyLevelSelect.disabled = true;
+        document.getElementById('privacyLockIcon').style.display = 'block';
+        document.getElementById('privacyHelperText').style.display = 'block';
+        document.getElementById('anonymousNotification').style.display = 'block';
+    }
 
     // Initialize content from hidden input if available
     if (contentInput.value) {
         editor.innerHTML = contentInput.value;
+    }
+
+    // Restore editor content from Model if page was returned with validation errors
+    const serverContent = '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(Model?.Content ?? ""))';
+    if (serverContent && serverContent.trim()) {
+        editor.innerHTML = serverContent;
+        contentInput.value = serverContent;
+        updateCounts();
     }
 
     // Update character and word count
@@ -471,10 +1237,7 @@
             const value = this.getAttribute('data-value');
 
             if (command === 'createLink') {
-                const url = prompt('Enter the URL:');
-                if (url) {
-                    document.execCommand(command, false, url);
-                }
+                openLinkModal();
             } else if (command === 'insertUnorderedList' || command === 'insertOrderedList') {
                 document.execCommand(command, false, null);
             } else if (command === 'removeFormat') {
@@ -514,16 +1277,16 @@
 
     // Set status based on button clicked
     const form = document.querySelector('form');
-    
+
     // CRITICAL: Sync content IMMEDIATELY before ANY validation runs
     // This must run in capture phase and before default validators
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         // IMMEDIATE sync - this must happen first
         contentInput.value = editor.innerHTML;
-        
+
         // Get text for validation
         const text = editor.innerText.trim();
-        
+
         // Validate that there's actual content
         if (text.length === 0) {
             e.preventDefault();
@@ -531,7 +1294,42 @@
             editor.focus();
             return false;
         }
-        
+
+        // Check if user is trying to publish and validate tags
+        const isPublishing = e.submitter && e.submitter.value === 'Published';
+        if (isPublishing && journalTags.length === 0) {
+            e.preventDefault();
+            showTagsError();
+            tagsInput.focus();
+            alert('Please add at least one tag before publishing your journal');
+            return false;
+        }
+
+        // Validate Reference DUI if entered
+        const referenceDUIValue = referenceDUIInput.value.trim();
+        if (referenceDUIValue) {
+            e.preventDefault(); // Prevent default submission
+
+            showDUIValidation('?? Validating DUI before submission...', false);
+            const isValid = await validateReferenceDUI(referenceDUIValue);
+
+            if (!isValid) {
+                showDUIValidation('? Please correct or remove the invalid DUI before submitting', true);
+                referenceDUIInput.focus();
+                return false;
+            }
+
+            hideDUIValidation();
+            // If valid, submit the form
+            form.submit();
+            return false;
+        }
+
+        // Clear any existing tags error if validation passes
+        if (journalTags.length > 0) {
+            clearTagsError();
+        }
+
         // Content is valid and synced, form will submit with populated hidden input
         return true;
     }, true); // Use capture phase to ensure this runs BEFORE validation
@@ -554,6 +1352,668 @@
     // Initial count update
     updateCounts();
     titleCount.textContent = titleInput.value.length;
+</script>
+
+<!-- AI Enhancement Modal -->
+<div id="enhanceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: var(--card-bg); border-radius: 12px; padding: 30px; max-width: 700px; width: 90%; max-height: 80vh; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); border: 1px solid rgba(102, 126, 234, 0.2); display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0; color: var(--text-primary); font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                <i class="bi bi-sparkles" style="color: #667eea;"></i> AI Content Enhancement
+            </h3>
+            <button type="button" onclick="closeEnhanceModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary);">×</button>
+        </div>
+
+        <div id="enhanceContent" style="flex: 1; overflow-y: auto; margin-bottom: 20px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 8px; border: 1px solid rgba(102, 126, 234, 0.1); color: var(--text-primary); line-height: 1.6;">
+            <p style="color: var(--text-secondary); text-align: center; margin: 40px 0;">Click "Enhance" to improve your content with AI...</p>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" onclick="closeEnhanceModal()" style="padding: 10px 20px; background: rgba(102, 126, 234, 0.2); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Cancel
+            </button>
+            <button type="button" id="discardEnhanceBtn" onclick="discardEnhancement()" style="padding: 10px 20px; background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.3); border-radius: 6px; cursor: pointer; font-weight: 600; display: none;">
+                Discard
+            </button>
+            <button type="button" id="acceptEnhanceBtn" onclick="acceptEnhancement()" style="padding: 10px 20px; background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; display: none;">
+                Accept Changes
+            </button>
+            <button type="button" id="enhanceNowBtn" onclick="enhanceContent()" style="padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Enhance
+            </button>
+        </div>
+
+        <div id="enhanceStatus" style="margin-top: 15px; padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 6px; color: var(--text-secondary); display: none; text-align: center;">
+            <small></small>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Enhancement Modal Styles */
+    #enhanceModal[style*="display: flex"] {
+        display: flex !important;
+    }
+
+    [data-theme="light"] #enhanceModal > div {
+        background: #ffffff !important;
+        border-color: rgba(102, 126, 234, 0.15) !important;
+    }
+
+    [data-theme="light"] #enhanceContent {
+        background: rgba(102, 126, 234, 0.02) !important;
+        border-color: rgba(102, 126, 234, 0.08) !important;
+        color: #2c3e50 !important;
+    }
+
+    [data-theme="light"] #enhanceContent p {
+        color: #2c3e50 !important;
+    }
+
+    [data-theme="light"] #enhanceStatus {
+        background: rgba(102, 126, 234, 0.05) !important;
+        color: #2c3e50 !important;
+    }
+
+    [data-theme="light"] #enhanceStatus small {
+        color: #2c3e50 !important;
+    }
+
+    [data-theme="light"] #enhanceBtn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        box-shadow: 0 4px 14px rgba(102, 126, 234, 0.5) !important;
+    }
+
+    [data-theme="light"] #enhanceBtn:hover {
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.65) !important;
+    }
+
+    /* Light theme button styles for modal */
+    [data-theme="light"] #enhanceModal button {
+        color: #2c3e50 !important;
+    }
+
+    [data-theme="light"] #enhanceModal button[onclick*="closeEnhanceModal"] {
+        background: rgba(102, 126, 234, 0.1) !important;
+        color: #667eea !important;
+        border-color: rgba(102, 126, 234, 0.2) !important;
+    }
+
+    [data-theme="light"] #discardEnhanceBtn {
+        background: rgba(255, 107, 107, 0.1) !important;
+        color: #ff6b6b !important;
+        border-color: rgba(255, 107, 107, 0.2) !important;
+    }
+
+    [data-theme="light"] #acceptEnhanceBtn {
+        background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%) !important;
+        color: white !important;
+    }
+
+    [data-theme="light"] #enhanceNowBtn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+    }
+</style>
+
+<script>
+// AI Enhancement Modal Management
+let originalContent = '';
+let enhancedContent = '';
+
+function openEnhanceModal() {
+    const content = document.getElementById('Content').innerText.trim();
+    
+    if (!content || content.length < 10) {
+        alert('Please write at least 10 characters before using AI enhancement.');
+        return;
+    }
+
+    originalContent = document.getElementById('Content').innerHTML;
+    document.getElementById('enhanceModal').style.display = 'flex';
+    document.getElementById('enhanceNowBtn').style.display = 'block';
+    document.getElementById('enhanceNowBtn').disabled = false;
+    document.getElementById('acceptEnhanceBtn').style.display = 'none';
+    document.getElementById('discardEnhanceBtn').style.display = 'none';
+    document.getElementById('enhanceContent').innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin: 40px 0;">Click "Enhance" to improve your content with AI...</p>';
+    document.getElementById('enhanceStatus').style.display = 'none';
+    enhancedContent = '';
+}
+
+function closeEnhanceModal() {
+    document.getElementById('enhanceModal').style.display = 'none';
+    originalContent = '';
+    enhancedContent = '';
+}
+
+function showStatus(message, isError = false) {
+    const status = document.getElementById('enhanceStatus');
+    const isDarkTheme = document.documentElement.getAttribute('data-theme') !== 'light';
+    
+    let textColor;
+    if (isError) {
+        textColor = '#ff6b6b';
+    } else {
+        textColor = isDarkTheme ? '#667eea' : '#2c3e50';
+    }
+    
+    status.innerHTML = `<small style="color: ${textColor}">${message}</small>`;
+    status.style.display = 'block';
+}
+
+async function enhanceContent() {
+const content = document.getElementById('Content').innerText.trim();
+    
+if (!content) {
+    showStatus('No content to enhance', true);
+    return;
+}
+
+if (content.length < 10) {
+    showStatus('Content must be at least 10 characters', true);
+    return;
+}
+
+document.getElementById('enhanceNowBtn').disabled = true;
+showStatus('Enhancing your content... (this may take 10-30 seconds)');
+
+    try {
+        console.log('Sending content for enhancement:', content.substring(0, 100));
+
+        // Get anti-forgery token from the page
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+        const response = await fetch('/Journal/EnhanceContent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify({ content: content })
+        });
+
+        const responseText = await response.text();
+        console.log('Response status:', response.status);
+        console.log('Response text:', responseText);
+
+        // Parse the response
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('Parse error:', parseError);
+            console.error('Response was:', responseText);
+            throw new Error('Server error: Invalid response format');
+        }
+
+        // Check if request was successful
+        if (!response.ok) {
+            const errorMessage = result.error || `Error ${response.status}`;
+            throw new Error(errorMessage);
+        }
+
+        // Check if we got enhanced content
+        if (!result.enhanced) {
+            throw new Error(result.error || 'No enhanced content returned');
+        }
+
+        enhancedContent = result.enhanced;
+        console.log('Enhancement successful');
+
+        // Display enhanced content
+        document.getElementById('enhanceContent').innerHTML = `<p>${enhancedContent.replace(/\n/g, '</p><p>')}</p>`;
+        
+        // Show accept/discard buttons
+        document.getElementById('enhanceNowBtn').style.display = 'none';
+        document.getElementById('acceptEnhanceBtn').style.display = 'block';
+        document.getElementById('discardEnhanceBtn').style.display = 'block';
+        
+        showStatus('Enhancement complete! Review and accept or discard.');
+    } catch (error) {
+        console.error('Enhancement error:', error);
+        showStatus(`Error: ${error.message}`, true);
+        document.getElementById('enhanceNowBtn').disabled = false;
+        document.getElementById('enhanceNowBtn').style.display = 'block';
+    }
+}
+
+// Custom success toast notification
+function showSuccessToast(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(81, 207, 102, 0.4);
+        font-weight: 600;
+        z-index: 10000;
+        animation: slideInRight 0.3s ease;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Add CSS for toast if not already present
+if (!document.getElementById('toast-styles')) {
+    const style = document.createElement('style');
+    style.id = 'toast-styles';
+    style.textContent = '.success-toast { position: fixed; top: 20px; right: 20px; transition: all 0.3s ease; }';
+    document.head.appendChild(style);
+}
+
+function acceptEnhancement() {
+    if (!enhancedContent) return;
+
+    document.getElementById('Content').innerHTML = enhancedContent;
+    document.getElementById('ContentInput').value = enhancedContent;
+    
+    // Update counts
+    updateCounts();
+    
+    closeEnhanceModal();
+    showSuccessToast('Content enhanced successfully!');
+}
+
+function discardEnhancement() {
+    // Reset to original
+    document.getElementById('enhanceContent').innerHTML = '<p style="color: var(--text-secondary); text-align: center; margin: 40px 0;">Click "Enhance" to improve your content with AI...</p>';
+    document.getElementById('enhanceNowBtn').style.display = 'block';
+    document.getElementById('enhanceNowBtn').disabled = false;
+    document.getElementById('acceptEnhanceBtn').style.display = 'none';
+    document.getElementById('discardEnhanceBtn').style.display = 'none';
+    document.getElementById('enhanceStatus').style.display = 'none';
+    enhancedContent = '';
+    
+    // Close the modal
+    closeEnhanceModal();
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('enhanceModal');
+    if (e.target === modal) {
+        closeEnhanceModal();
+    }
+});
+</script>
+
+<!-- Custom Link Modal -->
+<div id="linkModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: var(--card-bg); border-radius: 12px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); border: 1px solid rgba(102, 126, 234, 0.2);">
+        <h3 style="margin-top: 0; color: var(--text-primary); font-weight: 700;">Insert Link</h3>
+        
+        <div style="margin-bottom: 20px;">
+            <label for="linkUrl" style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">URL</label>
+            <input type="text" id="linkUrl" placeholder="https://example.com" style="width: 100%; padding: 12px; border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); box-sizing: border-box;" />
+            <small id="linkUrlError" style="color: #ff6b6b; display: none; margin-top: 5px; display: block;"></small>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <label for="linkText" style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-primary);">Link Text (Optional)</label>
+            <input type="text" id="linkText" placeholder="Display text for the link" style="width: 100%; padding: 12px; border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); box-sizing: border-box;" />
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" onclick="closeLinkModal()" style="padding: 10px 20px; background: rgba(102, 126, 234, 0.2); color: #667eea; border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Cancel
+            </button>
+            <button type="button" onclick="insertLink()" style="padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                Insert Link
+            </button>
+            <button type="button" id="removeLink" onclick="removeLink()" style="padding: 10px 20px; background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.3); border-radius: 6px; cursor: pointer; font-weight: 600; display: none;">
+                Remove Link
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Link Modal Styles */
+    #linkModal[style*="display: flex"] {
+        display: flex !important;
+    }
+
+    [data-theme="light"] #linkModal > div {
+        background: #ffffff !important;
+    }
+
+    [data-theme="light"] #linkModal input {
+        background: #ffffff !important;
+        color: #2c3e50 !important;
+    }
+</style>
+
+<script>
+// Custom Link Modal Management
+let currentLinkElement = null;
+let savedSelection = null;
+
+function openLinkModal() {
+    const selection = window.getSelection();
+    const linkModal = document.getElementById('linkModal');
+    const linkUrl = document.getElementById('linkUrl');
+    const linkText = document.getElementById('linkText');
+    const linkUrlError = document.getElementById('linkUrlError');
+    const removeLink = document.getElementById('removeLink');
+    const editor = document.getElementById('Content');
+
+    // Ensure editor is focused first
+    editor.focus();
+
+    // Clear previous errors
+    linkUrlError.style.display = 'none';
+
+    // Save current selection/cursor position
+    if (selection.rangeCount > 0) {
+        savedSelection = selection.getRangeAt(0).cloneRange();
+    } else {
+        // Create a range at the end of the editor if no selection
+        savedSelection = document.createRange();
+        savedSelection.selectNodeContents(editor);
+        savedSelection.collapse(false); // Move to end
+    }
+
+    // Check if cursor is within an existing link
+    let selectedLink = null;
+    if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const container = range.commonAncestorContainer;
+        const element = container.nodeType === 3 ? container.parentElement : container;
+
+        // Look for existing link in the selection or cursor position
+        selectedLink = element.closest('a');
+
+        // If no direct link found, check if selection spans a link
+        if (!selectedLink && selection.toString()) {
+            const selectedContent = range.cloneContents();
+            const links = selectedContent.querySelectorAll('a');
+            if (links.length === 1) {
+                // Find the corresponding link in the actual DOM
+                const selectedText = selection.toString();
+                const editorLinks = editor.querySelectorAll('a');
+                selectedLink = Array.from(editorLinks).find(link => link.textContent === selectedText);
+            }
+        }
+    }
+
+    // Set up modal based on whether we're editing existing link or creating new
+    currentLinkElement = selectedLink;
+
+    if (selectedLink) {
+        // Editing existing link
+        linkUrl.value = selectedLink.href || '';
+        linkText.value = selectedLink.textContent || '';
+        removeLink.style.display = 'block';
+    } else {
+        // Creating new link
+        linkUrl.value = '';
+        linkText.value = selection.toString() || '';
+        removeLink.style.display = 'none';
+    }
+
+    linkModal.style.display = 'flex';
+    linkUrl.focus();
+    linkUrl.select(); // Select all text for easier editing
+}
+
+function closeLinkModal() {
+    document.getElementById('linkModal').style.display = 'none';
+    document.getElementById('linkUrl').value = '';
+    document.getElementById('linkText').value = '';
+    document.getElementById('linkUrlError').style.display = 'none';
+    currentLinkElement = null;
+    savedSelection = null;
+
+    // Return focus to editor
+    document.getElementById('Content').focus();
+}
+
+function validateUrl(url) {
+    if (!url || url.trim().length === 0) {
+        return null;
+    }
+
+    try {
+        let urlToValidate = url.trim();
+
+        // Handle common URL patterns
+        if (urlToValidate.startsWith('www.')) {
+            urlToValidate = 'https://' + urlToValidate;
+        } else if (!urlToValidate.match(/^https?:\/\//i)) {
+            // Check if it looks like a domain (contains a dot)
+            if (urlToValidate.includes('.')) {
+                urlToValidate = 'https://' + urlToValidate;
+            } else {
+                return null; // Not a valid URL pattern
+            }
+        }
+
+        // Validate using URL constructor
+        const urlObj = new URL(urlToValidate);
+
+        // Additional validation - must have valid protocol and host
+        if (!['http:', 'https:'].includes(urlObj.protocol)) {
+            return null;
+        }
+
+        if (!urlObj.hostname || urlObj.hostname.length === 0) {
+            return null;
+        }
+
+        return urlToValidate;
+    } catch (e) {
+        return null;
+    }
+}
+
+function insertLink() {
+    const linkUrl = document.getElementById('linkUrl').value.trim();
+    const linkText = document.getElementById('linkText').value.trim();
+    const linkUrlError = document.getElementById('linkUrlError');
+    const editor = document.getElementById('Content');
+
+    // Clear previous errors
+    linkUrlError.style.display = 'none';
+
+    if (!linkUrl) {
+        linkUrlError.textContent = 'URL is required';
+        linkUrlError.style.display = 'block';
+        return;
+    }
+
+    const validUrl = validateUrl(linkUrl);
+    if (!validUrl) {
+        linkUrlError.textContent = 'Invalid URL format';
+        linkUrlError.style.display = 'block';
+        return;
+    }
+
+    // Determine display text
+    const displayText = linkText || validUrl;
+
+    if (currentLinkElement) {
+        // Edit existing link
+        currentLinkElement.href = validUrl;
+        currentLinkElement.target = '_blank';
+        currentLinkElement.rel = 'noopener noreferrer';
+        currentLinkElement.textContent = displayText;
+    } else {
+        // Create new link element
+        const link = document.createElement('a');
+        link.href = validUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.style.color = '#667eea';
+        link.style.textDecoration = 'underline';
+        link.textContent = displayText;
+
+        // Focus editor and restore selection
+        editor.focus();
+
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+
+        if (savedSelection) {
+            // Use saved selection
+            selection.addRange(savedSelection);
+
+            const selectedText = savedSelection.toString();
+            if (selectedText.length > 0) {
+                // Replace selected text with link
+                savedSelection.deleteContents();
+                savedSelection.insertNode(link);
+            } else {
+                // Insert at cursor position
+                savedSelection.insertNode(link);
+
+                // Add space after link if needed
+                const nextSibling = link.nextSibling;
+                if (!nextSibling || (nextSibling.nodeType === 3 && !nextSibling.textContent.startsWith(' '))) {
+                    const spaceNode = document.createTextNode(' ');
+                    link.parentNode.insertBefore(spaceNode, link.nextSibling);
+                }
+            }
+
+            // Position cursor after the link
+            const range = document.createRange();
+            const nextNode = link.nextSibling;
+            if (nextNode && nextNode.nodeType === 3) {
+                range.setStart(nextNode, 1); // After the space
+                range.setEnd(nextNode, 1);
+            } else {
+                range.setStartAfter(link);
+                range.setEndAfter(link);
+            }
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+        } else {
+            // Fallback: append to end of editor
+            const spaceNode = document.createTextNode(' ');
+            editor.appendChild(spaceNode);
+            editor.appendChild(link);
+            editor.appendChild(document.createTextNode(' '));
+
+            // Position cursor after link
+            const range = document.createRange();
+            range.setStartAfter(link);
+            range.setEndAfter(link);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }
+
+    // Force editor focus and sync content
+    editor.focus();
+    document.getElementById('ContentInput').value = editor.innerHTML;
+
+    // Update character counts
+    updateCounts();
+
+    console.log('Link inserted successfully:', displayText, '?', validUrl);
+    closeLinkModal();
+}
+
+function removeLink() {
+    if (currentLinkElement) {
+        const editor = document.getElementById('Content');
+        const parent = currentLinkElement.parentNode;
+        const textContent = currentLinkElement.textContent;
+
+        // Create text node with the link's text content
+        const textNode = document.createTextNode(textContent);
+
+        // Replace the link with plain text
+        parent.insertBefore(textNode, currentLinkElement);
+        parent.removeChild(currentLinkElement);
+
+        // Position cursor after the text
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        // Focus editor and sync content
+        editor.focus();
+        document.getElementById('ContentInput').value = editor.innerHTML;
+        updateCounts();
+    }
+    closeLinkModal();
+}
+
+// Close modal when clicking outside
+document.getElementById('linkModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeLinkModal();
+    }
+});
+
+// Keyboard support for link modal
+document.getElementById('linkUrl').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        console.log('Enter pressed in URL field, calling insertLink()');
+        insertLink();
+    } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closeLinkModal();
+    }
+});
+
+document.getElementById('linkText').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        console.log('Enter pressed in text field, calling insertLink()');
+        insertLink();
+    } else if (e.key === 'Escape') {
+        e.preventDefault();
+        closeLinkModal();
+    }
+});
+
+// Ensure Insert Link button is properly wired
+document.addEventListener('DOMContentLoaded', function() {
+    const insertLinkBtn = document.querySelector('#linkModal button[onclick="insertLink()"]');
+    if (insertLinkBtn) {
+        // Remove onclick attribute and add proper event listener
+        insertLinkBtn.removeAttribute('onclick');
+        insertLinkBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Insert Link button clicked');
+            insertLink();
+        });
+    }
+
+    // Also ensure toolbar button works
+    const toolbarLinkBtn = document.querySelector('[data-command="createLink"]');
+    if (toolbarLinkBtn) {
+        toolbarLinkBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Toolbar link button clicked');
+            openLinkModal();
+        });
+    }
+});
+
+// Replace default link button with custom modal (backup)
+document.querySelector('[data-command="createLink"]')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('Backup toolbar link handler triggered');
+    openLinkModal();
+});
 </script>
 
 @section Scripts {

@@ -31,11 +31,18 @@ namespace InkVault.ViewModels
 
         public string? ProfilePictureUrl { get; set; }
 
+        [StringLength(200, ErrorMessage = "Bio must not exceed 200 characters.")]
+        public string? Bio { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime? LastLoginAt { get; set; }
 
         public string ThemePreference { get; set; } = "dark";
+
+        // For public profile
+        public bool AreFriends { get; set; }
+        public int PublicJournalCount { get; set; } = 0;
     }
 
     public class ChangePasswordViewModel
@@ -52,6 +59,34 @@ namespace InkVault.ViewModels
         [DataType(DataType.Password)]
         [Compare("NewPassword", ErrorMessage = "Password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; } = null!;
+    }
+
+    public class UserJournalViewModel
+    {
+        public int JournalId { get; set; }
+        public string Title { get; set; } = null!;
+        public string Content { get; set; } = null!;
+        public string? Topic { get; set; }
+        public List<string> Tags { get; set; } = new List<string>();
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public int ViewCount { get; set; }
+        public InkVault.Models.PrivacyLevel PrivacyLevel { get; set; }
+        public bool IsAnonymous { get; set; }
+        public string? DUI { get; set; }
+        public string? ReferencedDUI { get; set; }
+    }
+
+    public class UserJournalsViewModel
+    {
+        public string UserId { get; set; } = null!;
+        public string UserFirstName { get; set; } = null!;
+        public string UserLastName { get; set; } = null!;
+        public string? UserProfilePicture { get; set; }
+        public bool IsOwner { get; set; }
+        public bool AreFriends { get; set; }
+        public List<UserJournalViewModel> Journals { get; set; } = new List<UserJournalViewModel>();
+        public int JournalCount { get; set; }
     }
 }
 

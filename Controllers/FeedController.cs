@@ -73,34 +73,84 @@ namespace InkVault.Controllers
 
             var viewModel = new FriendsFeedViewModel
             {
-                PublicJournals = publicJournals.Select(j => new FriendJournalViewModel
-                {
-                    JournalId = j.JournalId,
-                    Title = j.Title,
-                    Content = StripHtmlTags(j.Content).Length > 150
-                        ? StripHtmlTags(j.Content).Substring(0, 150) + "..."
-                        : StripHtmlTags(j.Content),
-                    AuthorName = $"{j.User?.FirstName} {j.User?.LastName}",
-                    AuthorProfilePicture = j.User?.ProfilePicturePath,
-                    CreatedAt = j.CreatedAt,
-                    ViewCount = j.ViewCount,
-                    Topic = j.Topic,
-                    PrivacyLevel = j.PrivacyLevel
+                PublicJournals = publicJournals.Select(j => {
+                    // Parse tags from JSON
+                    List<string>? tags = null;
+                    if (!string.IsNullOrEmpty(j.Tags))
+                    {
+                        try
+                        {
+                            tags = System.Text.Json.JsonSerializer.Deserialize<List<string>>(j.Tags);
+                        }
+                        catch
+                        {
+                            tags = null;
+                        }
+                    }
+
+                    return new FriendJournalViewModel
+                    {
+                        JournalId = j.JournalId,
+                        Title = j.Title,
+                        Content = !string.IsNullOrEmpty(j.Content)
+                            ? (StripHtmlTags(j.Content).Length > 150
+                                ? StripHtmlTags(j.Content).Substring(0, 150) + "..."
+                                : StripHtmlTags(j.Content))
+                            : !string.IsNullOrEmpty(j.Abstract)
+                                ? (j.Abstract.Length > 150
+                                    ? j.Abstract.Substring(0, 150) + "..."
+                                    : j.Abstract)
+                                : string.Empty,
+                        AuthorName = $"{j.User?.FirstName} {j.User?.LastName}",
+                        AuthorProfilePicture = j.User?.ProfilePicturePath,
+                        CreatedAt = j.CreatedAt,
+                        ViewCount = j.ViewCount,
+                        Topic = j.Topic,
+                        Tags = tags,
+                        PrivacyLevel = j.PrivacyLevel,
+                        DUI = j.DUI,
+                        ReferencedDUI = j.ReferencedDUI
+                    };
                 }).ToList(),
 
-                FriendsOnlyJournals = friendsOnlyJournals.Select(j => new FriendJournalViewModel
-                {
-                    JournalId = j.JournalId,
-                    Title = j.Title,
-                    Content = StripHtmlTags(j.Content).Length > 150
-                        ? StripHtmlTags(j.Content).Substring(0, 150) + "..."
-                        : StripHtmlTags(j.Content),
-                    AuthorName = $"{j.User?.FirstName} {j.User?.LastName}",
-                    AuthorProfilePicture = j.User?.ProfilePicturePath,
-                    CreatedAt = j.CreatedAt,
-                    ViewCount = j.ViewCount,
-                    Topic = j.Topic,
-                    PrivacyLevel = j.PrivacyLevel
+                FriendsOnlyJournals = friendsOnlyJournals.Select(j => {
+                    // Parse tags from JSON
+                    List<string>? tags = null;
+                    if (!string.IsNullOrEmpty(j.Tags))
+                    {
+                        try
+                        {
+                            tags = System.Text.Json.JsonSerializer.Deserialize<List<string>>(j.Tags);
+                        }
+                        catch
+                        {
+                            tags = null;
+                        }
+                    }
+
+                    return new FriendJournalViewModel
+                    {
+                        JournalId = j.JournalId,
+                        Title = j.Title,
+                        Content = !string.IsNullOrEmpty(j.Content)
+                            ? (StripHtmlTags(j.Content).Length > 150
+                                ? StripHtmlTags(j.Content).Substring(0, 150) + "..."
+                                : StripHtmlTags(j.Content))
+                            : !string.IsNullOrEmpty(j.Abstract)
+                                ? (j.Abstract.Length > 150
+                                    ? j.Abstract.Substring(0, 150) + "..."
+                                    : j.Abstract)
+                                : string.Empty,
+                        AuthorName = $"{j.User?.FirstName} {j.User?.LastName}",
+                        AuthorProfilePicture = j.User?.ProfilePicturePath,
+                        CreatedAt = j.CreatedAt,
+                        ViewCount = j.ViewCount,
+                        Topic = j.Topic,
+                        Tags = tags,
+                        PrivacyLevel = j.PrivacyLevel,
+                        DUI = j.DUI,
+                        ReferencedDUI = j.ReferencedDUI
+                    };
                 }).ToList(),
 
                 HasFriends = true

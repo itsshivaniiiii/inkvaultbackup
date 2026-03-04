@@ -12,10 +12,14 @@ namespace InkVault.ViewModels
         public DateTime? UpdatedAt { get; set; }
         public int ViewCount { get; set; }
         public string? Topic { get; set; }
+        public List<string>? Tags { get; set; }
         public string PreviewText { get; set; } = null!;
         public bool IsFriendsOnly { get; set; }
         public bool IsPublic { get; set; }
         public bool IsOwn { get; set; }
+        public bool IsAnonymous { get; set; } = false;
+        public string? DUI { get; set; }
+        public string? ReferencedDUI { get; set; }
     }
 
     public class ExploreListViewModel
@@ -23,6 +27,7 @@ namespace InkVault.ViewModels
         public List<ExploreViewModel> PublicJournals { get; set; } = new List<ExploreViewModel>();
         public List<ExploreViewModel> FriendJournals { get; set; } = new List<ExploreViewModel>();
         public string? SearchQuery { get; set; }
+        public string? TagQuery { get; set; }
         public string? SortBy { get; set; } = "recent";
     }
 }

@@ -9,6 +9,6 @@ namespace InkVault.ViewModels
         public string OTP { get; set; } = null!;
 
         public string Email { get; set; } = null!;
-        public string Purpose { get; set; } = "Registration"; // Registration or PasswordReset
+        public string Purpose { get; set; } = "Registration"; // Registration, Login, or PasswordReset
     }
 }

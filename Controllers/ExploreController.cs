@@ -21,7 +21,7 @@ namespace InkVault.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? search, string? sortBy = "recent")
+        public async Task<IActionResult> Index(string? search, string? tag, string? sortBy = "recent")
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
@@ -46,8 +46,16 @@ namespace InkVault.Controllers
                     j.Title.ToLower().Contains(searchLower) ||
                     j.Content.ToLower().Contains(searchLower) ||
                     j.Topic!.ToLower().Contains(searchLower) ||
-                    (j.User!.FirstName + " " + j.User.LastName).ToLower().Contains(searchLower)
+                    (j.User!.FirstName + " " + j.User.LastName).ToLower().Contains(searchLower) ||
+                    (!string.IsNullOrEmpty(j.Tags) && j.Tags.ToLower().Contains(searchLower))
                 );
+            }
+
+            // Filter by specific tag
+            if (!string.IsNullOrWhiteSpace(tag))
+            {
+                var tagLower = tag.ToLower();
+                query = query.Where(j => !string.IsNullOrEmpty(j.Tags) && j.Tags.ToLower().Contains($"\"{tagLower}\""));
             }
 
             // Separate public journals only
@@ -82,27 +90,54 @@ namespace InkVault.Controllers
 
             var viewModel = new ExploreListViewModel
             {
-                PublicJournals = publicJournals.Select(j => new ExploreViewModel
-                {
-                    JournalId = j.JournalId,
-                    Title = j.Title,
-                    Content = j.Content,
-                    UserId = j.UserId,
-                    AuthorName = $"{j.User!.FirstName} {j.User.LastName}",
-                    AuthorProfilePicture = j.User.ProfilePicturePath,
-                    CreatedAt = j.CreatedAt,
-                    UpdatedAt = j.UpdatedAt,
-                    ViewCount = j.ViewCount,
-                    Topic = j.Topic,
-                    PreviewText = StripHtmlTags(j.Content).Length > 150 
-                        ? StripHtmlTags(j.Content).Substring(0, 150) + "..." 
-                        : StripHtmlTags(j.Content),
-                    IsFriendsOnly = false,
-                    IsPublic = true,
-                    IsOwn = j.UserId == currentUser.Id
+                PublicJournals = publicJournals.Select(j => {
+                    // Parse tags from JSON for display
+                    List<string>? tags = null;
+                    if (!string.IsNullOrEmpty(j.Tags))
+                    {
+                        try
+                        {
+                            tags = System.Text.Json.JsonSerializer.Deserialize<List<string>>(j.Tags);
+                        }
+                        catch
+                        {
+                            tags = null;
+                        }
+                    }
+
+                    return new ExploreViewModel
+                    {
+                        JournalId = j.JournalId,
+                        Title = j.Title,
+                        Content = j.Content,
+                        UserId = j.UserId,
+                        AuthorName = $"{j.User!.FirstName} {j.User.LastName}",
+                        AuthorProfilePicture = j.User.ProfilePicturePath,
+                        CreatedAt = j.CreatedAt,
+                        UpdatedAt = j.UpdatedAt,
+                        ViewCount = j.ViewCount,
+                        Topic = j.Topic,
+                        Tags = tags,
+                        PreviewText = !string.IsNullOrEmpty(j.Content)
+                            ? (StripHtmlTags(j.Content).Length > 150 
+                                ? StripHtmlTags(j.Content).Substring(0, 150) + "..." 
+                                : StripHtmlTags(j.Content))
+                            : !string.IsNullOrEmpty(j.Abstract)
+                                ? (j.Abstract.Length > 150
+                                    ? j.Abstract.Substring(0, 150) + "..."
+                                    : j.Abstract)
+                                : string.Empty,
+                        IsFriendsOnly = false,
+                        IsPublic = true,
+                        IsOwn = j.UserId == currentUser.Id,
+                        IsAnonymous = j.IsAnonymous,
+                        DUI = j.DUI,
+                        ReferencedDUI = j.ReferencedDUI
+                    };
                 }).ToList(),
                 FriendJournals = new List<ExploreViewModel>(),
                 SearchQuery = search,
+                TagQuery = tag,
                 SortBy = sortBy
             };
 
@@ -110,7 +145,7 @@ namespace InkVault.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> View(int id)
+        public async Task<IActionResult> View(int id, bool fromLibrary = false, bool fromBrowse = false, string? topicName = null, bool fromFeed = false)
         {
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser == null)
@@ -119,6 +154,9 @@ namespace InkVault.Controllers
             var journal = await _context.Journals
                 .Include(j => j.User)
                 .Include(j => j.Views)
+                .Include(j => j.Likes)
+                .Include(j => j.Comments)
+                    .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(j => j.JournalId == id && j.Status == JournalStatus.Published);
 
             if (journal == null)
@@ -171,7 +209,59 @@ namespace InkVault.Controllers
                 System.Diagnostics.Debug.WriteLine($"Error saving view: {ex.Message}");
             }
 
+            ViewBag.FromLibrary = fromLibrary;
+            ViewBag.FromBrowse = fromBrowse;
+            ViewBag.TopicName = topicName;
+            ViewBag.FromFeed = fromFeed;
+
             return View(journal);
+        }
+
+        /// <summary>
+        /// View a journal by its DUI (Document Unique Identifier)
+        /// Looks up the journal by DUI and redirects to the standard View action
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ViewByDUI(string dui)
+        {
+            if (string.IsNullOrWhiteSpace(dui))
+                return NotFound();
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null)
+                return Unauthorized();
+
+            // Look up journal by DUI
+            var journal = await _context.Journals
+                .FirstOrDefaultAsync(j => j.DUI == dui && j.Status == JournalStatus.Published);
+
+            if (journal == null)
+            {
+                TempData["Error"] = $"Journal with DUI '{dui}' not found.";
+                return RedirectToAction("Index");
+            }
+
+            // Check access permissions before redirecting
+            if (journal.PrivacyLevel == PrivacyLevel.Private)
+            {
+                TempData["Error"] = "This journal is private and cannot be accessed.";
+                return RedirectToAction("Index");
+            }
+
+            if (journal.PrivacyLevel == PrivacyLevel.FriendsOnly)
+            {
+                var isFriend = await _context.Friends
+                    .AnyAsync(f => f.UserId == currentUser.Id && f.FriendUserId == journal.UserId);
+
+                if (!isFriend && journal.UserId != currentUser.Id)
+                {
+                    TempData["Error"] = "This journal is only visible to friends.";
+                    return RedirectToAction("Index");
+                }
+            }
+
+            // Redirect to the standard View action with the journal ID
+            return RedirectToAction("View", new { id = journal.JournalId });
         }
     }
 }

@@ -297,6 +297,49 @@
         color: white;
     }
 
+    /* DUI Styles */
+    .journal-dui-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 12px;
+        font-size: 0.8rem;
+    }
+
+    .journal-dui {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--text-secondary);
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+    }
+
+    .journal-dui i {
+        color: #667eea;
+    }
+
+    .journal-reference-dui {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+    }
+
+    .journal-reference-dui a {
+        color: #667eea;
+        text-decoration: none;
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .journal-reference-dui a:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+
     @@keyframes fadeInUp {
         from {
             opacity: 0;
@@ -350,6 +393,43 @@
             font-size: 0.9rem;
         }
     }
+
+    /* Feed Tags Styles */
+    .journal-tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 12px;
+    }
+
+    .feed-journal-tag {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white !important;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .feed-journal-tag:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(102, 126, 234, 0.4);
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .feed-journal-tag-more {
+        display: inline-block;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
 </style>
 
 <div class="feed-container">
@@ -391,51 +471,87 @@
             {
                 <div class="journals-list">
                     @foreach (var journal in Model.PublicJournals)
-                    {
-                        <div class="journal-card">
-                            <div class="journal-header">
-                                <div class="author-info">
-                                    <div class="author-avatar">
-                                        @if (!string.IsNullOrEmpty(journal.AuthorProfilePicture))
-                                        {
-                                            <img src="@journal.AuthorProfilePicture" alt="@journal.AuthorName" />
-                                        }
-                                        else
-                                        {
-                                            @journal.AuthorName.First()
-                                        }
-                                    </div>
-                                    <div class="author-details">
-                                        <h3>@journal.AuthorName</h3>
-                                        <p>@journal.CreatedAt.ToString("MMM dd, yyyy")</p>
+                        {
+                            <div class="journal-card">
+                                <div class="journal-header">
+                                    <div class="author-info">
+                                        <div class="author-avatar">
+                                            @if (!string.IsNullOrEmpty(journal.AuthorProfilePicture))
+                                            {
+                                                <img src="@journal.AuthorProfilePicture" alt="@journal.AuthorName" />
+                                            }
+                                            else
+                                            {
+                                                @journal.AuthorName.First()
+                                            }
+                                        </div>
+                                        <div class="author-details">
+                                            <h3>@journal.AuthorName</h3>
+                                            <p>@journal.CreatedAt.ToString("MMM dd, yyyy")</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <h2 class="journal-title">@journal.Title</h2>
+                                <h2 class="journal-title">@journal.Title</h2>
 
-                            <div class="journal-meta">
-                                <div class="meta-item">
-                                    <i class="bi bi-eye"></i>
-                                    <span>@journal.ViewCount @(journal.ViewCount == 1 ? "view" : "views")</span>
+                                <div class="journal-meta">
+                                    <div class="meta-item">
+                                        <i class="bi bi-eye"></i>
+                                        <span>@journal.ViewCount @(journal.ViewCount == 1 ? "view" : "views")</span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(journal.Topic))
+                                    {
+                                        <span class="topic-badge">#@journal.Topic</span>
+                                    }
                                 </div>
-                                @if (!string.IsNullOrEmpty(journal.Topic))
+
+                                <!-- DUI Display for Public Journals Only -->
+                                @if (!string.IsNullOrEmpty(journal.DUI) && journal.PrivacyLevel == InkVault.Models.PrivacyLevel.Public)
                                 {
-                                    <span class="topic-badge">#@journal.Topic</span>
+                                    <div class="journal-dui-container">
+                                        <div class="journal-dui">
+                                            <i class="bi bi-hash"></i>
+                                            <span>@journal.DUI</span>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(journal.ReferencedDUI))
+                                        {
+                                            <div class="journal-reference-dui">
+                                                <i class="bi bi-arrow-return-right"></i>
+                                                <span>Referenced from:</span>
+                                                <a href="@Url.Action("ViewByDUI", "Journal", new { dui = journal.ReferencedDUI })" title="View referenced journal">
+                                                    @journal.ReferencedDUI
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
                                 }
-                            </div>
 
-                            <div class="journal-content">
-                                @journal.Content
-                            </div>
+                                <!-- Tags Display -->
+                                @if (journal.Tags != null && journal.Tags.Any())
+                                {
+                                    <div class="journal-tags-container" style="margin-bottom: 12px;">
+                                        @foreach (var tag in journal.Tags.Take(4))
+                                        {
+                                            <a href="@Url.Action("Index", "Explore", new { tag = tag })" class="feed-journal-tag">#@tag</a>
+                                        }
+                                        @if (journal.Tags.Count > 4)
+                                        {
+                                            <span class="feed-journal-tag-more">+@(journal.Tags.Count - 4) more</span>
+                                        }
+                                    </div>
+                                }
 
-                            <div class="journal-footer">
-                                <a href="@Url.Action("View", "Journal", new { id = journal.JournalId, fromFeed = true })" class="view-btn">
-                                    <i class="bi bi-eye"></i> Read Full Journal
-                                </a>
+                                <div class="journal-content">
+                                    @journal.Content
+                                </div>
+
+                                <div class="journal-footer">
+                                    <a href="@Url.Action("View", "Journal", new { id = journal.JournalId, fromFeed = true })" class="view-btn">
+                                        <i class="bi bi-eye"></i> Read Full Journal
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    }
+                        }
                 </div>
             }
             else
@@ -454,51 +570,69 @@
             {
                 <div class="journals-list">
                     @foreach (var journal in Model.FriendsOnlyJournals)
-                    {
-                        <div class="journal-card">
-                            <div class="journal-header">
-                                <div class="author-info">
-                                    <div class="author-avatar">
-                                        @if (!string.IsNullOrEmpty(journal.AuthorProfilePicture))
-                                        {
-                                            <img src="@journal.AuthorProfilePicture" alt="@journal.AuthorName" />
-                                        }
-                                        else
-                                        {
-                                            @journal.AuthorName.First()
-                                        }
-                                    </div>
-                                    <div class="author-details">
-                                        <h3>@journal.AuthorName</h3>
-                                        <p>@journal.CreatedAt.ToString("MMM dd, yyyy")</p>
+                        {
+                            <div class="journal-card">
+                                <div class="journal-header">
+                                    <div class="author-info">
+                                        <div class="author-avatar">
+                                            @if (!string.IsNullOrEmpty(journal.AuthorProfilePicture))
+                                            {
+                                                <img src="@journal.AuthorProfilePicture" alt="@journal.AuthorName" />
+                                            }
+                                            else
+                                            {
+                                                @journal.AuthorName.First()
+                                            }
+                                        </div>
+                                        <div class="author-details">
+                                            <h3>@journal.AuthorName</h3>
+                                            <p>@journal.CreatedAt.ToString("MMM dd, yyyy")</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <h2 class="journal-title">@journal.Title</h2>
+                                <h2 class="journal-title">@journal.Title</h2>
 
-                            <div class="journal-meta">
-                                <div class="meta-item">
-                                    <i class="bi bi-eye"></i>
-                                    <span>@journal.ViewCount @(journal.ViewCount == 1 ? "view" : "views")</span>
+                                <div class="journal-meta">
+                                    <div class="meta-item">
+                                        <i class="bi bi-eye"></i>
+                                        <span>@journal.ViewCount @(journal.ViewCount == 1 ? "view" : "views")</span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(journal.Topic))
+                                    {
+                                        <span class="topic-badge">#@journal.Topic</span>
+                                    }
                                 </div>
-                                @if (!string.IsNullOrEmpty(journal.Topic))
+
+                                <!-- DUI is NOT displayed for Friends-Only journals -->
+                                <!-- Only Public journals show DUI according to privacy rules -->
+
+                                <!-- Tags Display -->
+                                @if (journal.Tags != null && journal.Tags.Any())
                                 {
-                                    <span class="topic-badge">#@journal.Topic</span>
+                                    <div class="journal-tags-container" style="margin-bottom: 12px;">
+                                        @foreach (var tag in journal.Tags.Take(4))
+                                        {
+                                            <a href="@Url.Action("Index", "Explore", new { tag = tag })" class="feed-journal-tag">#@tag</a>
+                                        }
+                                        @if (journal.Tags.Count > 4)
+                                        {
+                                            <span class="feed-journal-tag-more">+@(journal.Tags.Count - 4) more</span>
+                                        }
+                                    </div>
                                 }
-                            </div>
 
-                            <div class="journal-content">
-                                @journal.Content
-                            </div>
+                                <div class="journal-content">
+                                    @journal.Content
+                                </div>
 
-                            <div class="journal-footer">
-                                <a href="@Url.Action("View", "Journal", new { id = journal.JournalId, fromFeed = true })" class="view-btn">
-                                    <i class="bi bi-eye"></i> Read Full Journal
-                                </a>
+                                <div class="journal-footer">
+                                    <a href="@Url.Action("View", "Journal", new { id = journal.JournalId, fromFeed = true })" class="view-btn">
+                                        <i class="bi bi-eye"></i> Read Full Journal
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    }
+                        }
                 </div>
             }
             else

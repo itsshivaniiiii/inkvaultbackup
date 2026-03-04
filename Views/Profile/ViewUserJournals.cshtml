@@ -1,0 +1,502 @@
+@model InkVault.ViewModels.UserJournalsViewModel
+
+@{
+    ViewData["Title"] = $"{Model.UserFirstName} {Model.UserLastName}'s Journals";
+}
+
+<style>
+    .user-journals-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .user-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 40px;
+        padding: 30px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 15px;
+    }
+
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 700;
+        flex-shrink: 0;
+        border: 3px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .user-info h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 5px 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .user-info p {
+        color: var(--text-secondary);
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .friend-badge {
+        background: rgba(81, 207, 102, 0.2);
+        color: #51cf66;
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-left: auto;
+    }
+
+    .journals-section h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .journals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .journal-card {
+        background: linear-gradient(135deg, rgba(26, 31, 46, 0.8) 0%, rgba(26, 31, 46, 0.6) 100%);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 25px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .journal-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(102, 126, 234, 0.5);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .journal-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .journal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .privacy-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .privacy-public {
+        background: rgba(240, 147, 251, 0.2);
+        color: #f093fb;
+    }
+
+    .privacy-friends {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+    }
+
+    .privacy-private {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+    }
+
+    .journal-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .topic-badge {
+        background: rgba(102, 126, 234, 0.15);
+        color: #667eea;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .journal-tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 15px;
+    }
+
+    .journal-tag {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white !important;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .journal-tag:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(102, 126, 234, 0.4);
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .journal-tag-more {
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .journal-content {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+    }
+
+    .journal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .view-journal-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .view-journal-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 40px;
+        background: rgba(102, 126, 234, 0.05);
+        border: 1px dashed rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--text-secondary);
+        opacity: 0.5;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+        color: var(--text-primary);
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+        margin: 0;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+    }
+
+    .back-btn:hover {
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
+    }
+
+    /* Light theme support */
+    [data-theme="light"] .journal-card {
+        background: #ffffff;
+        border-color: rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="light"] .journal-title {
+        color: var(--text-primary);
+    }
+
+    [data-theme="light"] .journal-content {
+        color: var(--text-secondary);
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .user-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .user-info h1 {
+            font-size: 1.5rem;
+        }
+
+        .journals-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .journal-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="user-journals-container">
+    <!-- Back Button -->
+    @{
+        var fromFriends = ViewBag.FromFriends ?? false;
+    }
+    @if (fromFriends)
+    {
+        <a href="@Url.Action("Index", "Friends")" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Friends
+        </a>
+    }
+    else
+    {
+        <a href="@Url.Action("ViewPublic", "Profile", new { userId = Model.UserId })" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Profile
+        </a>
+    }
+
+    <!-- User Header -->
+    <div class="user-header">
+        <div class="user-avatar">
+            @if (!string.IsNullOrEmpty(Model.UserProfilePicture))
+            {
+                <img src="@Model.UserProfilePicture" alt="@Model.UserFirstName @Model.UserLastName" />
+            }
+            else
+            {
+                <span>@Model.UserFirstName?.FirstOrDefault()@Model.UserLastName?.FirstOrDefault()</span>
+            }
+        </div>
+
+        <div class="user-info">
+            <h1>@Model.UserFirstName @Model.UserLastName's Journals</h1>
+            <p>
+                @Model.JournalCount journal@(Model.JournalCount != 1 ? "s" : "") available
+                @if (Model.IsOwner)
+                {
+                    <small class="text-muted">(your published journals)</small>
+                }
+                else if (Model.AreFriends)
+                {
+                    <small class="text-muted">(public & friends-only journals)</small>
+                }
+                else
+                {
+                    <small class="text-muted">(public journals only)</small>
+                }
+            </p>
+        </div>
+
+        @if (Model.AreFriends)
+        {
+            <div class="friend-badge">
+                <i class="bi bi-check-circle"></i> Friends
+            </div>
+        }
+    </div>
+
+    <!-- Journals Section -->
+    <div class="journals-section">
+        <h2>
+            <i class="bi bi-book"></i>
+            @if (Model.IsOwner)
+            {
+                <span>My Published Journals</span>
+            }
+            else
+            {
+                <span>Published Journals</span>
+            }
+            (@Model.JournalCount)
+        </h2>
+
+        @if (Model.Journals.Any())
+        {
+            <div class="journals-grid">
+                @foreach (var journal in Model.Journals)
+                {
+                    <div class="journal-card">
+                        <div class="journal-card-header">
+                            <h3 class="journal-title">@journal.Title</h3>
+                            <span class="privacy-badge privacy-@(journal.PrivacyLevel.ToString().ToLower())">
+                                @if (journal.PrivacyLevel == InkVault.Models.PrivacyLevel.Public)
+                                {
+                                    <i class="bi bi-globe"></i>
+                                    <span>Public</span>
+                                }
+                                else if (journal.PrivacyLevel == InkVault.Models.PrivacyLevel.FriendsOnly)
+                                {
+                                    <i class="bi bi-people-fill"></i>
+                                    <span>Friends</span>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-lock-fill"></i>
+                                    <span>Private</span>
+                                }
+                            </span>
+                        </div>
+
+                        <div class="journal-meta">
+                            <div class="meta-item">
+                                <i class="bi bi-calendar-event"></i>
+                                <span>@journal.CreatedAt.ToString("MMM dd, yyyy")</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="bi bi-eye"></i>
+                                <span>@journal.ViewCount @(journal.ViewCount == 1 ? "view" : "views")</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(journal.Topic))
+                            {
+                                <span class="topic-badge">#@journal.Topic</span>
+                            }
+                        </div>
+
+                        <!-- Tags Display -->
+                        @if (journal.Tags.Any())
+                        {
+                            <div class="journal-tags-container">
+                                @foreach (var tag in journal.Tags.Take(4))
+                                {
+                                    <a href="@Url.Action("Index", "Explore", new { tag = tag })" class="journal-tag">#@tag</a>
+                                }
+                                @if (journal.Tags.Count > 4)
+                                {
+                                    <span class="journal-tag-more">+@(journal.Tags.Count - 4) more</span>
+                                }
+                            </div>
+                        }
+
+                        <div class="journal-content">
+                            @Html.Raw(journal.Content.Length > 200 ? journal.Content.Substring(0, 200) + "..." : journal.Content)
+                        </div>
+
+                        <div class="journal-footer">
+                            @{
+                                var fromFriendsPage = ViewBag.FromFriends ?? false;
+                            }
+                            <a href="@Url.Action("View", "Journal", new { 
+                                id = journal.JournalId, 
+                                fromUserProfile = true, 
+                                userId = Model.UserId,
+                                backToFriends = fromFriendsPage 
+                            })" class="view-journal-btn">
+                                <i class="bi bi-eye"></i> Read Full Journal
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-book"></i>
+                <h3>No Journals Available</h3>
+                @if (Model.IsOwner)
+                {
+                    <p>You haven't published any journals yet.</p>
+                }
+                else
+                {
+                    <p>@Model.UserFirstName hasn't shared any journals that you can view.</p>
+                }
+            </div>
+        }
+    </div>
+</div>

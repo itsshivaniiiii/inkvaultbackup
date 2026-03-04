@@ -1,4 +1,7 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
     ViewData["Title"] = "Dashboard";
 }
 
@@ -127,6 +130,12 @@
         border-radius: 6px;
         font-weight: 600;
         transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 100%;
+        text-align: center;
     }
 
     .feature-card .btn:hover {
@@ -253,34 +262,91 @@
     <div class="dashboard-container">
         <!-- Welcome Section -->
         <div class="welcome-section">
-            <h1>Welcome back, <span style="color: #667eea;">@User.Identity.Name</span>! 👋</h1>
+            @{
+                var currentUser = await UserManager.GetUserAsync(User);
+                var displayName = currentUser?.FirstName ?? User.Identity.Name;
+            }
+            <h1>Welcome back, <span style="color: #667eea;">@displayName</span>! 👋</h1>
             <p>Share your thoughts, explore fascinating stories, and connect with writers around the world.</p>
         </div>
 
+        @if (ViewData["IsFirstLogin"] != null && (bool)ViewData["IsFirstLogin"])
+        {
+            <!-- Getting Started Section - First Login Only -->
+            <div class="section-header">
+                <i class="bi bi-rocket"></i>
+                <h2>Getting Started</h2>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-lg-6 mb-4">
+                    <div class="quick-action" onclick="location.href='@Url.Action("Index", "Profile")'" style="cursor: pointer;">
+                        <i class="bi bi-1-circle"></i>
+                        <div class="quick-action-text">
+                            <h6>Complete Your Profile</h6>
+                            <p>Add a profile picture, bio, and interests to help others find you.</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-action" onclick="location.href='@Url.Action("Create", "Journal")'" style="cursor: pointer;">
+                        <i class="bi bi-2-circle"></i>
+                        <div class="quick-action-text">
+                            <h6>Create Your First Journal</h6>
+                            <p>Start your journey by sharing your first thought or story.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mb-4">
+                    <div class="quick-action" onclick="location.href='@Url.Action("Index", "Explore")'" style="cursor: pointer;">
+                        <i class="bi bi-3-circle"></i>
+                        <div class="quick-action-text">
+                            <h6>Explore Journals</h6>
+                            <p>Browse writings, discover authors, and find interesting content.</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-action" onclick="location.href='@Url.Action("Index", "Friends")'" style="cursor: pointer;">
+                        <i class="bi bi-4-circle"></i>
+                        <div class="quick-action-text">
+                            <h6>Add Friends</h6>
+                            <p>Connect with writers and build your community network.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
         <!-- Stats Section -->
         <div class="row mb-5">
-            <div class="col-md-3 mb-3">
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
                 <div class="stat-box">
                     <div class="number">@ViewData["PublishedJournalsCount"]</div>
                     <div class="label">Journals Published</div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
                 <div class="stat-box">
                     <div class="number">@ViewData["FriendsCount"]</div>
                     <div class="label">Friends</div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
                 <div class="stat-box">
                     <div class="number">@ViewData["ReadersCount"]</div>
                     <div class="label">Readers</div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
                 <div class="stat-box">
-                    <div class="number">@ViewData["LikesAndCommentsCount"]</div>
-                    <div class="label">Likes & Comments</div>
+                    <div class="number">@ViewData["LikesCount"]</div>
+                    <div class="label">Likes Received</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-3">
+                <div class="stat-box">
+                    <div class="number">@ViewData["CommentsCount"]</div>
+                    <div class="label">Comments Received</div>
                 </div>
             </div>
         </div>
@@ -299,7 +365,7 @@
                     <h5>Create Journal</h5>
                     <p>Write and share your thoughts with the world. Make it private for yourself or public for readers.</p>
                     <a href="@Url.Action("Create", "Journal")" class="btn btn-sm">
-                        <i class="bi bi-plus-lg"></i> New Journal
+                        <i class="bi bi-plus-lg" style="font-size: 1.2rem; font-weight: bold;"></i> New Journal
                     </a>
                 </div>
             </div>
@@ -322,9 +388,9 @@
                     <div class="feature-icon">👥</div>
                     <h5>Make Friends</h5>
                     <p>Connect with other writers and readers. Build your community and network.</p>
-                    <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#makeFriendsModal">
+                    <a href="@Url.Action("Index", "Friends")" class="btn btn-sm">
                         <i class="bi bi-people"></i> Connect
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -345,9 +411,9 @@
                 <div class="feature-card">
                     <div class="feature-icon">📖</div>
                     <h5>My Library</h5>
-                    <p>View and manage all your journals, drafts, and saved writings in one place.</p>
-                    <a href="@Url.Action("MyJournals", "Journal")" class="btn btn-sm">
-                        <i class="bi bi-bookmark"></i> My Journals
+                    <p>View and manage all your saved journals from other writers you've bookmarked.</p>
+                    <a href="@Url.Action("Library", "Journal")" class="btn btn-sm">
+                        <i class="bi bi-bookmark"></i> Saved Journals
                     </a>
                 </div>
             </div>
@@ -361,66 +427,6 @@
                     <a href="@Url.Action("Index", "Feed")" class="btn btn-sm">
                         <i class="bi bi-chat-dots"></i> View Feed
                     </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Getting Started Section -->
-        <div class="section-header">
-            <i class="bi bi-rocket"></i>
-            <h2>Getting Started</h2>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-6 mb-4">
-                <div class="quick-action">
-                    <i class="bi bi-1-circle"></i>
-                    <div class="quick-action-text">
-                        <h6>Complete Your Profile</h6>
-                        <p>Add a profile picture, bio, and interests to help others find you.</p>
-                    </div>
-                </div>
-
-                <div class="quick-action">
-                    <i class="bi bi-2-circle"></i>
-                    <div class="quick-action-text">
-                        <h6>Write Your First Journal</h6>
-                        <p>Start your journey by sharing your first thought or story.</p>
-                    </div>
-                </div>
-
-                <div class="quick-action">
-                    <i class="bi bi-3-circle"></i>
-                    <div class="quick-action-text">
-                        <h6>Explore & Connect</h6>
-                        <p>Browse writings, follow authors, and make new friends.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6 mb-4">
-                <div class="quick-action">
-                    <i class="bi bi-4-circle"></i>
-                    <div class="quick-action-text">
-                        <h6>Engage with Community</h6>
-                        <p>Comment, like, and discuss writings with fellow authors.</p>
-                    </div>
-                </div>
-
-                <div class="quick-action">
-                    <i class="bi bi-5-circle"></i>
-                    <div class="quick-action-text">
-                        <h6>Build Your Audience</h6>
-                        <p>Share quality content and grow your readership over time.</p>
-                    </div>
-                </div>
-
-                <div class="quick-action">
-                    <i class="bi bi-6-circle"></i>
-                    <div class="quick-action-text">
-                        <h6>Customize Preferences</h6>
-                        <p>Set privacy levels, notification settings, and content preferences.</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -508,39 +514,366 @@
 }
 else
 {
-    <div style="text-align: center; padding: 60px 20px; animation: fadeInUp 0.8s ease;">
-        <div style="margin-bottom: 30px;">
-            <i class="bi bi-book" style="font-size: 5rem; color: #667eea;"></i>
-        </div>
-        <h1 style="font-size: 3rem; font-weight: 700; margin-bottom: 15px;">
-            Welcome to <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">InkVault</span>
-        </h1>
-        <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 30px;">
-            Your personal journal platform to share thoughts, discover stories, and connect with writers worldwide.
-        </p>
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a asp-controller="Account" asp-action="Welcome" class="cta-button" id="loginBtn">
-                <i class="bi bi-box-arrow-in-right"></i> Login Now
+    <!-- Section 1: Hero Welcome Section -->
+    <section class="snap-section hero-section">
+        <div class="section-content">
+            <div style="margin-bottom: 30px; animation: fadeInUp 0.8s ease;">
+                <i class="bi bi-book" style="font-size: 5rem; color: #667eea;"></i>
+            </div>
+            <h1 style="font-size: 3rem; font-weight: 700; margin-bottom: 15px; animation: fadeInUp 0.8s ease 0.1s backwards;">
+                Welcome to <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">InkVault</span>
+            </h1>
+            <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 30px; animation: fadeInUp 0.8s ease 0.2s backwards;">
+                Your personal journal platform to share thoughts, discover stories, and connect with writers worldwide.
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; animation: fadeInUp 0.8s ease 0.3s backwards;">
+                <a asp-controller="Account" asp-action="Welcome" class="cta-button" id="loginBtn">
+                    <i class="bi bi-box-arrow-in-right"></i> Login Now
+                </a>
+                <a asp-controller="Account" asp-action="Register" class="cta-button" id="joinBtn" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%); border: 1px solid rgba(102, 126, 234, 0.4); color: #667eea;">
+                    <i class="bi bi-person-plus"></i> Join Community
+                </a>
+            </div>
+
+            <!-- Scroll Indicator - Clickable -->
+            <a href="#features" class="scroll-indicator" style="text-decoration: none;">
+                <i class="bi bi-chevron-down"></i>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 5px;">Scroll to explore features</p>
             </a>
-            <a asp-controller="Account" asp-action="Register" class="cta-button" id="joinBtn" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%); border: 1px solid rgba(102, 126, 234, 0.4); color: #667eea;">
-                <i class="bi bi-person-plus"></i> Join Community
-            </a>
-        </div>
-        
-        <style>
-            [data-theme="light"] #joinBtn {
-                background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%) !important;
-                border: 2px solid #667eea !important;
-                color: #667eea !important;
+
+                <style>
+                    [data-theme="light"] #joinBtn {
+                        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%) !important;
+                        border: 2px solid #667eea !important;
+                        color: #667eea !important;
+                    }
+
+                    [data-theme="light"] #joinBtn:hover {
+                        background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%) !important;
+                        color: #667eea !important;
+                        text-decoration: none;
+                    }
+
+                    .scroll-indicator {
+                        position: absolute;
+                        bottom: 70px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        text-align: center;
+                        animation: bounceUpDown 2s ease-in-out infinite;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+
+                    .scroll-indicator:hover {
+                        transform: translateX(-50%) scale(1.1);
+                    }
+
+                    .scroll-indicator i {
+                        font-size: 2rem;
+                        color: #667eea;
+                        display: block;
+                        margin-bottom: 5px;
+                    }
+
+                    .scroll-indicator p {
+                        margin: 0;
+                        padding: 0;
+                    }
+
+                    @@keyframes bounceUpDown {
+                        0%, 100% { transform: translate(-50%, 0); }
+                        50% { transform: translate(-50%, 10px); }
+                    }
+                </style>
+            </div>
+        </section>
+
+        <!-- Section 2: Platform Features Section -->
+        <section id="features" class="snap-section features-section">
+            <div class="section-content">
+                <div style="text-align: center; margin-bottom: 50px; animation: fadeInUp 0.8s ease;">
+                    <div style="display: inline-flex; align-items: center; gap: 12px; padding-bottom: 15px; border-bottom: 2px solid rgba(102, 126, 234, 0.25);">
+                        <i class="bi bi-star-fill" style="font-size: 2rem; color: #667eea;"></i>
+                        <h2 style="font-size: 2.2rem; margin: 0; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Platform Features</h2>
+                    </div>
+                    <p style="color: var(--text-secondary); margin-top: 15px; font-size: 1.05rem;">Discover what you can do on InkVault</p>
+                </div>
+
+                <div class="container">
+                    <div class="row g-4">
+                        <!-- Feature 1: Write & Publish Journals -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="info-feature-card">
+                                <div class="feature-icon-circle">
+                                    <i class="bi bi-journal-text"></i>
+                                </div>
+                                <h5>Write & Publish Journals</h5>
+                                <p>Create personal journals and publish them publicly or privately with full control.</p>
+                            </div>
+                        </div>
+
+                        <!-- Feature 2: Abstract & Full Content Control -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="info-feature-card">
+                                <div class="feature-icon-circle">
+                                    <i class="bi bi-file-earmark-lock2"></i>
+                                </div>
+                                <h5>Abstract & Full Content Control</h5>
+                                <p>Share abstracts and allow readers to request full access when needed.</p>
+                            </div>
+                        </div>
+
+                        <!-- Feature 3: Connect with Writers -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="info-feature-card">
+                                <div class="feature-icon-circle">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <h5>Connect with Writers</h5>
+                                <p>Follow friends and explore journals from other users in the community.</p>
+                            </div>
+                        </div>
+
+                        <!-- Feature 4: Save to Library -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="info-feature-card">
+                                <div class="feature-icon-circle">
+                                    <i class="bi bi-bookmark-heart"></i>
+                                </div>
+                                <h5>Save to Library</h5>
+                                <p>Bookmark journals and access them anytime from your personal library.</p>
+                            </div>
+                        </div>
+
+                        <!-- Feature 5: AI Writing Assistant -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="info-feature-card">
+                                <div class="feature-icon-circle">
+                                    <i class="bi bi-magic"></i>
+                                </div>
+                                <h5>AI Writing Assistant</h5>
+                                <p>Enhance your writing with grammar and readability improvements.</p>
+                            </div>
+                        </div>
+
+                        <!-- Feature 6: Secure & Private -->
+                        <div class="col-lg-4 col-md-6">
+                            <div class="info-feature-card">
+                                <div class="feature-icon-circle">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+                                <h5>Secure & Private</h5>
+                                <p>OTP verification and customizable notification settings for your security.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </section>
+
+            <style>
+                /* Smooth Scrolling */
+                html {
+                    scroll-behavior: smooth;
+                }
+
+                /* Each Full-Screen Section */
+                .snap-section {
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    padding: 20px;
+                }
+
+                .section-content {
+                    width: 100%;
+                    max-width: 1400px;
+                    margin: 0 auto;
+                    text-align: center;
+                }
+
+                /* Hero Section Specific - Perfectly Centered */
+                .hero-section {
+                    height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding-top: 0;
+                    padding-bottom: 140px;
+                }
+
+                .hero-section .section-content {
+                    padding: 0 20px;
+                    margin-top: -80px;
+                }
+
+                /* Features Section Specific */
+                .features-section {
+                    padding-top: 60px;
+                    padding-bottom: 60px;
+                }
+
+        /* Info Feature Cards - Non-clickable, purely informational */
+        .info-feature-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.25);
+            border-radius: 15px;
+            padding: 35px 25px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.08) 0%, rgba(102, 126, 234, 0.08) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .info-feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102, 126, 234, 0.5);
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.25);
+        }
+
+        .info-feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon-circle {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border: 2px solid rgba(102, 126, 234, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-feature-card:hover .feature-icon-circle {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .feature-icon-circle i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .info-feature-card h5 {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Light theme support */
+        [data-theme="light"] .info-feature-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        [data-theme="light"] .feature-icon-circle {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .snap-section {
+                padding: 15px;
+                min-height: auto;
             }
-            
-            [data-theme="light"] #joinBtn:hover {
-                background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%) !important;
-                color: #667eea !important;
-                text-decoration: none;
+
+            .hero-section {
+                padding-top: 60px;
+                padding-bottom: 60px;
             }
-        </style>
-    </div>
+
+            .features-section {
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
+
+            .info-feature-card {
+                padding: 25px 20px;
+            }
+
+            .feature-icon-circle {
+                width: 70px;
+                height: 70px;
+            }
+
+            .feature-icon-circle i {
+                font-size: 1.75rem;
+            }
+
+            .info-feature-card h5 {
+                font-size: 1.15rem;
+            }
+
+            .info-feature-card p {
+                font-size: 0.9rem;
+            }
+
+            .scroll-indicator {
+                bottom: 60px;
+            }
+
+            .scroll-indicator i {
+                font-size: 1.5rem;
+            }
+
+            .scroll-indicator p {
+                font-size: 0.75rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .snap-section h1 {
+                font-size: 2rem !important;
+            }
+
+            .snap-section h2 {
+                font-size: 1.5rem !important;
+            }
+
+            .scroll-indicator {
+                bottom: 50px;
+            }
+        }
+    </style>
 }
 
 <script>
@@ -782,8 +1115,20 @@ function showToast(message, type = 'success') {
     const toastContainer = document.getElementById('toastContainer');
     const toastId = 'toast-' + Date.now();
     
-    const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
-    const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
+    let bgColor, iconClass;
+    switch(type) {
+        case 'success':
+            bgColor = '#10b981';
+            iconClass = 'bi-check-circle-fill';
+            break;
+        case 'error':
+            bgColor = '#ef4444';
+            iconClass = 'bi-exclamation-circle-fill';
+            break;
+        default:
+            bgColor = '#3b82f6';
+            iconClass = 'bi-info-circle-fill';
+    }
     
     const toastHTML = `
         <div id="${toastId}" style="
@@ -799,7 +1144,7 @@ function showToast(message, type = 'success') {
             animation: slideInRight 0.3s ease;
             min-width: 300px;
         ">
-            <span style="font-weight: bold; font-size: 1.2rem;">${icon}</span>
+            <i class="bi ${iconClass}" style="font-size: 1.2rem; flex-shrink: 0;"></i>
             <span>${message}</span>
         </div>
     `;

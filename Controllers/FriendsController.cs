@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using InkVault.Data;
 using InkVault.Models;
 using InkVault.ViewModels;
+using InkVault.Services;
 
 namespace InkVault.Controllers
 {
@@ -13,11 +14,16 @@ namespace InkVault.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly NotificationService _notificationService;
 
-        public FriendsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public FriendsController(
+            ApplicationDbContext context, 
+            UserManager<ApplicationUser> userManager,
+            NotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
+            _notificationService = notificationService;
         }
 
         [HttpGet]
@@ -217,6 +223,9 @@ namespace InkVault.Controllers
             _context.FriendRequests.Add(friendRequest);
             await _context.SaveChangesAsync();
 
+            // Send email notification to receiver
+            await _notificationService.SendFriendRequestReceivedEmailAsync(friendRequest);
+
             return Ok("Friend request sent");
         }
 
@@ -263,6 +272,9 @@ namespace InkVault.Controllers
                 _context.Friends.Add(friend2);
                 await _context.SaveChangesAsync();
 
+                // Send email notification to the sender about acceptance
+                await _notificationService.SendFriendRequestAcceptedEmailAsync(friendRequest);
+
                 return Ok(new { success = true, message = "Friend request accepted" });
             }
             catch (Exception ex)
@@ -296,6 +308,9 @@ namespace InkVault.Controllers
 
                 _context.FriendRequests.Update(friendRequest);
                 await _context.SaveChangesAsync();
+
+                // Send email notification to the sender about decline
+                await _notificationService.SendFriendRequestDeniedEmailAsync(friendRequest);
 
                 return Ok(new { success = true, message = "Friend request declined" });
             }

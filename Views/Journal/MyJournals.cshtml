@@ -8,55 +8,6 @@
 }
 
 <style>
-    /* Toast Notification Styles */
-    .toast-notification {
-        position: fixed;
-        top: 30px;
-        right: 30px;
-        background: linear-gradient(135deg, #66c864 0%, #52b788 100%);
-        color: white;
-        padding: 16px 24px;
-        border-radius: 8px;
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        font-weight: 600;
-        animation: slideInRight 0.4s ease;
-        z-index: 9999;
-        max-width: 400px;
-    }
-
-    .toast-notification.error {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-    }
-
-    .toast-notification i {
-        font-size: 1.2rem;
-    }
-
-    @@keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(400px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @@keyframes slideOutRight {
-        from {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateX(400px);
-        }
-    }
-
     .journals-container {
         animation: fadeInUp 0.8s ease;
     }
@@ -101,6 +52,15 @@
         gap: 8px;
         text-decoration: none;
         white-space: nowrap;
+        min-width: fit-content;
+        overflow: visible;
+    }
+
+    .create-btn i {
+        font-size: 1.2rem;
+        display: inline-block;
+        width: auto;
+        min-width: 1.2rem;
     }
 
     .create-btn:hover {
@@ -110,19 +70,8 @@
         text-decoration: none;
     }
 
-    .create-btn:focus {
-        color: white !important;
-        text-decoration: none;
-    }
-
-    .create-btn i {
-        color: white !important;
-    }
-
-    /* Light theme button */
     [data-theme="light"] .create-btn {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
         color: white !important;
     }
 
@@ -147,22 +96,6 @@
         color: var(--text-primary);
     }
 
-    .section-title i {
-        font-size: 1.8rem;
-    }
-
-    .published .section-title i {
-        color: #66c864;
-    }
-
-    .private .section-title i {
-        color: #667eea;
-    }
-
-    .drafts .section-title i {
-        color: #ff6b6b;
-    }
-
     .journal-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -184,52 +117,17 @@
         min-height: 280px;
     }
 
-    .journal-tile::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        transform: scaleX(0);
-        transform-origin: left;
-        transition: transform 0.4s ease;
-    }
-
-    .journal-tile-lock {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background: rgba(102, 126, 234, 0.3);
-        border: 1px solid rgba(102, 126, 234, 0.5);
-        border-radius: 6px;
-        padding: 6px 8px;
-        color: #667eea;
-        font-size: 0.85rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        z-index: 10;
-    }
-
     .journal-tile:hover {
-        transform: translateY(-12px);
+        transform: translateY(-8px);
         border-color: rgba(102, 126, 234, 0.5);
-        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.25);
-    }
-
-    .journal-tile:hover::before {
-        transform: scaleX(1);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
     }
 
     .journal-tile-title {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
         font-weight: 700;
+        margin-bottom: 12px;
         color: var(--text-primary);
-        margin: 0 0 12px 0;
-        word-break: break-word;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -240,63 +138,58 @@
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        margin-bottom: 12px;
-        font-size: 0.8rem;
+        margin-bottom: 15px;
     }
 
     .meta-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 10px;
         background: rgba(102, 126, 234, 0.15);
         color: #667eea;
-        border-radius: 5px;
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 12px;
         font-weight: 600;
     }
 
     .meta-date {
-        display: flex;
-        align-items: center;
-        gap: 4px;
         color: var(--text-secondary);
         font-size: 0.85rem;
-        margin-top: auto;
-        padding-top: 12px;
-        border-top: 1px solid rgba(102, 126, 234, 0.1);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .tile-actions {
+        margin-top: auto;
         display: flex;
         gap: 8px;
-        margin-top: 16px;
+        flex-wrap: wrap;
     }
 
     .tile-btn {
-        flex: 1;
-        padding: 10px 12px;
-        border: none;
+        padding: 8px 12px;
         border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
         text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .tile-btn-edit {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        border: 1px solid rgba(102, 126, 234, 0.3);
     }
 
     .tile-btn-edit:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
-        color: white;
+        background: rgba(102, 126, 234, 0.3);
+        color: #667eea;
+        text-decoration: none;
     }
 
     .tile-btn-view {
@@ -364,50 +257,6 @@
         margin-bottom: 30px;
     }
 
-    [data-theme="light"] .journal-tile {
-        background: #ffffff;
-        border: 1px solid rgba(102, 126, 234, 0.15);
-    }
-
-    [data-theme="light"] .journal-tile-title {
-        color: #2c3e50;
-    }
-
-    [data-theme="light"] .meta-badge {
-        background: rgba(102, 126, 234, 0.08);
-        color: #667eea;
-    }
-
-    [data-theme="light"] .meta-date {
-        color: #7f8c8d;
-    }
-
-    @@media (max-width: 768px) {
-        .page-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .journal-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .tile-actions {
-            flex-direction: row;
-        }
-    }
-
-    @@keyframes slideInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
     .back-btn {
         display: inline-flex;
         align-items: center;
@@ -428,6 +277,125 @@
         color: #667eea;
         text-decoration: none;
     }
+
+    [data-theme="light"] .journal-tile {
+        background: #ffffff;
+        border: 1px solid rgba(102, 126, 234, 0.15);
+    }
+
+    [data-theme="light"] .journal-tile-title {
+        color: #2c3e50;
+    }
+
+    [data-theme="light"] .meta-badge {
+        background: rgba(102, 126, 234, 0.08);
+        color: #667eea;
+    }
+
+    [data-theme="light"] .meta-date {
+        color: #7f8c8d;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Tags Styles for Journal Tiles */
+    .journal-tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 12px;
+    }
+
+    .journal-tag {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .journal-tag:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(102, 126, 234, 0.4);
+    }
+
+    .journal-tag-more {
+        display: inline-block;
+        background: rgba(102, 126, 234, 0.2);
+        color: #667eea;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    /* DUI Styles */
+    .journal-dui-container {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 12px;
+        font-size: 0.8rem;
+    }
+
+    .journal-dui {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--text-secondary);
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+    }
+
+    .journal-dui i {
+        color: #667eea;
+    }
+
+    .journal-reference-dui {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+    }
+
+    .journal-reference-dui a {
+        color: #667eea;
+        text-decoration: none;
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .journal-reference-dui a:hover {
+        color: #764ba2;
+        text-decoration: underline;
+    }
+
 </style>
 
 <div class="journals-container">
@@ -448,10 +416,10 @@
 
     @if (Model.Any())
     {
-        <!-- Published Journals Section (Default/First) -->
+        <!-- Published Journals Section -->
         <div class="section published">
             <h2 class="section-title">
-                <i class="bi bi-globe"></i>
+                <i class="bi bi-globe" style="color: #66c864;"></i>
                 Published Journals (@publishedJournals.Count)
             </h2>
             @if (publishedJournals.Any())
@@ -461,11 +429,17 @@
                     {
                         <div class="journal-tile">
                             <h3 class="journal-tile-title">@journal.Title</h3>
-                            
+
                             <div class="journal-tile-meta">
                                 <span class="meta-badge">
                                     <i class="bi bi-globe"></i> Public
                                 </span>
+                                @if (journal.IsAnonymous)
+                                {
+                                    <span class="meta-badge" style="background: rgba(163, 135, 236, 0.2); border-color: rgba(163, 135, 236, 0.4); color: #a387ec;">
+                                        <i class="bi bi-incognito"></i> Anonymous
+                                    </span>
+                                }
                                 @if (!string.IsNullOrEmpty(journal.Topic))
                                 {
                                     <span class="meta-badge">
@@ -473,6 +447,42 @@
                                     </span>
                                 }
                             </div>
+
+                            <!-- DUI Display for Public Journals Only -->
+                            @if (!string.IsNullOrEmpty(journal.DUI) && journal.PrivacyLevel == InkVault.Models.PrivacyLevel.Public)
+                            {
+                                <div class="journal-dui-container">
+                                    <div class="journal-dui">
+                                        <i class="bi bi-hash"></i>
+                                        <span>@journal.DUI</span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(journal.ReferencedDUI))
+                                    {
+                                        <div class="journal-reference-dui">
+                                            <i class="bi bi-arrow-return-right"></i>
+                                            <span>Referenced from:</span>
+                                            <a href="@Url.Action("ViewByDUI", "Journal", new { dui = journal.ReferencedDUI })" title="View referenced journal">
+                                                @journal.ReferencedDUI
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            <!-- Tags Display -->
+                            @if (journal.Tags != null && journal.Tags.Any())
+                            {
+                                <div class="journal-tags-container" style="margin-bottom: 12px;">
+                                    @foreach (var tag in journal.Tags.Take(3))
+                                    {
+                                        <span class="journal-tag">#@tag</span>
+                                    }
+                                    @if (journal.Tags.Count > 3)
+                                    {
+                                        <span class="journal-tag-more">+@(journal.Tags.Count - 3) more</span>
+                                    }
+                                </div>
+                            }
 
                             <div class="meta-date">
                                 <i class="bi bi-calendar-event"></i>
@@ -506,7 +516,7 @@
         <!-- Private Journals Section -->
         <div class="section private">
             <h2 class="section-title">
-                <i class="bi bi-lock"></i>
+                <i class="bi bi-lock" style="color: #667eea;"></i>
                 Private Journals (@privateJournals.Count)
             </h2>
             @if (privateJournals.Any())
@@ -515,12 +525,6 @@
                     @foreach (var journal in privateJournals)
                     {
                         <div class="journal-tile">
-                            @if (journal.PrivacyLevel == InkVault.Models.PrivacyLevel.Private)
-                            {
-                                <div class="journal-tile-lock">
-                                    <i class="bi bi-lock-fill"></i> Private
-                                </div>
-                            }
                             <h3 class="journal-tile-title">@journal.Title</h3>
                             
                             <div class="journal-tile-meta">
@@ -543,6 +547,21 @@
                                     </span>
                                 }
                             </div>
+
+                            <!-- Tags Display -->
+                            @if (journal.Tags != null && journal.Tags.Any())
+                            {
+                                <div class="journal-tags-container" style="margin-bottom: 12px;">
+                                    @foreach (var tag in journal.Tags.Take(3))
+                                    {
+                                        <span class="journal-tag">#@tag</span>
+                                    }
+                                    @if (journal.Tags.Count > 3)
+                                    {
+                                        <span class="journal-tag-more">+@(journal.Tags.Count - 3) more</span>
+                                    }
+                                </div>
+                            }
 
                             <div class="meta-date">
                                 <i class="bi bi-calendar-event"></i>
@@ -576,7 +595,7 @@
         <!-- Drafts Section -->
         <div class="section drafts">
             <h2 class="section-title">
-                <i class="bi bi-bookmark"></i>
+                <i class="bi bi-bookmark" style="color: #ff6b6b;"></i>
                 Drafts (@draftJournals.Count)
             </h2>
             @if (draftJournals.Any())
@@ -598,6 +617,21 @@
                                     </span>
                                 }
                             </div>
+
+                            <!-- Tags Display -->
+                            @if (journal.Tags != null && journal.Tags.Any())
+                            {
+                                <div class="journal-tags-container" style="margin-bottom: 12px;">
+                                    @foreach (var tag in journal.Tags.Take(3))
+                                    {
+                                        <span class="journal-tag">#@tag</span>
+                                    }
+                                    @if (journal.Tags.Count > 3)
+                                    {
+                                        <span class="journal-tag-more">+@(journal.Tags.Count - 3) more</span>
+                                    }
+                                </div>
+                            }
 
                             <div class="meta-date">
                                 <i class="bi bi-calendar-event"></i>
@@ -634,9 +668,6 @@
             <i class="bi bi-book"></i>
             <h2>No Journals Yet</h2>
             <p>You haven't created any journals yet. Start writing your first journal entry!</p>
-            <a href="@Url.Action("Create", "Journal")" class="create-btn">
-                <i class="bi bi-plus-circle"></i> Create New Journal
-            </a>
         </div>
     }
 </div>
@@ -674,7 +705,7 @@
                 </button>
                 <form id="deleteForm" method="post" style="display: inline;">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-danger" style="background: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
                         <i class="bi bi-trash"></i> Delete Permanently
                     </button>
                 </form>
@@ -684,51 +715,18 @@
 </div>
 
 <script>
-    let currentDeleteJournalId = null;
+// Global variables to store URLs
+var deleteUrl = '@Url.Action("Delete", "Journal")';
 
-    function showDeleteConfirmation(journalId, journalTitle) {
-        currentDeleteJournalId = journalId;
-        document.getElementById('journalTitleDisplay').textContent = journalTitle;
-        
-        // Update form action
-        const form = document.getElementById('deleteForm');
-        form.action = '@Url.Action("Delete", "Journal")' + '?id=' + journalId;
-        
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
-        modal.show();
-    }
-
-    // Display toast notification if there's a success message from TempData
-    document.addEventListener('DOMContentLoaded', function() {
-        const successMessage = '@TempData["Success"]';
-        
-        
-        if (successMessage && successMessage.trim().length > 0) {
-            showToast(successMessage, 'success');
-        }
-    });
-
-    // Toast notification function
-    function showToast(message, type = 'success') {
-        const toast = document.createElement('div');
-        toast.className = `toast-notification ${type === 'error' ? 'error' : ''}`;
-        
-        const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
-        
-        toast.innerHTML = `
-            <i class="bi ${icon}"></i>
-            <span>${message}</span>
-        `;
-        
-        document.body.appendChild(toast);
-        
-        // Auto remove after 4 seconds
-        setTimeout(function() {
-            toast.style.animation = 'slideOutRight 0.4s ease';
-            setTimeout(function() {
-                toast.remove();
-            }, 400);
-        }, 4000);
-    }
+function showDeleteConfirmation(journalId, journalTitle) {
+    document.getElementById('journalTitleDisplay').textContent = journalTitle;
+    
+    // Set the form action to include the journal ID
+    const form = document.getElementById('deleteForm');
+    form.action = deleteUrl + '/' + journalId;
+    
+    // Show the modal
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+    modal.show();
+}
 </script>

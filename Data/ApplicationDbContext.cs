@@ -17,7 +17,12 @@ namespace InkVault.Data
         public DbSet<Friend> Friends { get; set; }
         public DbSet<FriendRequest> FriendRequests { get; set; }
         public DbSet<JournalView> JournalViews { get; set; }
-        
+        public DbSet<SavedJournal> SavedJournals { get; set; }
+        public DbSet<Like> Likes { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<NotificationPreference> NotificationPreferences { get; set; }
+        public DbSet<FullTextRequest> FullTextRequests { get; set; }
+
         // Data Protection Keys for antiforgery token encryption
         public DbSet<Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey> DataProtectionKeys { get; set; }
 
@@ -67,6 +72,24 @@ namespace InkVault.Data
             // Create unique index to prevent duplicate views from same user
             modelBuilder.Entity<JournalView>()
                 .HasIndex(jv => new { jv.JournalId, jv.UserId })
+                .IsUnique();
+
+            // Configure FullTextRequest relationships
+            modelBuilder.Entity<FullTextRequest>()
+                .HasOne(ftr => ftr.Journal)
+                .WithMany()
+                .HasForeignKey(ftr => ftr.JournalId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<FullTextRequest>()
+                .HasOne(ftr => ftr.Requester)
+                .WithMany()
+                .HasForeignKey(ftr => ftr.RequesterId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // Create unique index to prevent duplicate requests from same user for same journal
+            modelBuilder.Entity<FullTextRequest>()
+                .HasIndex(ftr => new { ftr.JournalId, ftr.RequesterId })
                 .IsUnique();
         }
     }
