@@ -283,11 +283,13 @@
                 }
                 else
                 {
-                    <a href="@Url.Action("SendRequest", "Friends", new { receiverId = Model?.UserId })" 
-                       class="action-button" 
-                       onclick="return confirm('Send friend request to @Model?.FirstName @Model?.LastName?');">
-                        <i class="bi bi-person-plus"></i> Add Friend
-                    </a>
+                    <form method="post" asp-controller="Friends" asp-action="SendRequest" style="display: inline;"
+                          onsubmit="return confirm('Send friend request to @Model?.FirstName @Model?.LastName?');">
+                        <input type="hidden" name="receiverId" value="@Model?.UserId" />
+                        <button type="submit" class="action-button">
+                            <i class="bi bi-person-plus"></i> Add Friend
+                        </button>
+                    </form>
                 }
             </div>
         }

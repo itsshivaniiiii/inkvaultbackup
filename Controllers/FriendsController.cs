@@ -176,6 +176,7 @@ namespace InkVault.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendRequest(string receiverId)
         {
             var currentUser = await _userManager.GetUserAsync(User);

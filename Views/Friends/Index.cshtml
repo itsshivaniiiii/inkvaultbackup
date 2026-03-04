@@ -663,12 +663,16 @@ function sendFriendRequest(btn, receiverId, userName) {
     btn.disabled = true;
     btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending...';
 
+    // Get CSRF token
+    const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
     fetch('/Friends/SendRequest', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'receiverId=' + encodeURIComponent(receiverId)
+        body: 'receiverId=' + encodeURIComponent(receiverId) +
+              (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
     })
     .then(response => {
         if (!response.ok) {
