@@ -364,16 +364,14 @@
                           '&__RequestVerificationToken=' + encodeURIComponent(csrfToken)
                 })
                 .then(function(response) {
-                    if (!response.ok) {
-                        return response.text().then(function(text) { throw new Error(text || 'Failed to send request'); });
-                    }
-                    return response.json();
+                    return response.json().then(function(data) { return { ok: response.ok, data: data }; });
                 })
-                .then(function() {
+                .then(function(result) {
+                    if (!result.ok) throw new Error(result.data.message || 'Failed to send request');
                     showToast('Friend request sent to ' + userName + '!', 'success');
                     btn.innerHTML = '<i class="bi bi-clock"></i> Request Sent';
-                    btn.className = 'action-button';
                     btn.style.opacity = '0.7';
+                    btn.disabled = true;
                     btn.onclick = null;
                 })
                 .catch(function(error) {

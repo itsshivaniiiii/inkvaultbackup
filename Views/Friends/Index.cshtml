@@ -663,39 +663,24 @@ function sendFriendRequest(btn, receiverId, userName) {
     btn.disabled = true;
     btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Sending...';
 
-    // Get CSRF token
     const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
 
     fetch('/Friends/SendRequest', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
         body: 'receiverId=' + encodeURIComponent(receiverId) +
               (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(text || 'Failed to send request');
-            });
-        }
-        return response.text();
-    })
-    .then(data => {
-        showToast(`Friend request sent to ${userName}!`, 'success');
-        btn.className = 'btn-action btn-withdraw';
-        btn.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Withdraw';
-        btn.disabled = false;
-        // Update onclick to call withdrawRequest later once we know the ID
-        btn.onclick = function() { 
-            // For now, we'll need to reload or get the ID from search
-            location.reload(); 
-        };
+    .then(response => response.json().then(data => ({ ok: response.ok, data })))
+    .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.message || 'Failed to send request');
+        showToast('Friend request sent to ' + userName + '!', 'success');
+        btn.className = 'btn-action btn-pending';
+        btn.innerHTML = '<i class="bi bi-clock"></i> Pending';
+        btn.disabled = true;
+        btn.onclick = null;
     })
     .catch(error => {
-        console.error('Error:', error);
         showToast(error.message || 'Error sending friend request', 'error');
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-person-plus"></i> Add Friend';
@@ -718,31 +703,17 @@ function withdrawRequest(btn, friendRequestId, userName) {
 
     fetch('/Friends/WithdrawRequest', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) + 
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) +
               (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
     })
-    .then(response => {
-        console.log('Withdraw response status:', response.status);
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message || 'Failed to withdraw request');
-            }).catch(() => {
-                throw new Error('Failed to withdraw request (HTTP ' + response.status + ')');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Withdraw success:', data);
-        showToast(`Friend request withdrawn from ${userName}`, 'success');
+    .then(response => response.json().then(data => ({ ok: response.ok, data })))
+    .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.message || 'Failed to withdraw request');
+        showToast('Friend request withdrawn from ' + userName, 'success');
         setTimeout(() => location.reload(), 1500);
     })
     .catch(error => {
-        console.error('Error withdrawing request:', error);
         showToast(error.message || 'Error withdrawing request', 'error');
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-arrow-counterclockwise"></i> Withdraw';
@@ -760,31 +731,17 @@ function acceptRequest(btn, friendRequestId, userName) {
     
     fetch('/Friends/AcceptRequest', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) + 
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) +
               (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
     })
-    .then(response => {
-        console.log('Accept response status:', response.status);
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message || 'Failed to accept request');
-            }).catch(() => {
-                throw new Error('Failed to accept request (HTTP ' + response.status + ')');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Accept success:', data);
-        showToast(`You are now friends with ${userName}!`, 'success');
+    .then(response => response.json().then(data => ({ ok: response.ok, data })))
+    .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.message || 'Failed to accept request');
+        showToast('You are now friends with ' + userName + '!', 'success');
         setTimeout(() => location.reload(), 1500);
     })
     .catch(error => {
-        console.error('Error accepting request:', error);
         showToast(error.message || 'Error accepting friend request', 'error');
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-check-circle"></i> Accept';
@@ -802,31 +759,17 @@ function declineRequest(btn, friendRequestId, userName) {
 
     fetch('/Friends/DeclineRequest', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) + 
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: 'friendRequestId=' + encodeURIComponent(friendRequestId) +
               (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
     })
-    .then(response => {
-        console.log('Decline response status:', response.status);
-        if (!response.ok) {
-            return response.json().then(data => {
-                throw new Error(data.message || 'Failed to decline request');
-            }).catch(() => {
-                throw new Error('Failed to decline request (HTTP ' + response.status + ')');
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Decline success:', data);
-        showToast(`Friend request from ${userName} declined`, 'success');
+    .then(response => response.json().then(data => ({ ok: response.ok, data })))
+    .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.message || 'Failed to decline request');
+        showToast('Friend request from ' + userName + ' declined', 'success');
         setTimeout(() => location.reload(), 1500);
     })
     .catch(error => {
-        console.error('Error declining request:', error);
         showToast(error.message || 'Error declining request', 'error');
         btn.disabled = false;
         btn.innerHTML = '<i class="bi bi-x-circle"></i> Decline';
@@ -843,27 +786,17 @@ function removeFriend(btn, friendId, userName) {
 
         fetch('/Friends/RemoveFriend', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
             body: 'friendId=' + encodeURIComponent(friendId) +
                   (csrfToken ? '&__RequestVerificationToken=' + encodeURIComponent(csrfToken) : '')
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(text || 'Failed to remove friend');
-                });
-            }
-            return response.text();
-        })
-        .then(data => {
+        .then(response => response.json().then(data => ({ ok: response.ok, data })))
+        .then(({ ok, data }) => {
+            if (!ok) throw new Error(data.message || 'Failed to remove friend');
             showToast(userName + ' has been removed from your friends', 'success');
             setTimeout(() => location.reload(), 1500);
         })
         .catch(error => {
-            console.error('Error:', error);
             showToast(error.message || 'Error removing friend', 'error');
             btn.disabled = false;
             btn.innerHTML = '<i class="bi bi-x-circle"></i> Remove';

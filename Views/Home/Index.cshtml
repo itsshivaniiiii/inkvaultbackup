@@ -1267,24 +1267,13 @@ function sendFriendRequest(receiverId, userName) {
         },
         body: formData
     })
-    .then(response => {
-        if (!response.ok) {
-            if (response.status === 400) {
-                return response.text().then(msg => {
-                    throw new Error(msg || 'Invalid request');
-                });
-            }
-            throw new Error('Failed to send request');
-        }
-        return response.text();
-    })
-    .then(data => {
-        showToast(`Friend request sent to ${userName}!`, 'success');
-        // Refresh search results to update button state
+    .then(response => response.json().then(data => ({ ok: response.ok, data })))
+    .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.message || 'Invalid request');
+        showToast('Friend request sent to ' + userName + '!', 'success');
         setTimeout(() => searchFriends(), 800);
     })
     .catch(error => {
-        console.error('Error:', error);
         showToast(error.message || 'Error sending friend request. Please try again.', 'error');
     });
 }

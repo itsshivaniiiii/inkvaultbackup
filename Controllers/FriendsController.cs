@@ -184,7 +184,7 @@ namespace InkVault.Controllers
                 return Unauthorized();
 
             if (currentUser.Id == receiverId)
-                return BadRequest("Cannot send friend request to yourself");
+                return BadRequest(new { message = "Cannot send friend request to yourself" });
 
             // Check if already friends
             var existingFriend = await _context.Friends
@@ -192,7 +192,7 @@ namespace InkVault.Controllers
                               (f.UserId == receiverId && f.FriendUserId == currentUser.Id));
 
             if (existingFriend)
-                return BadRequest("Already friends");
+                return BadRequest(new { message = "Already friends" });
 
             // Check if request already exists FROM ME TO THEM
             var existingRequest = await _context.FriendRequests
@@ -201,17 +201,16 @@ namespace InkVault.Controllers
                                fr.Status == FriendRequestStatus.Pending);
 
             if (existingRequest)
-                return BadRequest("Friend request already sent");
+                return BadRequest(new { message = "Friend request already sent" });
 
             // IMPORTANT: Check if THEY have already sent ME a pending request
-            // If so, user must accept or decline that request first
             var incomingRequest = await _context.FriendRequests
                 .AnyAsync(fr => fr.SenderId == receiverId && 
                                fr.ReceiverId == currentUser.Id && 
                                fr.Status == FriendRequestStatus.Pending);
 
             if (incomingRequest)
-                return BadRequest("You have a pending friend request from this user. Please accept or decline it first.");
+                return BadRequest(new { message = "You have a pending friend request from this user. Please accept or decline it first." });
 
             var friendRequest = new FriendRequest
             {
@@ -227,15 +226,7 @@ namespace InkVault.Controllers
             // Send email notification to receiver
             await _notificationService.SendFriendRequestReceivedEmailAsync(friendRequest);
 
-            // If AJAX request, return JSON; otherwise redirect back
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest" ||
-                Request.Headers["Accept"].ToString().Contains("application/json"))
-            {
-                return Ok(new { success = true, message = "Friend request sent" });
-            }
-
-            TempData["Success"] = "Friend request sent!";
-            return Redirect(Request.Headers["Referer"].ToString() ?? "/Friends");
+            return Ok(new { success = true, message = "Friend request sent" });
         }
 
 
@@ -342,7 +333,7 @@ namespace InkVault.Controllers
                 .FirstOrDefaultAsync(f => f.FriendId == friendId && f.UserId == currentUser.Id);
 
             if (friend == null)
-                return NotFound();
+                return NotFound(new { success = false, message = "Friend not found" });
 
             // Remove bidirectional friendship
             var reverseFriend = await _context.Friends
@@ -354,14 +345,7 @@ namespace InkVault.Controllers
 
             await _context.SaveChangesAsync();
 
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest" ||
-                Request.Headers["Accept"].ToString().Contains("application/json"))
-            {
-                return Ok(new { success = true, message = "Friend removed" });
-            }
-
-            TempData["Success"] = "Friend removed.";
-            return Redirect(Request.Headers["Referer"].ToString() ?? "/Friends");
+            return Ok(new { success = true, message = "Friend removed" });
         }
 
         [HttpPost]
