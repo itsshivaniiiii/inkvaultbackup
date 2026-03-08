@@ -117,21 +117,25 @@ namespace InkVault.Services
         {
             try
             {
-                // Brevo (formerly Sendinblue) API — used on Render production
+                // Accept multiple common env var name formats users might set in Render Dashboard
                 var brevoApiKey = Environment.GetEnvironmentVariable("BREVO_API_KEY")
                     ?? Environment.GetEnvironmentVariable("Brevo__ApiKey")
+                    ?? Environment.GetEnvironmentVariable("BREVO__API_KEY")
                     ?? _configuration["Brevo:ApiKey"];
 
                 var senderEmail = Environment.GetEnvironmentVariable("Brevo__SenderEmail")
+                    ?? Environment.GetEnvironmentVariable("BREVO_SENDER_EMAIL")
+                    ?? Environment.GetEnvironmentVariable("BREVO__SENDER_EMAIL")
                     ?? _configuration["Brevo:SenderEmail"]
                     ?? Environment.GetEnvironmentVariable("SmtpSettings__SenderEmail")
                     ?? _configuration["SmtpSettings:SenderEmail"];
 
                 var senderName = Environment.GetEnvironmentVariable("Brevo__SenderName")
+                    ?? Environment.GetEnvironmentVariable("BREVO_SENDER_NAME")
                     ?? _configuration["Brevo:SenderName"]
                     ?? "InkVault";
 
-                Console.WriteLine($"[EMAIL] ApiKey present: {!string.IsNullOrEmpty(brevoApiKey)}, SenderEmail present: {!string.IsNullOrEmpty(senderEmail)}");
+                Console.WriteLine($"[EMAIL] ApiKey present: {!string.IsNullOrEmpty(brevoApiKey)}, SenderEmail: {senderEmail ?? "NOT SET"}");
 
                 if (!string.IsNullOrEmpty(brevoApiKey) && !string.IsNullOrEmpty(senderEmail))
                 {

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using InkVault.Models;
 using InkVault.ViewModels;
+using InkVault.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -12,11 +13,13 @@ namespace InkVault.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailService _emailService;
 
-        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> Index()
@@ -103,8 +106,32 @@ namespace InkVault.Controllers
         }
 
         public IActionResult Privacy()
+        {            return View();
+        }
+
+        // Temporary email diagnostic endpoint — visit /Home/EmailTest?to=your@email.com on Render
+        [HttpGet]
+        public async Task<IActionResult> EmailTest(string to)
         {
-            return View();
+            if (string.IsNullOrEmpty(to))
+                return Content("Usage: /Home/EmailTest?to=your@email.com");
+
+            var brevoKey = Environment.GetEnvironmentVariable("BREVO_API_KEY")
+                ?? Environment.GetEnvironmentVariable("Brevo__ApiKey") ?? "(not set)";
+            var senderEmail = Environment.GetEnvironmentVariable("Brevo__SenderEmail")
+                ?? Environment.GetEnvironmentVariable("BREVO_SENDER_EMAIL") ?? "(not set)";
+
+            var info = $"BREVO_API_KEY: {(brevoKey == "(not set)" ? "NOT SET" : "set ({brevoKey.Length} chars)")}\n" +
+                       $"Brevo__SenderEmail: {senderEmail}\n\nAttempting send to: {to}\n\n";
+            try
+            {
+                await _emailService.SendEmailAsync(to, "InkVault Email Test", "<h2>Email test successful!</h2><p>Brevo is working correctly.</p>");
+                return Content(info + "RESULT: Email sent successfully! Check your inbox.");
+            }
+            catch (Exception ex)
+            {
+                return Content(info + $"RESULT: FAILED — {ex.Message}");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
