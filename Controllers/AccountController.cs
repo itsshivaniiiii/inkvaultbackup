@@ -406,12 +406,22 @@ namespace InkVault.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyOTP(VerifyOTPViewModel model)
         {
+            // Look up user and populate ViewBag upfront so every error return
+            // renders the countdown/resend section correctly
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                ViewBag.OTPSentAt   = user.OTPSentAt;
+                ViewBag.ResendCount = user.OTPResendCount;
+                ViewBag.IsLocked    = user.OTPResendLockedUntil.HasValue && user.OTPResendLockedUntil > DateTime.UtcNow;
+                ViewBag.LockedUntil = user.OTPResendLockedUntil;
+            }
+
             try
             {
                 if (!ModelState.IsValid)
                     return View(model);
 
-                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user == null)
                 {
                     ModelState.AddModelError(string.Empty, "User not found.");
@@ -479,6 +489,7 @@ namespace InkVault.Controllers
                         // Non-blocking - don't interrupt login flow
                     }
                     
+                    TempData.Remove("Error");
                     TempData["Success"] = "Login successful!";
                     return RedirectToAction("Index", "Home");
                 }

@@ -28,6 +28,23 @@
                     <div class="card-body p-5">
                         <h3 class="card-title text-center mb-4" style="color: #e0e0e0;">@title</h3>
 
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="alert alert-dismissible fade show mb-3" role="alert"
+                                 style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #ff6b6b; border-radius: 8px;">
+                                <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["Error"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: invert(1);"></button>
+                            </div>
+                        }
+                        @if (TempData["Success"] != null)
+                        {
+                            <div class="alert alert-dismissible fade show mb-3" role="alert"
+                                 style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #34d399; border-radius: 8px;">
+                                <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" style="filter: invert(1);"></button>
+                            </div>
+                        }
+
                         <p class="text-center mb-4" style="color: #b0b0b0;">
                             @if (Model?.Purpose == "Login")
                             {
