@@ -117,31 +117,30 @@ namespace InkVault.Services
         {
             try
             {
-                // Check env vars first (Render sets SENDGRID_API_KEY directly),
-                // then fall back to ASP.NET Core config sections (local appsettings / secrets)
-                var sendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY")
-                    ?? Environment.GetEnvironmentVariable("SendGrid__ApiKey")
-                    ?? _configuration["SendGrid:ApiKey"];
+                // Brevo (formerly Sendinblue) API — used on Render production
+                var brevoApiKey = Environment.GetEnvironmentVariable("BREVO_API_KEY")
+                    ?? Environment.GetEnvironmentVariable("Brevo__ApiKey")
+                    ?? _configuration["Brevo:ApiKey"];
 
-                var senderEmail = Environment.GetEnvironmentVariable("SendGrid__SenderEmail")
+                var senderEmail = Environment.GetEnvironmentVariable("Brevo__SenderEmail")
+                    ?? _configuration["Brevo:SenderEmail"]
                     ?? Environment.GetEnvironmentVariable("SmtpSettings__SenderEmail")
-                    ?? _configuration["SendGrid:SenderEmail"]
                     ?? _configuration["SmtpSettings:SenderEmail"];
 
-                var senderName = Environment.GetEnvironmentVariable("SendGrid__SenderName")
-                    ?? _configuration["SendGrid:SenderName"]
+                var senderName = Environment.GetEnvironmentVariable("Brevo__SenderName")
+                    ?? _configuration["Brevo:SenderName"]
                     ?? "InkVault";
 
-                Console.WriteLine($"[EMAIL] ApiKey present: {!string.IsNullOrEmpty(sendGridApiKey)}, SenderEmail present: {!string.IsNullOrEmpty(senderEmail)}");
+                Console.WriteLine($"[EMAIL] ApiKey present: {!string.IsNullOrEmpty(brevoApiKey)}, SenderEmail present: {!string.IsNullOrEmpty(senderEmail)}");
 
-                if (!string.IsNullOrEmpty(sendGridApiKey) && !string.IsNullOrEmpty(senderEmail))
+                if (!string.IsNullOrEmpty(brevoApiKey) && !string.IsNullOrEmpty(senderEmail))
                 {
-                    await SendViaSendGridAsync(email, subject, htmlBody, sendGridApiKey, senderEmail, senderName);
+                    await SendViaBrevoAsync(email, subject, htmlBody, brevoApiKey, senderEmail, senderName);
                     return;
                 }
 
                 // Fallback to SMTP for local development
-                _logger.LogInformation("SendGrid not configured, attempting SMTP fallback...");
+                _logger.LogInformation("Brevo not configured, attempting SMTP fallback...");
                 await SendViaSmtpAsync(email, subject, htmlBody);
             }
             catch (Exception ex)
@@ -151,55 +150,44 @@ namespace InkVault.Services
             }
         }
 
-        private async Task SendViaSendGridAsync(string toEmail, string subject, string htmlBody,
+        private async Task SendViaBrevoAsync(string toEmail, string subject, string htmlBody,
             string apiKey, string fromEmail, string fromName)
         {
-            Console.WriteLine($"[EMAIL] Sending via SendGrid API to {toEmail}...");
+            Console.WriteLine($"[EMAIL] Sending via Brevo API to {toEmail}...");
 
-            // Strip HTML tags for plain text fallback (spam filters prefer both)
+            // Strip HTML for plain text alternative (spam filters prefer both)
             var plainText = System.Text.RegularExpressions.Regex.Replace(htmlBody, "<[^>]+>", " ");
             plainText = System.Text.RegularExpressions.Regex.Replace(plainText, @"\s{2,}", " ").Trim();
 
             var payload = new
             {
-                personalizations = new[]
-                {
-                    new { to = new[] { new { email = toEmail } } }
-                },
-                from = new { email = fromEmail, name = fromName },
-                reply_to = new { email = fromEmail, name = fromName },
+                sender  = new { email = fromEmail, name = fromName },
+                to      = new[] { new { email = toEmail } },
+                replyTo = new { email = fromEmail, name = fromName },
                 subject,
-                content = new[]
-                {
-                    new { type = "text/plain", value = plainText },
-                    new { type = "text/html",  value = htmlBody  }
-                },
-                tracking_settings = new
-                {
-                    click_tracking        = new { enable = false },
-                    open_tracking         = new { enable = false },
-                    subscription_tracking = new { enable = false }
-                }
+                htmlContent = htmlBody,
+                textContent = plainText
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.sendgrid.com/v3/mail/send")
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email")
             {
                 Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
             };
-            request.Headers.Add("Authorization", $"Bearer {apiKey}");
+            request.Headers.Add("api-key", apiKey);
+            request.Headers.Add("Accept", "application/json");
 
             var response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"[EMAIL] SendGrid: sent successfully to {toEmail}");
-                _logger.LogInformation("Email sent via SendGrid to {Email}", toEmail);
+                Console.WriteLine($"[EMAIL] Brevo: sent successfully to {toEmail}");
+                _logger.LogInformation("Email sent via Brevo to {Email}", toEmail);
             }
             else
             {
                 var errorBody = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"[EMAIL] SendGrid error {response.StatusCode}: {errorBody}");
-                throw new Exception($"SendGrid API error: {response.StatusCode} - {errorBody}");
+                Console.WriteLine($"[EMAIL] Brevo error {response.StatusCode}: {errorBody}");
+                throw new Exception($"Brevo API error: {response.StatusCode} - {errorBody}");
             }
         }
 

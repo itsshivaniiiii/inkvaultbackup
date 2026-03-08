@@ -35,12 +35,12 @@ services:
       - key: SmtpSettings__SenderPassword
         sync: false
 
-      # --- SendGrid Email API (production on Render) ---
-      - key: SENDGRID_API_KEY
+      # --- Brevo Email API (production on Render) ---
+      - key: BREVO_API_KEY
         sync: false
-      - key: SendGrid__SenderEmail
+      - key: Brevo__SenderEmail
         sync: false
-      - key: SendGrid__SenderName
+      - key: Brevo__SenderName
         value: InkVault
 
       # --- Gemini AI (set in Render Dashboard) ---
